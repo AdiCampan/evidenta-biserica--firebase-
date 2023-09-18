@@ -6,7 +6,7 @@ import Table from "react-bootstrap/Table";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import AddPerson from "./AddPerson";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,17 @@ import {
 
 import "./Persoane.scss";
 import ScrollButton from "../../ScrollButton";
+import { onValue, query, ref, remove } from "firebase/database";
+import { db, firestore } from "../../firebase-config";
+import {
+  doc,
+  setDoc,
+  onSnapshot,
+  collection,
+  where,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 
 const AGE_FILTER_LABEL = {
   1: ">=",
@@ -65,8 +76,58 @@ function Persoane() {
   const [notBlessedOnly, setNotBlessedOnly] = useState(false);
   const [membersOnly, setMembersOnly] = useState(false);
   const [notMembersOnly, setNotMembersOnly] = useState(false);
-  let { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
-  const [deleteMember] = useDelMemberMutation();
+  const [persoane, setPersoane] = useState("");
+
+  // let { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
+
+  //FIRESTORE DATABASE//
+  const q = query(collection(firestore, "persoane"));
+
+  // LISTEN REAL TIME //
+  // const waytingPersons = onSnapshot(q, (querySnapshot) => {
+  //   const tmpArray = [];
+  //   querySnapshot.forEach((doc) => {
+  //     const childKey = doc.id;
+  //     const childData = doc.data();
+  //     tmpArray.push({ id: childKey, ...childData });
+  //     setPersoane(tmpArray);
+  //   });
+  // });
+  // LISTEN ONE TIME //
+  const waytingPersons = async () => {
+    const querySnapshot = await getDocs(q);
+    const tmpArray = [];
+    querySnapshot.forEach((doc) => {
+      const childKey = doc.id;
+      const childData = doc.data();
+      tmpArray.push({ id: childKey, ...childData });
+      setPersoane(tmpArray);
+    });
+  };
+  //REALTIME DATA BASE//
+
+  // const waitingPersons = () => {
+  //   const personsQuery = query(ref(db, "members"));
+  //   onValue(personsQuery, (snapshot) => {
+  //     const tmpArray = [];
+
+  //     snapshot.forEach((childSnapshot) => {
+  //       const childKey = childSnapshot.key;
+  //       const childData = childSnapshot.val();
+
+  //       tmpArray.push({ id: childKey, ...childData });
+  //     });
+  //     setPersoane(tmpArray);
+  //   });
+  // };
+  useEffect(() => {
+    waytingPersons();
+  }, []);
+
+  // const [deleteMember] = useDelMemberMutation();
+  const deleteMember = async (id) => {
+    await deleteDoc(doc(firestore, "persoane", id));
+  };
 
   function filterMembers(members) {
     let filteredMembers = members;
@@ -172,6 +233,7 @@ function Persoane() {
 
   const showDeleteModal = (personId, ev) => {
     setIdToDelete(personId);
+    console.log(personId);
     ev.stopPropagation();
   };
 

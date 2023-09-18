@@ -1,38 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { Card } from 'react-bootstrap';
-import DatePicker from 'react-datepicker';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Table from 'react-bootstrap/Table';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Button from 'react-bootstrap/Button';
-import { Typeahead } from 'react-bootstrap-typeahead';
-import { useGetMembersQuery } from '../../services/members';
-import Copil from './Copil';
-import Confirmation from '../../Confirmation';
-import AddPerson from '../Persoane/AddPerson';
+import React, { useState, useEffect } from "react";
+import { Card } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Table from "react-bootstrap/Table";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Button from "react-bootstrap/Button";
+import { Typeahead } from "react-bootstrap-typeahead";
+import { useGetMembersQuery } from "../../services/members";
+import Copil from "./Copil";
+import Confirmation from "../../Confirmation";
+import AddPerson from "../Persoane/AddPerson";
+import { query } from "firebase/database";
+import { collection, getDocs } from "firebase/firestore";
+import { firestore } from "../../firebase-config";
 
 function uuid() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
   );
 }
 
 const Familie = ({ dataUpdated, data }) => {
-  const { data: persoane } = useGetMembersQuery();
-  const [pereche, setPereche] = useState('');
-  const [servCivil, setServCivil] = useState('');
-  const [servRel, setServRel] = useState('');
-  const [biserica, setBiserica] = useState('');
-  const [dataNasteriiCopil, setDataNasteriiCopil] = useState('');
-  const [sexCopil, setSexCopil] = useState('');
-  const [childList, setChildList] = useState(data.relations.filter(relation => relation.type === 'child').map(relation => ({
-    childId: relation.person.id,
-    index: relation.id
-  })));
+  console.log(data);
+  // const { data: persoane } = useGetMembersQuery();
+  const [pereche, setPereche] = useState("");
+  const [servCivil, setServCivil] = useState("");
+  const [servRel, setServRel] = useState("");
+  const [biserica, setBiserica] = useState("");
+  const [dataNasteriiCopil, setDataNasteriiCopil] = useState("");
+  const [sexCopil, setSexCopil] = useState("");
+  const [childList, setChildList] = useState();
+  data?.relations
+    .filter((relation) => relation.type === "child")
+    .map((relation) => ({
+      childId: relation.person.id,
+      index: relation.id,
+    }));
   const [idToDelete, setIdToDelete] = useState(null);
+  const [persoane, setPersoane] = useState();
+  const waitingPersons = async () => {
+    const q = query(collection(firestore, "persoane"));
+
+    const querySnapshot = await getDocs(q);
+    const tmpArray = [];
+    querySnapshot.forEach((doc) => {
+      const childKey = doc.id;
+      const childData = doc.data();
+      tmpArray.push({ id: childKey, ...childData });
+      setPersoane(tmpArray);
+    });
+  };
+  useEffect(() => {
+    waitingPersons();
+  }, []);
 
   useEffect(() => {
     let partener = {};
@@ -40,39 +66,46 @@ const Familie = ({ dataUpdated, data }) => {
     if (pereche.length > 0) {
       partener = {
         person: pereche,
-        type: data.sex ? 'wife' : 'husband',
+        type: data.sex ? "wife" : "husband",
         civilWeddingDate: servCivil,
         religiousWeddingDate: servRel,
         weddingChurch: biserica,
-      }
+      };
     }
-    const children = childList.filter(child => child.childId.length > 0).map(child => ({
-      person: child.childId,
-      type: 'child'
-    }));
+    const children = childList
+      .filter((child) => child.childId.length > 0)
+      .map((child) => ({
+        person: child.childId,
+        type: "child",
+      }));
 
     dataUpdated({
-      relations: [
-        partener,
-        ...children,
-      ]
+      relations: [partener, ...children],
     });
   }, [pereche, servCivil, servRel, biserica, childList, dataNasteriiCopil]);
 
   useEffect(() => {
-    const spouse = data.relations.find(relation => relation.type === 'wife' || relation.type === 'husband');
+    const spouse = data.relations.find(
+      (relation) => relation.type === "wife" || relation.type === "husband"
+    );
 
-    setServCivil(spouse?.civilWeddingDate ? new Date(spouse?.civilWeddingDate) : '');
-    setServRel(spouse?.religiousWeddingDate ? new Date(spouse?.religiousWeddingDate) : '');
-    setBiserica(spouse?.weddingChurch || '');
-    setDataNasteriiCopil(data?.birthDate || '');
-    setSexCopil(data?.sex || '');
+    setServCivil(
+      spouse?.civilWeddingDate ? new Date(spouse?.civilWeddingDate) : ""
+    );
+    setServRel(
+      spouse?.religiousWeddingDate ? new Date(spouse?.religiousWeddingDate) : ""
+    );
+    setBiserica(spouse?.weddingChurch || "");
+    setDataNasteriiCopil(data?.birthDate || "");
+    setSexCopil(data?.sex || "");
 
-    const relationPair = data.relations.find(relation => relation.type === 'wife' || relation.type === 'husband')?.person;
-    if (typeof relationPair == 'object') {
-      setPereche(relationPair?.id || '');
+    const relationPair = data.relations.find(
+      (relation) => relation.type === "wife" || relation.type === "husband"
+    )?.person;
+    if (typeof relationPair == "object") {
+      setPereche(relationPair?.id || "");
     } else {
-      setPereche(relationPair || '');
+      setPereche(relationPair || "");
     }
   }, [data]);
 
@@ -80,76 +113,96 @@ const Familie = ({ dataUpdated, data }) => {
     if (persons.length > 0) {
       setPereche(persons[0].id);
     } else {
-      setPereche('');
+      setPereche("");
     }
-  }
+  };
 
   const addChildField = () => {
-    setChildList([
-      ...childList,
-      { childId: '', index: uuid() }
-    ]);
-  }
+    setChildList([...childList, { childId: "", index: uuid() }]);
+  };
 
   const updateChild = (childId, index) => {
-    setChildList(childList.map((currentChild) => {
-      if (index === currentChild.index) {
-        return { childId, index: currentChild.index };
-      }
-      return currentChild;
-    }));
-
-  }
+    setChildList(
+      childList.map((currentChild) => {
+        if (index === currentChild.index) {
+          return { childId, index: currentChild.index };
+        }
+        return currentChild;
+      })
+    );
+  };
 
   const removeChild = (childIndex) => {
-    setChildList(childList.filter((child) => {
-      if (child.index !== childIndex) {
-        return true;
+    setChildList(
+      childList.filter((child) => {
+        if (child.index !== childIndex) {
+          return true;
+        }
+        setIdToDelete(null);
+        return false;
+      })
+    );
+  };
 
-      }
-      setIdToDelete(null);
-      return false;
-    }));
-  }
-
-  useEffect(() => {
-  }, [childList])
+  useEffect(() => {}, [childList]);
 
   return (
     <Container>
-      <Card>Sot/Sotie
+      <Card>
+        Sot/Sotie
         <Row>
           <Col>
             <InputGroup size="sm" className="mb-3">
-              <div style={{ display: 'flex' }}>
-                <InputGroup.Text id="inputGroup-sizing-sm">Sot/Sotie</InputGroup.Text>
+              <div style={{ display: "flex" }}>
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Sot/Sotie
+                </InputGroup.Text>
                 <Typeahead
                   id="pereche"
                   onChange={onPersonChange}
-                  labelKey={option => `${option.firstName} ${option.lastName}`}
-                  options={persoane?.filter(
-                    // verificam daca persoana e de sex diferit
-                    person => {
-                      if (person.sex !== data.sex && !person.relations.find(relation => relation.type === 'husband' || relation.type === 'wife')) {
-                        return true;
+                  labelKey={(option) =>
+                    `${option.firstName} ${option.lastName}`
+                  }
+                  options={
+                    persoane?.filter(
+                      // verificam daca persoana e de sex diferit
+                      (person) => {
+                        if (
+                          person.sex !== data.sex &&
+                          !person.relations.find(
+                            (relation) =>
+                              relation.type === "husband" ||
+                              relation.type === "wife"
+                          )
+                        ) {
+                          return true;
+                        }
+                        return false;
                       }
-                      return false;
-                    }
-                    // person => person.relations.find(
-                    //   // si persoana nu mai are o alta relatie de sot/sotie
-                    //   relation => relation.type === 'husband' || relation.type === 'wife'
-                    // )
-                  ) || []}
+                      // person => person.relations.find(
+                      //   // si persoana nu mai are o alta relatie de sot/sotie
+                      //   relation => relation.type === 'husband' || relation.type === 'wife'
+                      // )
+                    ) || []
+                  }
                   placeholder="Alege o persoana..."
-                  selected={persoane?.filter(person => person.id === pereche) || []}
+                  selected={
+                    persoane?.filter((person) => person.id === pereche) || []
+                  }
                 />
               </div>
-              <AddPerson label="+"/>
+              <AddPerson label="+" />
             </InputGroup>
           </Col>
           <Col>
-            <InputGroup size="sm" className="mb-3" style={{ display: 'flex', flexWrap: 'nowrap' }}>
-              <InputGroup.Text id="inputGroup-sizing-sm">Data Serv. Civil</InputGroup.Text>
+            <InputGroup
+              size="sm"
+              className="mb-3"
+              style={{ display: "flex", flexWrap: "nowrap" }}
+            >
+              <InputGroup.Text id="inputGroup-sizing-sm">
+                Data Serv. Civil
+              </InputGroup.Text>
               <DatePicker
                 selected={servCivil}
                 onChange={(date) => setServCivil(date)}
@@ -165,8 +218,14 @@ const Familie = ({ dataUpdated, data }) => {
         </Row>
         <Row>
           <Col>
-            <InputGroup size="sm" className="mb-3" style={{ display: 'flex', flexWrap: 'nowrap' }}>
-              <InputGroup.Text id="inputGroup-sizing-sm">Data Serv.Rel.</InputGroup.Text>
+            <InputGroup
+              size="sm"
+              className="mb-3"
+              style={{ display: "flex", flexWrap: "nowrap" }}
+            >
+              <InputGroup.Text id="inputGroup-sizing-sm">
+                Data Serv.Rel.
+              </InputGroup.Text>
               <DatePicker
                 selected={servRel}
                 onChange={(date) => setServRel(date)}
@@ -181,21 +240,29 @@ const Familie = ({ dataUpdated, data }) => {
           </Col>
           <Col>
             <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text id="inputGroup-sizing-sm">Efectuat in Biserica</InputGroup.Text>
-              <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                onChange={(event) => setBiserica(event.target.value)} value={biserica} />
+              <InputGroup.Text id="inputGroup-sizing-sm">
+                Efectuat in Biserica
+              </InputGroup.Text>
+              <Form.Control
+                aria-label="Small"
+                aria-describedby="inputGroup-sizing-sm"
+                onChange={(event) => setBiserica(event.target.value)}
+                value={biserica}
+              />
             </InputGroup>
           </Col>
         </Row>
-      </Card><br /><br />
+      </Card>
+      <br />
+      <br />
       {/* ------- COPII --------- */}
-      <Card>Copii
+      <Card>
+        Copii
         <Col>
           <InputGroup size="sm" className="mb-3">
             <Button onClick={addChildField}>Adauga un copil</Button>
           </InputGroup>
         </Col>
-
         <Table striped bordered hover size="sm">
           <thead>
             <tr>
@@ -208,7 +275,9 @@ const Familie = ({ dataUpdated, data }) => {
           <tbody>
             {childList.map((childItem) => (
               <Copil
-                childUpdated={(childId) => updateChild(childId, childItem.index)}
+                childUpdated={(childId) =>
+                  updateChild(childId, childItem.index)
+                }
                 removeChild={() => setIdToDelete(childItem.index)}
                 key={childItem.index}
                 selected={childItem.childId}
@@ -216,7 +285,6 @@ const Familie = ({ dataUpdated, data }) => {
             ))}
           </tbody>
         </Table>
-
       </Card>
       <Confirmation
         showModal={idToDelete != null}
@@ -226,6 +294,6 @@ const Familie = ({ dataUpdated, data }) => {
         hideModal={() => setIdToDelete(null)}
       />
     </Container>
-  )
+  );
 };
 export default Familie;

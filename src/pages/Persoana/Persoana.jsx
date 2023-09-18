@@ -1,43 +1,62 @@
-
-import { useParams, useNavigate } from 'react-router-dom';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import React, { useState, useEffect } from 'react';
-import { useGetMemberQuery, useModifyMemberMutation, useAddRelationMutation } from '../../services/members';
-import { Card } from 'react-bootstrap';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import "./Persoana.css";
-import General from './General';
-import Biserica from './Biserica';
-import Familie from './Familie';
-import Observatii from './Observatii';
-import DownloadLink from "react-download-link";
+import { useParams, useNavigate } from "react-router-dom";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter,
-  Routes,
-  Route,
-  NavLink,
-  Link,
-} from "react-router-dom";
-
-
-
+  useGetMemberQuery,
+  useModifyMemberMutation,
+  useAddRelationMutation,
+} from "../../services/members";
+import { Card } from "react-bootstrap";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import "./Persoana.css";
+import General from "./General";
+import Biserica from "./Biserica";
+import Familie from "./Familie";
+import Observatii from "./Observatii";
+import DownloadLink from "react-download-link";
+import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
+import { get, onValue, ref } from "firebase/database";
+import { db, firestore } from "../../firebase-config";
+import { memo } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 function Persoana() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { id } = useParams();
-  const { data, error, isLoading, isFetching } = useGetMemberQuery(id);
-  const [modifyMember, result] = useModifyMemberMutation();
+  // const { data, error, isLoading, isFetching } = useGetMemberQuery(id);
+  const [data, setData] = useState();
+  // const [modifyMember, result] = useModifyMemberMutation();
   const [addRelation] = useAddRelationMutation();
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState("general");
   const [currentData, setCurrentData] = useState(null);
 
-  useEffect(() => {
-    setCurrentData(data);
-  }, [data]);
+  const getMemberData = async () => {
+    const docRef = doc(firestore, "persoane", id);
+    const docSnap = await getDoc(docRef);
+    const tmpArray = [];
+    if (docSnap.exists()) {
+      tmpArray.push(docSnap.data(), id);
+      setData(tmpArray);
+    } else {
+      console.log("No such document!");
+    }
+  };
 
+  useEffect(() => {
+    getMemberData();
+  }, []);
+
+  const modifyMember = (newData) => {
+    const docRef = doc(firestore, "persoane", id);
+    setDoc(docRef, newData);
+  };
+
+  // useEffect(() => {
+  //   setCurrentData(data);
+  // }, [data]);
 
   // useEffect(() => {
   //   if (result.isSuccess) {
@@ -46,16 +65,19 @@ function Persoana() {
   // }, [result]);
 
   const saveData = () => {
-    console.log('current data', currentData);
+    console.log("current data", currentData);
     if (currentData.firstName != "" && currentData.lastName != "") {
       modifyMember(currentData);
+    } else {
+      alert("Nu stergeti numele sau prenumele !");
     }
-    else {
-      alert("Nu stergeti numele sau prenumele !")
-    };
 
-    const spouse = currentData.relations.find(person => person.type === 'wife' || person.type === 'husband');
-    const children = currentData.relations.filter(person => person.type === 'child');
+    // const spouse = currentData.relations.find(
+    //   (person) => person.type === "wife" || person.type === "husband"
+    // );
+    // const children = currentData.relations.filter(
+    //   (person) => person.type === "child"
+    // );
 
     // if (spouse && children.length > 0) {
     //   console.log('update spouse');
@@ -66,21 +88,20 @@ function Persoana() {
     // } else {
     //   console.log('no', spouse, children);
     // }
-      // addRelation({
-      //   owner: currentData.id,
-      //   person: currentData.partner,
-      //   type: currentData.sex ? 'wife' : 'husband',
-      // });
+    // addRelation({
+    //   owner: currentData.id,
+    //   person: currentData.partner,
+    //   type: currentData.sex ? 'wife' : 'husband',
+    // });
   };
 
   const dataUpdated = (updatedData) => {
-    setCurrentData(prevState => {
-     
+    setCurrentData((prevState) => {
       return {
-        // ...prevState,
+        ...prevState,
         id,
         ...updatedData,
-      }
+      };
     });
   };
 
@@ -95,9 +116,9 @@ function Persoana() {
         <Tab eventKey="general" title="General">
           {data && <General data={data} dataUpdated={dataUpdated} />}
         </Tab>
-        <Tab eventKey="familie" title="Familie">
+        {/* <Tab eventKey="familie" title="Familie">
           {data && <Familie data={data} dataUpdated={dataUpdated} />}
-        </Tab>
+        </Tab> */}
         <Tab eventKey="biserica" title="Biserica">
           {data && <Biserica data={data} dataUpdated={dataUpdated} />}
         </Tab>
@@ -108,22 +129,29 @@ function Persoana() {
       <Card>
         <Card.Body>
           <Form>
-            <Button variant="primary" type="button" onClick={saveData} disabled={result.isLoading}    >
+            <Button
+              variant="primary"
+              type="button"
+              onClick={saveData}
+              // disabled={result.isLoading}
+            >
               Salveaza
             </Button>
-            
+
             <DownloadLink
               label="Descarca link Persoana"
               filename={`/persoane/${id}`}
               exportFile={() => `/persoane/${id}`}
             />
-            <Link to={`/persoane/${id}`} target="_blank" download>Download</Link>
+            <Link to={`/persoane/${id}`} target="_blank" download>
+              Download
+            </Link>
             {/* <a href="https://google.com" download>Download link</a> */}
           </Form>
         </Card.Body>
       </Card>
     </Card>
-  )
+  );
 }
 
-export default Persoana
+export default Persoana;

@@ -1,58 +1,82 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup'
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { useGetMemberQuery, useGetMembersQuery, useModifyMemberMutation } from '../../services/members';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import DatePicker from 'react-datepicker';
-import ImageUploader from '../../components/ImageUploader/ImageUploader';
-import AddTransferModal from '../Persoane/AddTransferModal';
+import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import {
+  useGetMemberQuery,
+  useGetMembersQuery,
+  useModifyMemberMutation,
+} from "../../services/members";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import DatePicker from "react-datepicker";
+import ImageUploader from "../../components/ImageUploader/ImageUploader";
+import AddTransferModal from "../Persoane/AddTransferModal";
 
 import "./Persoana.css";
-import AddPerson from '../Persoane/AddPerson';
-import { Typeahead } from 'react-bootstrap-typeahead';
-
+import AddPerson from "../Persoane/AddPerson";
+import { Typeahead } from "react-bootstrap-typeahead";
+import { firestore } from "../../firebase-config";
+import { query } from "firebase/database";
+import { collection, getDocs } from "firebase/firestore";
 
 const General = ({ dataUpdated, data }) => {
   const { id } = useParams();
   const [modifyMember, result] = useModifyMemberMutation();
   const [showTransferModal, setShowTransferModal] = useState(false);
-  const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
+  // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
 
-  const [nume, setNume] = useState('');
-  const [prenume, setPrenume] = useState('');
-  const [anterior, setAnterior] = useState('');
-  const [adresa, setAdresa] = useState('');
-  const [telefon, setTelefon] = useState('');
-  const [email, setEmail] = useState('');
+  const [nume, setNume] = useState("");
+  const [prenume, setPrenume] = useState("");
+  const [anterior, setAnterior] = useState("");
+  const [adresa, setAdresa] = useState("");
+  const [telefon, setTelefon] = useState("");
+  const [email, setEmail] = useState("");
   const [sex, setSex] = useState(null);
-  const [father, setFather] = useState('');
-  const [mother, setMother] = useState('');
-  const [placeOfBirth, setPlaceOfBirth] = useState('');
+  const [father, setFather] = useState("");
+  const [mother, setMother] = useState("");
+  const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [enterBirthDate, setEnterBirthDate] = useState(null);
   const [member, setMember] = useState(false);
   const [membruData, setMembruData] = useState(null);
-  const [detalii, setDetalii] = useState('');
+  const [detalii, setDetalii] = useState("");
+  const [persoane, setPersoane] = useState();
+
+  const waitingPersons = async () => {
+    const q = query(collection(firestore, "persoane"));
+
+    const querySnapshot = await getDocs(q);
+    const tmpArray = [];
+    querySnapshot.forEach((doc) => {
+      const childKey = doc.id;
+      const childData = doc.data();
+      tmpArray.push({ id: childKey, ...childData });
+      setPersoane(tmpArray);
+    });
+  };
+  useEffect(() => {
+    waitingPersons();
+  }, []);
 
   useEffect(() => {
+    console.log(data);
     dataUpdated({
-      id: data.id,
+      id: data[1],
       firstName: nume,
       lastName: prenume,
       maidenName: anterior,
       address: adresa,
       mobilePhone: telefon,
       email: email,
-      sex: sex === 'M' ? true : (sex === 'F' ? false : null),
+      sex: sex === "M" ? true : sex === "F" ? false : null,
       fatherName: father,
       motherName: mother,
       birthDate: enterBirthDate,
@@ -61,30 +85,45 @@ const General = ({ dataUpdated, data }) => {
       details: detalii,
       profileImage: selectedFile,
     });
-
-  }, [nume, prenume, anterior, adresa, telefon, email, sex, father, mother, placeOfBirth, enterBirthDate, member, detalii, selectedFile, membruData]);
+  }, [
+    nume,
+    prenume,
+    anterior,
+    adresa,
+    telefon,
+    email,
+    sex,
+    father,
+    mother,
+    placeOfBirth,
+    enterBirthDate,
+    member,
+    detalii,
+    selectedFile,
+    membruData,
+  ]);
 
   useEffect(() => {
     if (data) {
-      setNume(data.firstName || '');
-      setPrenume(data.lastName || '');
-      setAnterior(data.maidenName || '');
-      setAdresa(data.address || '');
-      setTelefon(data.mobilePhone || '');
-      setEmail(data.email || '');
-      setSex(data.sex === true ? 'M' : (data.sex === false ? 'F' : null));
-      setFather(data.fatherName || '');
-      setMother(data.motherName || '');
-      setEnterBirthDate(Date.parse(data.birthDate));
-      setPlaceOfBirth(data.placeOfBirth || '');
-      setMembruData(data.memberDate ? Date.parse(data.memberDate) : null);
-      setMember(!!data.memberDate);
-      setDetalii(data.details || '');
-      setProfileImage(data.imagePath);
+      setNume(data[0].firstName || "");
+      setPrenume(data[0].lastName || "");
+      setAnterior(data[0].maidenName || "");
+      setAdresa(data[0].address || "");
+      setTelefon(data[0].mobilePhone || "");
+      setEmail(data[0].email || "");
+      setSex(data[0].sex === true ? "M" : data[0].sex === false ? "F" : null);
+      setFather(data[0].fatherName || "");
+      setMother(data[0].motherName || "");
+      setEnterBirthDate(Date.parse(data[0].birthDate));
+      setPlaceOfBirth(data[0].placeOfBirth || "");
+      setMembruData(data[0].memberDate ? Date.parse(data[0].memberDate) : null);
+      setMember(!!data[0].memberDate);
+      setDetalii(data[0].details || "");
+      setProfileImage(data[0].profileImage);
     }
-  }, [data]);
+  }, []);
 
-  const addTransfer = () => { };
+  const addTransfer = () => {};
 
   const onFatherdChange = (p) => {
     if (p.length > 0) {
@@ -92,11 +131,11 @@ const General = ({ dataUpdated, data }) => {
     } else {
       setFather(null);
     }
-  }
+  };
 
-  const parent = data.relations.filter(relation => relation.type === 'parent')
-  
-  console.log(parent);
+  // const parent = data.relations.filter(
+  //   (relation) => relation.type === "parent"
+  // );
 
   return (
     <Container>
@@ -105,55 +144,88 @@ const General = ({ dataUpdated, data }) => {
           <Row>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">Nume</InputGroup.Text>
-                <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                  onChange={(event) => setNume(event.target.value)} value={nume} />
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Nume
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  onChange={(event) => setNume(event.target.value)}
+                  value={nume}
+                />
               </InputGroup>
             </Col>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">Prenume</InputGroup.Text>
-                <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Prenume
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
                   value={prenume}
-                  onChange={(event) => setPrenume(event.target.value)} />
+                  onChange={(event) => setPrenume(event.target.value)}
+                />
               </InputGroup>
             </Col>
-
           </Row>
           <InputGroup size="sm" className="mb-3">
-            <InputGroup.Text id="inputGroup-sizing-sm">Nume anterior</InputGroup.Text>
-            <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+            <InputGroup.Text id="inputGroup-sizing-sm">
+              Nume anterior
+            </InputGroup.Text>
+            <Form.Control
+              aria-label="Small"
+              aria-describedby="inputGroup-sizing-sm"
               value={anterior}
-              onChange={(event) => setAnterior(event.target.value)} />
+              onChange={(event) => setAnterior(event.target.value)}
+            />
           </InputGroup>
           <InputGroup size="sm" className="mb-3">
             <InputGroup.Text id="inputGroup-sizing-sm">Adresa</InputGroup.Text>
-            <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+            <Form.Control
+              aria-label="Small"
+              aria-describedby="inputGroup-sizing-sm"
               value={adresa}
-              onChange={(event) => setAdresa(event.target.value)} />
+              onChange={(event) => setAdresa(event.target.value)}
+            />
           </InputGroup>
           <Row>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">Telefon</InputGroup.Text>
-                <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                  onChange={(event) => setTelefon(event.target.value)} value={telefon} />
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Telefon
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  onChange={(event) => setTelefon(event.target.value)}
+                  value={telefon}
+                />
               </InputGroup>
             </Col>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">email</InputGroup.Text>
-                <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                  onChange={(event) => setEmail(event.target.value)} value={email} />
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  email
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  onChange={(event) => setEmail(event.target.value)}
+                  value={email}
+                />
               </InputGroup>
             </Col>
           </Row>
 
-
           <Row>
             <Col>
-              <InputGroup size="sm" className="mb-3" style={{ display: 'flex', flexWrap: 'nowrap' }}>
-                <InputGroup.Text >Data nasterii</InputGroup.Text>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text>Data nasterii</InputGroup.Text>
                 <DatePicker
                   selected={enterBirthDate}
                   onChange={(date) => setEnterBirthDate(date)}
@@ -168,36 +240,56 @@ const General = ({ dataUpdated, data }) => {
             </Col>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">Locul nasterii</InputGroup.Text>
-                <Form.Control aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Locul nasterii
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
                   value={placeOfBirth}
-                  onChange={(event) => setPlaceOfBirth(event.target.value)} />
+                  onChange={(event) => setPlaceOfBirth(event.target.value)}
+                />
               </InputGroup>
             </Col>
           </Row>
           <InputGroup size="sm" className="mb-3">
             <InputGroup.Text id="inputGroup-sizing-sm">Sexul</InputGroup.Text>
             <RadioGroup
-              style={{ display: 'flex', flexDirection: 'row', paddingLeft: 14 }}
+              style={{ display: "flex", flexDirection: "row", paddingLeft: 14 }}
               name="use-radio-group"
               value={sex}
-              onChange={(e) => { console.log('valoare', e); setSex(e.target.value) }}
+              onChange={(e) => {
+                console.log("valoare", e);
+                setSex(e.target.value);
+              }}
             >
-              <FormControlLabel value="M" label="Masculin" control={<Radio />} />
+              <FormControlLabel
+                value="M"
+                label="Masculin"
+                control={<Radio />}
+              />
               <FormControlLabel value="F" label="Feminin" control={<Radio />} />
             </RadioGroup>
           </InputGroup>
           <Row>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">Tata</InputGroup.Text>
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Tata
+                </InputGroup.Text>
                 <Typeahead
                   id="father"
                   onChange={onFatherdChange}
-                  labelKey={option => `${option.firstName} ${option.lastName}`}
+                  labelKey={(option) =>
+                    `${option.firstName} ${option.lastName}`
+                  }
                   options={persoane || []}
                   placeholder="Alege tatal..."
-                  selected={persoane?.filter(p => p.id === parent?.person && p.sex === 'true') || []}
+                  selected={
+                    persoane?.filter(
+                      (p) => p.id === parent?.person && p.sex === "true"
+                    ) || []
+                  }
                 />
                 <AddPerson label="+" />
               </InputGroup>
@@ -206,9 +298,13 @@ const General = ({ dataUpdated, data }) => {
           <Row>
             <Col>
               <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">Mama</InputGroup.Text>
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Mama
+                </InputGroup.Text>
                 <Typeahead
-                  labelKey={option => `${option.firstName} ${option.lastName}`}
+                  labelKey={(option) =>
+                    `${option.firstName} ${option.lastName}`
+                  }
                   options={persoane || []}
                   placeholder="Alege mama..."
                   id="mother"
@@ -222,29 +318,38 @@ const General = ({ dataUpdated, data }) => {
           </Row>
           <Row>
             <Col>
-              {membruData && (<InputGroup size="sm" className="mb-3" style={{ display: 'flex', flexWrap: 'nowrap' }}>
-                <InputGroup.Text >Membru începând cu data </InputGroup.Text>
-                <DatePicker
-                  selected={membruData}
-                  onChange={(date) => setMembruData(date)}
-                  peekNextMonth
-                  showMonthDropdown
-                  showYearDropdown
-                  disabled
-                  dropdownMode="select"
-                  dateFormat="dd/MM/yyyy"
-                />
-              </InputGroup>)}
+              {membruData && (
+                <InputGroup
+                  size="sm"
+                  className="mb-3"
+                  style={{ display: "flex", flexWrap: "nowrap" }}
+                >
+                  <InputGroup.Text>Membru începând cu data </InputGroup.Text>
+                  <DatePicker
+                    selected={membruData}
+                    onChange={(date) => setMembruData(date)}
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    disabled
+                    dropdownMode="select"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                </InputGroup>
+              )}
             </Col>
             <Col>
-              <Button variant="danger" type="button" onClick={() => setShowTransferModal(true)}>
+              <Button
+                variant="danger"
+                type="button"
+                onClick={() => setShowTransferModal(true)}
+              >
                 Transfer
               </Button>
             </Col>
           </Row>
         </Col>
         <Col>
-
           <ImageUploader
             onFileSelectSuccess={(file) => setSelectedFile(file)}
             onFileSelectError={({ error }) => alert(error)}

@@ -1,18 +1,19 @@
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button';
-import { useAddMemberMutation } from '../../services/members';
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import React, { useState, useEffect } from "react";
+// import { useDispatch } from 'react-redux';
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import { push, ref, set } from "firebase/database";
+import { db, firestore } from "../../firebase-config";
+import { doc, setDoc } from "firebase/firestore";
+import { useAddMemberMutation } from "../../services/members";
 
-
-
-function AddPerson( {label} ) {
+function AddPerson({ label }) {
   const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
- 
+  // const dispatch = useDispatch();
+
   const [nume, setNume] = useState("");
   const [prenume, setPrenume] = useState("");
   // const [adresa, setAdresa] = useState("");
@@ -20,10 +21,30 @@ function AddPerson( {label} ) {
   // const [email, setEmail] = useState("");
   const [sex, setSex] = useState(true);
 
-  const [addMember, result] = useAddMemberMutation();
+  const [result] = useAddMemberMutation();
+
+  // FIREBASE //
+  const addMember = async (newMember) => {
+    await setDoc(doc(firestore, "persoane", crypto.randomUUID()), {
+      firstName: newMember.firstName,
+      lastName: newMember.lastName,
+      sex: newMember.sex,
+    });
+    setShow(false);
+  };
+
+  // REALTIME DATA BASE //
+  // const addMember = (newMember) => {
+  //   const membersRef = ref(db, `members/${crypto.randomUUID()}/`);
+  //   console.log(db);
+  //   set(membersRef, newMember)
+  //     .then((data) => console.log("member added", data))
+  //     .catch((err) => console.error(err));
+  //   setShow(false);
+  // };
 
   const handleClose = () => setShow(false);
- 
+
   useEffect(() => {
     if (result.isSuccess) {
       setShow(false);
@@ -49,33 +70,32 @@ function AddPerson( {label} ) {
       // setAdresa("");
       // setTelefon("");
       // setEmail("");
-      setSex("");
+      setSex(true);
       addMember(newPerson);
-      
     }
   };
 
   return (
     <>
       <Button variant="primary" onClick={() => setShow(true)}>
-        {label || "Persoana noua"}  
+        {label || "Persoana noua"}
       </Button>
- 
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Detalii Persoana</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input
-            placeholder='Nume'
-            value={nume} 
+            placeholder="Nume"
+            value={nume}
             onChange={(event) => setNume(event.target.value)}
           ></input>
           <input
-           placeholder='Prenume'
+            placeholder="Prenume"
             value={prenume}
             onChange={(event) => setPrenume(event.target.value)}
-            ></input>
+          ></input>
           {/* <input 
           placeholder='Adresa' 
           value={adresa}
@@ -92,8 +112,20 @@ function AddPerson( {label} ) {
             onChange={(event) => setEmail(event.target.value)}
           ></input> */}
           <ButtonGroup aria-label="Basic example">
-            <Button variant="secondary" active={sex == true} onClick={() => setSex(true)}>M</Button>
-            <Button variant="secondary" active={sex == false} onClick={() => setSex(false)}>F</Button>
+            <Button
+              variant="secondary"
+              active={sex == true}
+              onClick={() => setSex(true)}
+            >
+              M
+            </Button>
+            <Button
+              variant="secondary"
+              active={sex == false}
+              onClick={() => setSex(false)}
+            >
+              F
+            </Button>
           </ButtonGroup>
         </Modal.Body>
         <Modal.Footer>
