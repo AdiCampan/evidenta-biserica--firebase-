@@ -102,6 +102,7 @@ function Persoane() {
       const childData = doc.data();
       tmpArray.push({ id: childKey, ...childData });
       setPersoane(tmpArray);
+      console.log(persoane);
     });
   };
   //REALTIME DATA BASE//

@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Form, InputGroup } from "react-bootstrap";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebase-config";
 
 import "./ImageUploader.scss";
 
 const ALLOWED_EXTENSIONS = ["jpeg", "jpg", "png"];
 const EMPTY_IMAGE = "/src/assets/images/person-placeholder.jpg";
-const storageRef = ref(storage, "Poze de perfil/");
+const storageRef = ref(storage, "Profile photos");
 
 const FileUploader = ({
   onFileSelectSuccess,
@@ -49,12 +49,16 @@ const FileUploader = ({
         // all good, we can upload the file
       } else {
         uploadBytes(storageRef, currentFile).then((snapshot) => {
-          console.log("Uploaded a blob or file!", snapshot);
-
-          setImagePreview(storageRef.fullPath);
+          getDownloadURL(ref(storage, "Profile photos"))
+            .then((url) => {
+              onFileSelectSuccess(url);
+            })
+            .catch((error) => {
+              // Handle any errors
+            });
+          setImagePreview(URL.createObjectURL(currentFile));
         });
         // setImagePreview(URL.createObjectURL(currentFile));
-        onFileSelectSuccess(currentFile);
       }
     }
   };
