@@ -1,35 +1,63 @@
-import { useState } from 'react';
-import { useGetMembersQuery } from '../../services/members';
-import { formatDate, calculateAge, filterByText} from '../../utils';
-import Table from 'react-bootstrap/Table';
-import './Familii.scss';
+import { useState, useEffect } from "react";
+import { useGetMembersQuery } from "../../services/members";
+import { formatDate, calculateAge, filterByText } from "../../utils";
+import Table from "react-bootstrap/Table";
+import "./Familii.scss";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { firestore } from "../../firebase-config";
 
 const Familii = () => {
-  const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
+  // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
+  useEffect(() => {
+    const q = query(collection(firestore, "persoane"));
+    onSnapshot(q, (querySnapshot) => {
+      const tmpArray = [];
+      querySnapshot.forEach((doc) => {
+        const childKey = doc.id;
+        const childData = doc.data();
+        tmpArray.push({ id: childKey, ...childData });
+        setPersoane(tmpArray);
+      });
+    });
+  }, []);
+
+  const [persoane, setPersoane] = useState();
   const [childrens, setChildrens] = useState([]);
-  const [firstNameFilter, setFirstNameFilter] = useState('');
+
+  const [firstNameFilter, setFirstNameFilter] = useState("");
 
   function filterMembers(members) {
+    console.log("members", members);
     let filteredMembers = members;
-    filteredMembers = filterByText(filteredMembers, 'firstName', firstNameFilter);
-    filteredMembers = filteredMembers.filter(member => member.relations.find(relation => relation.type === 'wife'));
-    filteredMembers = filteredMembers.filter(person => person.sex === true);
+    filteredMembers = filterByText(
+      filteredMembers,
+      "firstName",
+      firstNameFilter
+    );
+
+    filteredMembers = filteredMembers.filter((person) => person.sex === true);
+
+    filteredMembers = filteredMembers.filter((member) =>
+      member.relations?.filter((relation) => relation?.type === "wife")
+    );
+    console.log("filterd members", filteredMembers);
     return filteredMembers;
   }
 
   const listChildrens = (childrens) => {
-    const childrensFiltered = childrens.filter(relation => relation.type === "child").map(relation => relation?.person);
+    const childrensFiltered = childrens
+      .filter((relation) => relation.type === "child")
+      .map((relation) => relation?.person);
     setChildrens(childrensFiltered);
-    console.log(childrensFiltered);
-  }
+  };
 
-  const filterWife = (relation) => relation.type === "wife";
-
+  // const children = persoane.filter(child => child.id === childrens.map() )
+  // console.log("children", children);
   return (
-    <div className='pagina-familii'>
-      <div className='familii'>
-        <div className='title'>FAMILII</div>
-        <Table striped bordered hover size="sm" >
+    <div className="pagina-familii">
+      <div className="familii">
+        <div className="title">FAMILII</div>
+        <Table striped bordered hover size="sm">
           <thead>
             <tr>
               <th>#</th>
@@ -45,34 +73,68 @@ const Familii = () => {
               <td></td>
               <td>
                 <input
-                  className='search-input'
+                  className="search-input"
                   value={firstNameFilter}
                   onChange={(e) => setFirstNameFilter(e.target.value)}
                   type="text"
-                  placeholder='...numele de familie'
+                  placeholder="...numele de familie"
                 />
               </td>
             </tr>
           </thead>
           <tbody>
-            {persoane ? filterMembers(persoane).map((p, index) => (
-              <tr key={p.id} style={{ cursor: 'pointer' }} onClick={() => listChildrens(p.relations)}>
-                <td>{index + 1}</td>
-                <td>{p.firstName} {p.lastName} și {p.relations.find(filterWife)?.person.lastName}</td>
-                <td>{formatDate(p.relations.find(filterWife)?.civilWeddingDate)}</td>
-                <td>{formatDate(p.relations.find(filterWife)?.religiousWeddingDate)}</td>
-                <td>{p.relations.find(filterWife)?.weddingChurch}</td>
-                <td>{p.relations.find(filterWife)?.person.maidenName}</td>
-                <td>{calculateAge(p.birthDate)}</td>
-                <td>{calculateAge((p.relations.find(filterWife)?.person.birthDate))}</td>
-              </tr>
-            )) : null}
+            {persoane
+              ? filterMembers(persoane).map((p, index) => (
+                  <tr
+                    key={p.id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => listChildrens(p.relations)}
+                  >
+                    <td>{index + 1}</td>
+                    <td>
+                      {p.firstName} {p.lastName} și{" "}
+                      {
+                        persoane
+                          ?.filter(
+                            //    to do ---->filtrar solo relatiile de wife       //
+                            (persoana) => persoana.id === p.relations[0].person
+                          )
+                          .find((pers) => pers.lastName).lastName
+                      }
+                    </td>
+                    <td>{formatDate(p.relations[0].civilWeddingDate)}</td>
+                    <td>{formatDate(p.relations[0].religiousWeddingDate)}</td>
+                    <td>{p.relations[0].weddingChurch}</td>
+                    <td>
+                      {
+                        persoane
+                          ?.filter(
+                            //    to do ---->filtrar solo relatiile de wife       //
+                            (persoana) => persoana.id === p.relations[0].person
+                          )
+                          .find((pers) => pers.lastName).maidenName
+                      }
+                    </td>
+                    <td>{calculateAge(p.birthDate)}</td>
+                    <td>
+                      {calculateAge(
+                        persoane
+                          ?.filter(
+                            //    to do ---->filtrar solo relatiile de wife       //
+                            (persoana) => persoana.id === p.relations[0].person
+                          )
+                          .find((pers) => pers.lastName).birthDate
+                      )}
+                    </td>
+                  </tr>
+                ))
+              : null}
           </tbody>
         </Table>
       </div>
-      <div className='copii'>
-        <div className='title'>Copii</div>
-        <Table striped bordered hover size="sm" >
+      <div className="copii">
+        <div className="title">Copii</div>
+        <Table striped bordered hover size="sm">
           <thead>
             <tr>
               <th>#</th>
@@ -85,22 +147,58 @@ const Familii = () => {
             </tr>
           </thead>
           <tbody>
-            {childrens ? childrens.map((p, index) => (
-              <tr key={p.id} >
-                <td>{index + 1}</td>
-                <td>{p.firstName}</td>
-                <td>{p.lastName}</td>
-                <td>{formatDate(p.birthDate)}</td>
-                <td>{calculateAge(p.birthDate)}</td>
-                <td>{p.sex ? 'M' : 'F'}</td>
-                <td>{p.details}</td>
-              </tr>
-            )) : null}
+            {childrens
+              ? childrens.map((p, index) => (
+                  <tr key={p}>
+                    <td>{index + 1}</td>
+                    <td>
+                      {
+                        persoane
+                          .filter((child) => child.id === p)
+                          .find((children) => children.lastName).firstName
+                      }
+                    </td>
+                    <td>
+                      {
+                        persoane
+                          .filter((child) => child.id === p)
+                          .find((children) => children.lastName).lastName
+                      }
+                    </td>
+                    <td>
+                      {formatDate(
+                        persoane
+                          .filter((child) => child.id === p)
+                          .find((children) => children.lastName).birthDate || ""
+                      )}
+                    </td>
+                    <td>
+                      {calculateAge(
+                        persoane
+                          .filter((child) => child.id === p)
+                          .find((children) => children.lastName).birthDate || ""
+                      )}
+                    </td>
+                    <td>
+                      {persoane
+                        .filter((child) => child.id === p)
+                        .find((children) => children.lastName).sex
+                        ? "M"
+                        : "F"}
+                    </td>
+                    <td>
+                      {persoane
+                        .filter((child) => child.id === p)
+                        .find((children) => children.lastName).details || ""}
+                    </td>
+                  </tr>
+                ))
+              : null}
           </tbody>
         </Table>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Familii;

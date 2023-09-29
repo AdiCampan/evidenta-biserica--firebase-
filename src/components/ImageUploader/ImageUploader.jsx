@@ -4,10 +4,10 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebase-config";
 
 import "./ImageUploader.scss";
+import { useParams } from "react-router";
 
 const ALLOWED_EXTENSIONS = ["jpeg", "jpg", "png"];
 const EMPTY_IMAGE = "/src/assets/images/person-placeholder.jpg";
-const storageRef = ref(storage, "Profile photos");
 
 const FileUploader = ({
   onFileSelectSuccess,
@@ -17,6 +17,9 @@ const FileUploader = ({
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(EMPTY_IMAGE); // small image as placeholder
   const [fileError, setFileError] = useState(null);
+
+  const { id } = useParams();
+  const storageRef = ref(storage, `${id}`);
 
   useEffect(() => {
     setImagePreview(initialImage || EMPTY_IMAGE);
@@ -49,7 +52,7 @@ const FileUploader = ({
         // all good, we can upload the file
       } else {
         uploadBytes(storageRef, currentFile).then((snapshot) => {
-          getDownloadURL(ref(storage, "Profile photos"))
+          getDownloadURL(ref(storage, `${id}`))
             .then((url) => {
               onFileSelectSuccess(url);
             })

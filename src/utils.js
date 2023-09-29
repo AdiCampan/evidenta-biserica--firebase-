@@ -3,7 +3,7 @@ export const calculateAge = (birthDate) => {
     return "";
   }
 
-  const dataNasteriiUnix = Math.floor(new Date(birthDate).getTime() / 1000);
+  const dataNasteriiUnix = Math.floor(birthDate.toDate().getTime() / 1000);
   const dataCurentaUnix = Math.floor(new Date().getTime() / 1000);
   return Math.floor((dataCurentaUnix - dataNasteriiUnix) / 3600 / 24 / 365);
 };
@@ -13,7 +13,7 @@ export const formatDate = (dateToFormat) => {
     return "";
   }
 
-  const date = new Date(dateToFormat);
+  const date = dateToFormat.toDate();
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
 

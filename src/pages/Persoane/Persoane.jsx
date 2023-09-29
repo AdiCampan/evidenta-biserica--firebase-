@@ -78,36 +78,9 @@ function Persoane() {
   const [notMembersOnly, setNotMembersOnly] = useState(false);
   const [persoane, setPersoane] = useState("");
 
-  // let { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
+  // --------------  REALTIME DATA BASE -----------  //
 
-  //FIRESTORE DATABASE//
-  const q = query(collection(firestore, "persoane"));
-
-  // LISTEN REAL TIME //
-  // const waytingPersons = onSnapshot(q, (querySnapshot) => {
-  //   const tmpArray = [];
-  //   querySnapshot.forEach((doc) => {
-  //     const childKey = doc.id;
-  //     const childData = doc.data();
-  //     tmpArray.push({ id: childKey, ...childData });
-  //     setPersoane(tmpArray);
-  //   });
-  // });
-  // LISTEN ONE TIME //
-  const waytingPersons = async () => {
-    const querySnapshot = await getDocs(q);
-    const tmpArray = [];
-    querySnapshot.forEach((doc) => {
-      const childKey = doc.id;
-      const childData = doc.data();
-      tmpArray.push({ id: childKey, ...childData });
-      setPersoane(tmpArray);
-      console.log(persoane);
-    });
-  };
-  //REALTIME DATA BASE//
-
-  // const waitingPersons = () => {
+  // const waytingPersons = () => {
   //   const personsQuery = query(ref(db, "members"));
   //   onValue(personsQuery, (snapshot) => {
   //     const tmpArray = [];
@@ -121,8 +94,19 @@ function Persoane() {
   //     setPersoane(tmpArray);
   //   });
   // };
+
+  // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
+  const q = query(collection(firestore, "persoane"));
   useEffect(() => {
-    waytingPersons();
+    onSnapshot(q, (querySnapshot) => {
+      const tmpArray = [];
+      querySnapshot.forEach((doc) => {
+        const childKey = doc.id;
+        const childData = doc.data();
+        tmpArray.push({ id: childKey, ...childData });
+        setPersoane(tmpArray);
+      });
+    });
   }, []);
 
   // const [deleteMember] = useDelMemberMutation();
@@ -234,7 +218,6 @@ function Persoane() {
 
   const showDeleteModal = (personId, ev) => {
     setIdToDelete(personId);
-    console.log(personId);
     ev.stopPropagation();
   };
 

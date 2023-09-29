@@ -14,7 +14,7 @@ import Copil from "./Copil";
 import Confirmation from "../../Confirmation";
 import AddPerson from "../Persoane/AddPerson";
 import { query } from "firebase/database";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 
 function uuid() {
@@ -27,23 +27,25 @@ function uuid() {
 }
 
 const Familie = ({ dataUpdated, data }) => {
-  console.log(data);
-  // const { data: persoane } = useGetMembersQuery();
   const [pereche, setPereche] = useState("");
   const [servCivil, setServCivil] = useState("");
   const [servRel, setServRel] = useState("");
   const [biserica, setBiserica] = useState("");
   const [dataNasteriiCopil, setDataNasteriiCopil] = useState("");
   const [sexCopil, setSexCopil] = useState("");
-  const [childList, setChildList] = useState();
-  data?.relations
-    .filter((relation) => relation.type === "child")
-    .map((relation) => ({
-      childId: relation.person.id,
-      index: relation.id,
-    }));
   const [idToDelete, setIdToDelete] = useState(null);
   const [persoane, setPersoane] = useState();
+  const [initialSpouse, setInitialSpouse] = useState();
+  const [childList, setChildList] = useState(
+    data[0]?.relations
+      ?.filter((relation) => relation.type === "child")
+      .map((relation) => ({
+        childId: relation.person,
+        index: relation.id,
+      })) || []
+  );
+
+  // -------------- OBTENER LISTA DE PERSOANE -----------------------------------//
   const waitingPersons = async () => {
     const q = query(collection(firestore, "persoane"));
 
@@ -60,10 +62,11 @@ const Familie = ({ dataUpdated, data }) => {
     waitingPersons();
   }, []);
 
+  // --------------   SETEAZA PERECHEA SI COPII   ---------------------------   //
   useEffect(() => {
     let partener = {};
 
-    if (pereche.length > 0) {
+    if (pereche) {
       partener = {
         person: pereche,
         type: data.sex ? "wife" : "husband",
@@ -72,9 +75,9 @@ const Familie = ({ dataUpdated, data }) => {
         weddingChurch: biserica,
       };
     }
-    const children = childList
-      .filter((child) => child.childId.length > 0)
-      .map((child) => ({
+    const children =
+      childList &&
+      childList.map((child) => ({
         person: child.childId,
         type: "child",
       }));
@@ -84,31 +87,26 @@ const Familie = ({ dataUpdated, data }) => {
     });
   }, [pereche, servCivil, servRel, biserica, childList, dataNasteriiCopil]);
 
+  // ----------------------------- SET DATE SECUNDARE ------------------------------------- //
   useEffect(() => {
-    const spouse = data.relations.find(
+    const spouse = data[0]?.relations?.find(
       (relation) => relation.type === "wife" || relation.type === "husband"
     );
 
     setServCivil(
-      spouse?.civilWeddingDate ? new Date(spouse?.civilWeddingDate) : ""
+      spouse?.civilWeddingDate ? (spouse?.civilWeddingDate).toDate() : ""
     );
     setServRel(
-      spouse?.religiousWeddingDate ? new Date(spouse?.religiousWeddingDate) : ""
+      spouse?.religiousWeddingDate
+        ? (spouse?.religiousWeddingDate).toDate()
+        : ""
     );
     setBiserica(spouse?.weddingChurch || "");
     setDataNasteriiCopil(data?.birthDate || "");
     setSexCopil(data?.sex || "");
+  }, [data, persoane]);
 
-    const relationPair = data.relations.find(
-      (relation) => relation.type === "wife" || relation.type === "husband"
-    )?.person;
-    if (typeof relationPair == "object") {
-      setPereche(relationPair?.id || "");
-    } else {
-      setPereche(relationPair || "");
-    }
-  }, [data]);
-
+  // ------------------------------- ALEGE SOT/SOTIE (TypeAhead) ----------------------------- //
   const onPersonChange = (persons) => {
     if (persons.length > 0) {
       setPereche(persons[0].id);
@@ -116,6 +114,75 @@ const Familie = ({ dataUpdated, data }) => {
       setPereche("");
     }
   };
+
+  //prima data cand se alege partenerul se seteaza in Firestore...
+  //... perechea la partenerul persoanei curente :) //
+  if (pereche) {
+    const spouseId = pereche;
+    const children =
+      childList &&
+      childList.map((child) => ({
+        person: child.childId,
+        type: "child",
+      }));
+
+    let partener = {};
+    partener = {
+      person: data[1],
+      type: data[0].sex ? "husband" : "wife",
+      civilWeddingDate: servCivil,
+      religiousWeddingDate: servRel,
+      weddingChurch: biserica,
+    };
+    //   SALVEZ DATELE IN FIRESTORE LA PERECHEA PERSOANEI CURENTE //
+    const updateSpouse = { relations: [partener, ...children] };
+    const docRef = doc(firestore, "persoane", spouseId);
+    updateDoc(docRef, updateSpouse);
+    console.log("updated");
+  }
+
+  // -------------- SETEAZA IN FIREBASE RELATIA PERSOANEI CURENTE ----------------------//
+  useEffect(() => {
+    //   FILTREZ  RELATIA PERSOANEI CURENTE //
+    const relation = data[0]?.relations?.filter(
+      (relation) => relation.type === "wife" || relation.type === "husband"
+    );
+    if (relation?.length > 0) {
+      //  caut si  FILTREZ PERECHEA PERSOANEI CURENTE //
+      const spouseId = relation[0]?.person;
+      const spouseData = persoane?.filter((p) => p.id === spouseId);
+      setInitialSpouse(relation);
+      const children =
+        childList &&
+        childList.map((child) => ({
+          person: child.childId,
+          type: "child",
+        }));
+
+      let partener = {};
+      partener = {
+        person: data[1],
+        type: relation[0].type ? "wife" : "husband",
+        civilWeddingDate: servCivil,
+        religiousWeddingDate: servRel,
+        weddingChurch: biserica,
+      };
+      //   SALVEZ DATELE IN FIRESTORE LA PERECHEA PERSOANEI CURENTE //
+      const updateSpouse = { relations: [partener, ...children] };
+      const docRef = doc(firestore, "persoane", spouseId);
+      updateDoc(docRef, updateSpouse);
+      console.log("updated");
+    }
+    //  DACA ARE pereche, SETEZ PERECHEA LA PERSOANA CURENTA,  ( DIN FIRESTORE ) //
+    const relationPair = data[0].relations;
+    if (typeof relationPair == "object") {
+      setPereche(relationPair[0]?.person || "");
+    } else if (relation) {
+      setPereche(relation[0]?.person);
+    } else {
+      setPereche("");
+    }
+  }, [persoane, data, servCivil, servRel, biserica, dataNasteriiCopil]);
 
   const addChildField = () => {
     setChildList([...childList, { childId: "", index: uuid() }]);
@@ -144,12 +211,9 @@ const Familie = ({ dataUpdated, data }) => {
     );
   };
 
-  useEffect(() => {}, [childList]);
-
   return (
     <Container>
       <Card>
-        Sot/Sotie
         <Row>
           <Col>
             <InputGroup size="sm" className="mb-3">
@@ -164,30 +228,27 @@ const Familie = ({ dataUpdated, data }) => {
                     `${option.firstName} ${option.lastName}`
                   }
                   options={
-                    persoane?.filter(
-                      // verificam daca persoana e de sex diferit
-                      (person) => {
-                        if (
-                          person.sex !== data.sex &&
-                          !person.relations.find(
-                            (relation) =>
-                              relation.type === "husband" ||
-                              relation.type === "wife"
-                          )
-                        ) {
-                          return true;
-                        }
-                        return false;
+                    persoane?.filter((person) => {
+                      if (
+                        // verificam daca persoana e de sex diferit
+                        person.sex !== data[0].sex &&
+                        // si persoana nu mai are o alta relatie de sot/sotie
+                        !person.relations?.find(
+                          (relation) =>
+                            relation.type === "husband" ||
+                            relation.type === "wife"
+                        )
+                      ) {
+                        return true;
                       }
-                      // person => person.relations.find(
-                      //   // si persoana nu mai are o alta relatie de sot/sotie
-                      //   relation => relation.type === 'husband' || relation.type === 'wife'
-                      // )
-                    ) || []
+                      return false;
+                    }) || []
                   }
                   placeholder="Alege o persoana..."
                   selected={
-                    persoane?.filter((person) => person.id === pereche) || []
+                    persoane?.filter((person) => person.id === pereche) ||
+                    initialSpouse ||
+                    []
                   }
                 />
               </div>
@@ -273,16 +334,18 @@ const Familie = ({ dataUpdated, data }) => {
             </tr>
           </thead>
           <tbody>
-            {childList.map((childItem) => (
-              <Copil
-                childUpdated={(childId) =>
-                  updateChild(childId, childItem.index)
-                }
-                removeChild={() => setIdToDelete(childItem.index)}
-                key={childItem.index}
-                selected={childItem.childId}
-              />
-            ))}
+            {childList &&
+              childList?.map((childItem) => (
+                <Copil
+                  persoane={persoane}
+                  childUpdated={(childId) =>
+                    updateChild(childId, childItem.index)
+                  }
+                  removeChild={() => setIdToDelete(childItem.index)}
+                  key={childItem.childId}
+                  selected={childItem.childId}
+                />
+              ))}
           </tbody>
         </Table>
       </Card>

@@ -20,16 +20,16 @@ import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import { get, onValue, ref } from "firebase/database";
 import { db, firestore } from "../../firebase-config";
 import { memo } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 function Persoana() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { id } = useParams();
   // const { data, error, isLoading, isFetching } = useGetMemberQuery(id);
   const [data, setData] = useState();
   // const [modifyMember, result] = useModifyMemberMutation();
-  const [addRelation] = useAddRelationMutation();
+  // const [addRelation] = useAddRelationMutation();
   const [activeTab, setActiveTab] = useState("general");
   const [currentData, setCurrentData] = useState(null);
 
@@ -51,11 +51,14 @@ function Persoana() {
 
   const modifyMember = (newData) => {
     const docRef = doc(firestore, "persoane", id);
-    setDoc(docRef, newData);
+    updateDoc(docRef, newData);
   };
 
   // useEffect(() => {
-  //   setCurrentData(data);
+  //   if (data) {
+  //     setCurrentData(data);
+  //     console.log("current", currentData);
+  //   }
   // }, [data]);
 
   // useEffect(() => {
@@ -71,22 +74,19 @@ function Persoana() {
     } else {
       alert("Nu stergeti numele sau prenumele !");
     }
+    navigate("/persoane");
 
-    // const spouse = currentData.relations.find(
-    //   (person) => person.type === "wife" || person.type === "husband"
-    // );
-    // const children = currentData.relations.filter(
-    //   (person) => person.type === "child"
-    // );
-
+    const children = data[0]?.relations?.find(
+      (relation) => relation.type === "child"
+    )?.person;
     // if (spouse && children.length > 0) {
-    //   console.log('update spouse');
-    //     modifyMember({
-    //       id: spouse.person,
-    //       relations: children
-    //     });
+    //   console.log("update spouse");
+    //   modifyMember({
+    //     id: spouse.person,
+    //     relations: children,
+    //   });
     // } else {
-    //   console.log('no', spouse, children);
+    //   console.log("no spuse and children", spouse, children);
     // }
     // addRelation({
     //   owner: currentData.id,
@@ -116,9 +116,9 @@ function Persoana() {
         <Tab eventKey="general" title="General">
           {data && <General data={data} dataUpdated={dataUpdated} />}
         </Tab>
-        {/* <Tab eventKey="familie" title="Familie">
+        <Tab eventKey="familie" title="Familie">
           {data && <Familie data={data} dataUpdated={dataUpdated} />}
-        </Tab> */}
+        </Tab>
         <Tab eventKey="biserica" title="Biserica">
           {data && <Biserica data={data} dataUpdated={dataUpdated} />}
         </Tab>

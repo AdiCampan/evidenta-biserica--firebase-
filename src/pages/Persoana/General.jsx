@@ -49,7 +49,10 @@ const General = ({ dataUpdated, data }) => {
   const [membruData, setMembruData] = useState(null);
   const [detalii, setDetalii] = useState("");
   const [persoane, setPersoane] = useState();
+  const [initialFather, setInitialFather] = useState(null);
+  const [initialMother, setInitialMother] = useState(null);
 
+  // ---------- OBTIN DATELE  PERSOANELOR  (DIN FIRESTORE)  ------------- //
   const waitingPersons = async () => {
     const q = query(collection(firestore, "persoane"));
 
@@ -66,8 +69,8 @@ const General = ({ dataUpdated, data }) => {
     waitingPersons();
   }, []);
 
+  // --------- TRIMIT NOILE SETARI LA "PERSOANA" PT SALVARE IN BAZA DE DATE ------------ //
   useEffect(() => {
-    console.log(data);
     dataUpdated({
       id: data[1],
       firstName: nume,
@@ -103,6 +106,8 @@ const General = ({ dataUpdated, data }) => {
     membruData,
   ]);
 
+  // --------- SETEZ PROPRIETATILE DUPA "data" PRIMITE DIN "Persoana" -> din Firestore -----//
+
   useEffect(() => {
     if (data) {
       setNume(data[0].firstName || "");
@@ -114,28 +119,50 @@ const General = ({ dataUpdated, data }) => {
       setSex(data[0].sex === true ? "M" : data[0].sex === false ? "F" : null);
       setFather(data[0].fatherName || "");
       setMother(data[0].motherName || "");
-      setEnterBirthDate(Date.parse(data[0].birthDate));
+      setEnterBirthDate(data[0].birthDate ? data[0].birthDate.toDate() : null);
       setPlaceOfBirth(data[0].placeOfBirth || "");
       setMembruData(data[0].memberDate ? Date.parse(data[0].memberDate) : null);
       setMember(!!data[0].memberDate);
       setDetalii(data[0].details || "");
-      setProfileImage(data[0].profileImage);
+      setSelectedFile(data[0].profileImage || null);
+      setProfileImage(data[0].profileImage || null);
     }
   }, []);
 
+  // ------------------  (ToDo) ADD TRANSFER --------------- //
+
   const addTransfer = () => {};
 
+  // ----------- SELECTEZ "TATA" IN Typeahead -------------- //
   const onFatherdChange = (p) => {
     if (p.length > 0) {
-      setFather(p[0]);
+      setFather(p);
     } else {
       setFather(null);
     }
   };
 
-  // const parent = data.relations.filter(
-  //   (relation) => relation.type === "parent"
-  // );
+  // ------ daca are deja o relatie cu TATA si MAMA....
+  //             ....... le setez ca 'initialFather' si 'initialMother'---- //
+  useEffect(() => {
+    if (data && persoane && data.length > 0 && persoane.length > 0) {
+      //filtrez persoanele care au o relatie "child"..
+      //..si ID = cu ID-ul persoanei curente //
+      const parents =
+        persoane.filter((person) =>
+          person?.relations?.find(
+            (relation) =>
+              relation.type === "child" && relation.person === data[1]
+          )
+        ) || [];
+      const father = parents.filter((p) => p.sex === true);
+      const mother = parents.filter((p) => p.sex === false);
+      setInitialFather(father);
+      setInitialMother(mother);
+    }
+    setFather(null);
+    setMother(null);
+  }, [data, persoane]);
 
   return (
     <Container>
@@ -285,11 +312,7 @@ const General = ({ dataUpdated, data }) => {
                   }
                   options={persoane || []}
                   placeholder="Alege tatal..."
-                  selected={
-                    persoane?.filter(
-                      (p) => p.id === parent?.person && p.sex === "true"
-                    ) || []
-                  }
+                  selected={initialFather || []}
                 />
                 <AddPerson label="+" />
               </InputGroup>
@@ -309,8 +332,7 @@ const General = ({ dataUpdated, data }) => {
                   placeholder="Alege mama..."
                   id="mother"
                   onChange={onFatherdChange}
-                  // selected={persoane?.filter(p => p.id === parent[1]?.person) || []}
-                  disabled
+                  selected={initialMother || []}
                 />
                 <AddPerson label="+" />
               </InputGroup>
@@ -354,6 +376,7 @@ const General = ({ dataUpdated, data }) => {
             onFileSelectSuccess={(file) => setSelectedFile(file)}
             onFileSelectError={({ error }) => alert(error)}
             initialImage={profileImage}
+            id={id}
           />
         </Col>
       </Row>
