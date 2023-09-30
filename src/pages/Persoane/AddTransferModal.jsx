@@ -15,8 +15,9 @@ import {
   useModifyMemberMutation,
 } from "../../services/members";
 import { useAddTransferMutation } from "../../services/transfers";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
+import { createGlobalStyle } from "styled-components";
 
 const FILTER_LABEL = {
   1: "din EBEN-EZER",
@@ -34,14 +35,15 @@ function AddTransferModal({
   const [persoane, setPersoane] = useState();
   const [filterType, setFilterType] = useState("1");
   const [showModal, setShowModal] = useState(false);
-  const [person, setPerson] = useState(transferredPerson);
+  const [person, setPerson] = useState(transferredPerson || "");
   const [dataTransfer, setDataTransfer] = useState("");
   const [bisericaTransfer, setBisericaTransfer] = useState("");
   const [actTransfer, setActTransfer] = useState("");
   const [detalii, setDetalii] = useState("");
   const [modifyMember] = useModifyMemberMutation();
-  const [addTransfer] = useAddTransferMutation();
+  // const [addTransfer] = useAddTransferMutation();
 
+  //  ----------------  get list of all persons fron Firestore dataBase --------  //
   const waitingPersons = async () => {
     const q = query(collection(firestore, "persoane"));
 
@@ -61,7 +63,14 @@ function AddTransferModal({
   useEffect(() => {
     setShowModal(show);
   }, [show]);
-  console.log("transfered Person", transferredPerson);
+  console.log("transferedPerson - person -", transferredPerson);
+
+  // ------------ Add transfer to firestore dataBase --------------- //
+  const addTransfer = async (newTransfer) => {
+    await setDoc(doc(firestore, "transfers", crypto.randomUUID()), {
+      newTransfer,
+    });
+  };
 
   const addData = () => {
     const newTransfer = {
@@ -69,25 +78,25 @@ function AddTransferModal({
       churchTransfer: bisericaTransfer,
       docNumber: actTransfer,
       details: detalii,
-      owner: person.id,
-      type: filterType === "1" ? "transferTo" : "transferFrom",
+      owner: person,
+      // type: filterType === "1" ? "transferTo" : "transferFrom",
     };
 
     // plecat
-    if (filterType === "1") {
-      modifyMember({
-        id: person.id,
-        leaveDate: dataTransfer,
-        memberDate: "",
-      });
-      // venit
-    } else {
-      modifyMember({
-        id: person.id,
-        leaveDate: "",
-        memberDate: dataTransfer,
-      });
-    }
+    // if (filterType === "1") {
+    //   modifyMember({
+    //     id: person.id,
+    //     leaveDate: dataTransfer,
+    //     memberDate: "",
+    //   });
+    // venit
+    // } else {
+    //   modifyMember({
+    //     id: person.id,
+    //     leaveDate: "",
+    //     memberDate: dataTransfer,
+    //   });
+    // }
 
     addTransfer(newTransfer);
 
@@ -103,19 +112,25 @@ function AddTransferModal({
 
   const onTrasferedChange = (p) => {
     if (p.length > 0) {
-      setPerson(p[0]);
+      setPerson(p[0].id);
     } else {
       setPerson(null);
     }
+    console.log("p", p);
   };
 
   const filterByMember = (person) => {
+    // console.log("person", person);
     if (filterType == "1") {
       return !!person.memberDate; // pleaca
     } else {
       return !person.memberDate; // vine
     }
   };
+  console.log(
+    "selected",
+    persoane?.filter((p) => p.id === person)
+  );
 
   return (
     <>
@@ -162,9 +177,7 @@ function AddTransferModal({
                   }
                   options={persoane?.filter(filterByMember) || []}
                   placeholder="Alege o persoana..."
-                  selected={
-                    persoane?.filter((p) => p.id === person[0].id) || []
-                  }
+                  selected={persoane?.filter((p) => p.id === person) || []}
                 />
               </div>
             </InputGroup>

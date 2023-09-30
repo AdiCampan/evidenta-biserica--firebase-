@@ -27,7 +27,6 @@ const Familii = () => {
   const [firstNameFilter, setFirstNameFilter] = useState("");
 
   function filterMembers(members) {
-    console.log("members", members);
     let filteredMembers = members;
     filteredMembers = filterByText(
       filteredMembers,
@@ -40,7 +39,6 @@ const Familii = () => {
     filteredMembers = filteredMembers.filter((member) =>
       member.relations?.filter((relation) => relation?.type === "wife")
     );
-    console.log("filterd members", filteredMembers);
     return filteredMembers;
   }
 

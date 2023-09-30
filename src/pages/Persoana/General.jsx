@@ -385,7 +385,7 @@ const General = ({ dataUpdated, data }) => {
         onAddTransfer={addTransfer}
         show={showTransferModal}
         onClose={() => setShowTransferModal(false)}
-        transferredPerson={data}
+        transferredPerson={data[1]}
       />
     </Container>
   );
