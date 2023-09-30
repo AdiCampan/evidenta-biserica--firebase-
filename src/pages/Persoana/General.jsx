@@ -107,7 +107,6 @@ const General = ({ dataUpdated, data }) => {
   ]);
 
   // --------- SETEZ PROPRIETATILE DUPA "data" PRIMITE DIN "Persoana" -> din Firestore -----//
-
   useEffect(() => {
     if (data) {
       setNume(data[0].firstName || "");
@@ -121,7 +120,7 @@ const General = ({ dataUpdated, data }) => {
       setMother(data[0].motherName || "");
       setEnterBirthDate(data[0].birthDate ? data[0].birthDate.toDate() : null);
       setPlaceOfBirth(data[0].placeOfBirth || "");
-      setMembruData(data[0].memberDate ? Date.parse(data[0].memberDate) : null);
+      setMembruData(data[0].memberDate ? data[0].memberDate.toDate() : null);
       setMember(!!data[0].memberDate);
       setDetalii(data[0].details || "");
       setSelectedFile(data[0].profileImage || null);
@@ -129,7 +128,7 @@ const General = ({ dataUpdated, data }) => {
     }
   }, []);
 
-  // ------------------  (ToDo) ADD TRANSFER --------------- //
+  // ------------------ ADD TRANSFER   (not necessary)--------------- //
 
   const addTransfer = () => {};
 

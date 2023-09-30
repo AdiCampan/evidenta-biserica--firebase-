@@ -15,7 +15,14 @@ import {
   useModifyMemberMutation,
 } from "../../services/members";
 import { useAddTransferMutation } from "../../services/transfers";
-import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 import { createGlobalStyle } from "styled-components";
 
@@ -40,7 +47,7 @@ function AddTransferModal({
   const [bisericaTransfer, setBisericaTransfer] = useState("");
   const [actTransfer, setActTransfer] = useState("");
   const [detalii, setDetalii] = useState("");
-  const [modifyMember] = useModifyMemberMutation();
+  // const [modifyMember] = useModifyMemberMutation();
   // const [addTransfer] = useAddTransferMutation();
 
   //  ----------------  get list of all persons fron Firestore dataBase --------  //
@@ -63,13 +70,18 @@ function AddTransferModal({
   useEffect(() => {
     setShowModal(show);
   }, [show]);
-  console.log("transferedPerson - person -", transferredPerson);
 
   // ------------ Add transfer to firestore dataBase --------------- //
   const addTransfer = async (newTransfer) => {
     await setDoc(doc(firestore, "transfers", crypto.randomUUID()), {
       newTransfer,
     });
+  };
+
+  // ----------- Add transfer to current person, en 'Persoane' ----- //
+  const modifyMember = (newData) => {
+    const docRef = doc(firestore, "persoane", person);
+    updateDoc(docRef, newData);
   };
 
   const addData = () => {
@@ -79,24 +91,24 @@ function AddTransferModal({
       docNumber: actTransfer,
       details: detalii,
       owner: person,
-      // type: filterType === "1" ? "transferTo" : "transferFrom",
+      type: filterType === "1" ? "transferTo" : "transferFrom",
     };
 
     // plecat
-    // if (filterType === "1") {
-    //   modifyMember({
-    //     id: person.id,
-    //     leaveDate: dataTransfer,
-    //     memberDate: "",
-    //   });
-    // venit
-    // } else {
-    //   modifyMember({
-    //     id: person.id,
-    //     leaveDate: "",
-    //     memberDate: dataTransfer,
-    //   });
-    // }
+    if (filterType === "1") {
+      modifyMember({
+        // id: person.id,
+        leaveDate: dataTransfer,
+        memberDate: "",
+      });
+      // venit
+    } else {
+      modifyMember({
+        // id: person.id,
+        leaveDate: "",
+        memberDate: dataTransfer,
+      });
+    }
 
     addTransfer(newTransfer);
 
@@ -116,7 +128,6 @@ function AddTransferModal({
     } else {
       setPerson(null);
     }
-    console.log("p", p);
   };
 
   const filterByMember = (person) => {
@@ -127,10 +138,6 @@ function AddTransferModal({
       return !person.memberDate; // vine
     }
   };
-  console.log(
-    "selected",
-    persoane?.filter((p) => p.id === person)
-  );
 
   return (
     <>
