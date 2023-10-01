@@ -11,15 +11,24 @@ import {
   useGetTransfersQuery,
   useDelTransferMutation,
 } from "../../services/transfers";
-import { collection, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 import { firestore } from "../../firebase-config";
+import Confirmation from "../../Confirmation";
 
 const Transferuri = () => {
   const [persoane, setPersoane] = useState();
   const [transfers, setTransfers] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
   // const { data: transfers, isLoading: trasnfersLoading } = useGetTransfersQuery();
-  const [delTransfer] = useDelTransferMutation();
+  // const [delTransfer] = useDelTransferMutation();
 
   //  ----------------  get list of all persons fron Firestore dataBase --------  //
   const waitingPersons = async () => {
@@ -39,20 +48,18 @@ const Transferuri = () => {
   }, []);
 
   //  ----------------  get list of all transfers fron Firestore dataBase --------  //
-  const waitingTransfers = async () => {
-    const q = query(collection(firestore, "transfers"));
 
-    const querySnapshot = await getDocs(q);
-    const tmpArray = [];
-    querySnapshot.forEach((doc) => {
-      const childKey = doc.id;
-      const childData = doc.data();
-      tmpArray.push({ id: childKey, ...childData });
-      setTransfers(tmpArray);
-    });
-  };
+  const q = query(collection(firestore, "transfers"));
   useEffect(() => {
-    waitingTransfers();
+    onSnapshot(q, (querySnapshot) => {
+      const tmpArray = [];
+      querySnapshot.forEach((doc) => {
+        const childKey = doc.id;
+        const childData = doc.data();
+        tmpArray.push({ id: childKey, ...childData });
+        setTransfers(tmpArray);
+      });
+    });
   }, []);
 
   const addTransfer = (transfer) => {
@@ -60,9 +67,22 @@ const Transferuri = () => {
     setTransfers(transfersActualizados);
   };
 
-  const intrati = ["baptise", "transferFrom"];
+  function deleteTransfer(id) {
+    delTransfer(id);
 
-  console.log("transfers", transfers);
+    setIdToDelete(null);
+  }
+
+  const showDeleteModal = (personId, ev) => {
+    setIdToDelete(personId);
+    ev.stopPropagation();
+  };
+
+  const delTransfer = async (id) => {
+    await deleteDoc(doc(firestore, "transfers", id));
+  };
+
+  const intrati = ["baptise", "transferFrom"];
 
   return (
     <>
@@ -92,34 +112,44 @@ const Transferuri = () => {
                 <tr
                   key={index}
                   style={{
-                    backgroundColor: intrati.includes(transfer.type)
+                    backgroundColor: intrati.includes(transfer.newTransfer.type)
                       ? "#00c90057"
                       : "#ff000021",
                   }}
                 >
                   <td>{index + 1}</td>
                   <td>
-                    {persoane?.filter((p) => p.id === transfer.owner).firstName}{" "}
-                    {persoane?.filter((p) => p.id === transfer.owner).lastName}
+                    {
+                      persoane?.filter(
+                        (p) => p.id === transfer?.newTransfer.owner
+                      ).firstName
+                    }{" "}
+                    {
+                      persoane?.filter(
+                        (p) => p.id === transfer?.newTransfer.owner
+                      ).lastName
+                    }
                   </td>
                   <td>
-                    {intrati.includes(transfer.type) ? "din" : "in"}{" "}
-                    {transfer.churchTransfer}
+                    {intrati.includes(transfer.newTransfer.type) ? "din" : "in"}{" "}
+                    {transfer.newTransfer.churchTransfer}
                   </td>
-                  <td>{formatDate(transfer.date)}</td>
-                  <td>{transfer.docNumber}</td>
+                  <td>{formatDate(transfer.newTransfer.date)}</td>
+                  <td>{transfer.newTransfer.docNumber}</td>
                   <td style={{ wordBreak: "break-all", maxWidth: "200px" }}>
-                    {transfer.details}
+                    {transfer.newTransfer.details}
                   </td>
                   <td>
                     {calculateAge(
-                      persoane?.filter((p) => p.id === transfer.owner).birthDate
+                      persoane?.filter(
+                        (p) => p.id === transfer.newTransfer.owner
+                      ).birthDate
                     )}
                   </td>
                   <td>
                     <FaTrash
                       style={{ cursor: "pointer" }}
-                      onClick={() => delTransfer(transfer.id)}
+                      onClick={() => showDeleteModal(transfer?.id)}
                     />
                   </td>
                 </tr>
@@ -132,6 +162,13 @@ const Transferuri = () => {
           onClose={() => setShowModal(false)}
         />
       </Card>
+      <Confirmation
+        showModal={idToDelete != null}
+        id={idToDelete}
+        confirmModal={(id) => deleteTransfer(id)}
+        message="Esti sigur ca vrei sa stergi transferul din baza de date ?"
+        hideModal={() => setIdToDelete(null)}
+      />
     </>
   );
 };

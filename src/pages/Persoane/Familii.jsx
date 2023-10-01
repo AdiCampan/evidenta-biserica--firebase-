@@ -90,14 +90,14 @@ const Familii = () => {
                   >
                     <td>{index + 1}</td>
                     <td>
-                      {p.firstName} {p.lastName} și{" "}
+                      {p?.firstName} {p?.lastName} și{" "}
                       {
                         persoane
                           ?.filter(
                             //    to do ---->filtrar solo relatiile de wife       //
                             (persoana) => persoana.id === p.relations[0].person
                           )
-                          .find((pers) => pers.lastName).lastName
+                          .find((pers) => pers?.lastName)?.lastName
                       }
                     </td>
                     <td>{formatDate(p.relations[0].civilWeddingDate)}</td>
@@ -110,7 +110,7 @@ const Familii = () => {
                             //    to do ---->filtrar solo relatiile de wife       //
                             (persoana) => persoana.id === p.relations[0].person
                           )
-                          .find((pers) => pers.lastName).maidenName
+                          .find((pers) => pers.lastName)?.maidenName
                       }
                     </td>
                     <td>{calculateAge(p.birthDate)}</td>
@@ -121,7 +121,7 @@ const Familii = () => {
                             //    to do ---->filtrar solo relatiile de wife       //
                             (persoana) => persoana.id === p.relations[0].person
                           )
-                          .find((pers) => pers.lastName).birthDate
+                          .find((pers) => pers.lastName)?.birthDate
                       )}
                     </td>
                   </tr>
