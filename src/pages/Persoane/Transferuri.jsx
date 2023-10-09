@@ -22,33 +22,12 @@ import {
 import { firestore } from "../../firebase-config";
 import Confirmation from "../../Confirmation";
 
-const Transferuri = () => {
-  const [persoane, setPersoane] = useState();
+const Transferuri = ({ persoane }) => {
   const [transfers, setTransfers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
-  // const { data: transfers, isLoading: trasnfersLoading } = useGetTransfersQuery();
-  // const [delTransfer] = useDelTransferMutation();
-
-  //  ----------------  get list of all persons fron Firestore dataBase --------  //
-  const waitingPersons = async () => {
-    const q = query(collection(firestore, "persoane"));
-
-    const querySnapshot = await getDocs(q);
-    const tmpArray = [];
-    querySnapshot.forEach((doc) => {
-      const childKey = doc.id;
-      const childData = doc.data();
-      tmpArray.push({ id: childKey, ...childData });
-      setPersoane(tmpArray);
-    });
-  };
-  useEffect(() => {
-    waitingPersons();
-  }, []);
 
   //  ----------------  get list of all transfers fron Firestore dataBase --------  //
-
   const q = query(collection(firestore, "transfers"));
   useEffect(() => {
     onSnapshot(q, (querySnapshot) => {
@@ -60,7 +39,7 @@ const Transferuri = () => {
         setTransfers(tmpArray);
       });
     });
-  }, []);
+  }, [persoane, showModal]);
 
   const addTransfer = (transfer) => {
     const transfersActualizados = [transfer, ...transfers];
@@ -75,7 +54,7 @@ const Transferuri = () => {
 
   const showDeleteModal = (personId, ev) => {
     setIdToDelete(personId);
-    ev.stopPropagation();
+    // ev.stopPropagation();
   };
 
   const delTransfer = async (id) => {
@@ -83,9 +62,10 @@ const Transferuri = () => {
   };
 
   const intrati = ["baptise", "transferFrom"];
-
+  
   return (
     <>
+
       <Col>
         <InputGroup size="sm" className="mb-3">
           <Button variant="primary" onClick={() => setShowModal(true)}>
@@ -107,43 +87,40 @@ const Transferuri = () => {
             </tr>
           </thead>
           <tbody>
-            {transfers &&
+            {transfers && persoane &&
               transfers.map((transfer, index) => (
                 <tr
                   key={index}
                   style={{
-                    backgroundColor: intrati.includes(transfer.newTransfer.type)
+                    backgroundColor: intrati.includes(
+                      transfer?.newTransfer?.type
+                    )
                       ? "#00c90057"
                       : "#ff000021",
                   }}
                 >
                   <td>{index + 1}</td>
                   <td>
+                    {}
                     {
-                      persoane?.filter(
-                        (p) => p.id === transfer?.newTransfer.owner
-                      ).firstName
+                    persoane?.filter((p)=> p?.id === (transfer?.newTransfer?.owner))[0]?.firstName 
                     }{" "}
-                    {
-                      persoane?.filter(
-                        (p) => p.id === transfer?.newTransfer.owner
-                      ).lastName
-                    }
+                    { persoane?.filter((p)=> p?.id === (transfer?.newTransfer?.owner))[0]?.lastName }
                   </td>
                   <td>
-                    {intrati.includes(transfer.newTransfer.type) ? "din" : "in"}{" "}
-                    {transfer.newTransfer.churchTransfer}
+                    {intrati.includes(transfer.newTransfer?.type)
+                      ? "din"
+                      : "in"}{" "}
+                    {transfer.newTransfer?.churchTransfer}
                   </td>
-                  <td>{formatDate(transfer.newTransfer.date)}</td>
-                  <td>{transfer.newTransfer.docNumber}</td>
+                  <td>{formatDate(transfer.newTransfer?.date)}</td>
+                  <td>{transfer.newTransfer?.docNumber}</td>
                   <td style={{ wordBreak: "break-all", maxWidth: "200px" }}>
-                    {transfer.newTransfer.details}
+                    {transfer.newTransfer?.details}
                   </td>
                   <td>
                     {calculateAge(
-                      persoane?.filter(
-                        (p) => p.id === transfer.newTransfer.owner
-                      ).birthDate
+                       persoane?.filter((p)=> p?.id === (transfer?.newTransfer?.owner))[0]?.birthDate 
                     )}
                   </td>
                   <td>

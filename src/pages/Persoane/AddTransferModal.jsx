@@ -71,7 +71,7 @@ function AddTransferModal({
     setShowModal(show);
   }, [show]);
 
-  // ------------ Add transfer to firestore dataBase --------------- //
+  // ------------ Add new transfer to firestore dataBase --------------- //
   const addTransfer = async (newTransfer) => {
     await setDoc(doc(firestore, "transfers", crypto.randomUUID()), {
       newTransfer,
@@ -79,7 +79,8 @@ function AddTransferModal({
   };
 
   // ----------- Add transfer to current person, en 'Persoane' ----- //
-  const modifyMember = (newData) => {
+  const modifyTransfer = (newData) => {
+    onAddTransfer(newData);
     const docRef = doc(firestore, "persoane", person);
     updateDoc(docRef, newData);
   };
@@ -96,14 +97,14 @@ function AddTransferModal({
 
     // plecat
     if (filterType === "1") {
-      modifyMember({
+      modifyTransfer({
         // id: person.id,
         leaveDate: dataTransfer,
         memberDate: "",
       });
       // venit
     } else {
-      modifyMember({
+      modifyTransfer({
         // id: person.id,
         leaveDate: "",
         memberDate: dataTransfer,

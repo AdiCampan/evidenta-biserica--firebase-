@@ -16,15 +16,13 @@ import {
   calculateAge,
 } from "../../utils";
 import "./Boteze.scss";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 import { list } from "firebase/storage";
 
-function Boteze() {
-  // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
+function Boteze({ persoane }) {
   const navigate = useNavigate();
 
-  const [persoane, setPersoane] = useState();
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
   const [ageFilterGreater, setAgeFilterGreater] = useState("");
@@ -34,73 +32,65 @@ function Boteze() {
   const [listByDateBaptized, setListByDateBaptized] = useState([]);
   const [baptisms, setBaptisms] = useState([]);
 
-  // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
-  const q = query(collection(firestore, "persoane"));
-  useEffect(() => {
-    onSnapshot(q, (querySnapshot) => {
-      const tmpArray = [];
-      querySnapshot.forEach((doc) => {
-        const childKey = doc.id;
-        const childData = doc.data();
-        tmpArray.push({ id: childKey, ...childData });
-        setPersoane(tmpArray);
-      });
-    });
-  }, []);
-
-  console.log(persoane);
-
   function filterMembers(members) {
-    let filteredMembers = members;
-    // filteredMembers = filterByText(
-    //   filteredMembers,
-    //   "firstName",
-    //   firstNameFilter
-    // );
-    // filteredMembers = filterByText(filteredMembers, "lastName", lastNameFilter);
-    // filteredMembers = filterByText(filteredMembers, "address", addressFilter);
-    // filteredMembers = filterByText(
-    //   filteredMembers,
-    //   "mobilePhone",
-    //   telefonFilter
-    // );
-    // filteredMembers = filterByAgeGreater(
-    //   filteredMembers,
-    //   "birthDate",
-    //   ageFilterGreater
-    // );
-    // filteredMembers = filterByAgeSmaller(
-    //   filteredMembers,
-    //   "birthDate",
-    //   ageFilterSmaller
-    // );
-    // filteredMembers = filteredMembers.filter(
-    //   (member) => member[0]?.baptiseDate
-    // );
+    if (persoane.length > 0) {
+      let filteredMembers = members;
+      filteredMembers = filterByText(
+        filteredMembers,
+        "firstName",
+        firstNameFilter
+      );
+      filteredMembers = filterByText(
+        filteredMembers,
+        "lastName",
+        lastNameFilter
+      );
+      filteredMembers = filterByText(filteredMembers, "address", addressFilter);
+      filteredMembers = filterByText(
+        filteredMembers,
+        "mobilePhone",
+        telefonFilter
+      );
+      filteredMembers = filterByAgeGreater(
+        filteredMembers,
+        "birthDate",
+        ageFilterGreater
+      );
+      filteredMembers = filterByAgeSmaller(
+        filteredMembers,
+        "birthDate",
+        ageFilterSmaller
+      );
+      filteredMembers = filteredMembers.filter((member) => member?.baptiseDate);
 
-    // filteredMembers = filteredMembers.filter(
-    //   (member) => member[0]?.baptisePlace === "EBEN EZER"
-    // );
+      filteredMembers = filteredMembers.filter(
+        (member) =>
+          member?.baptisePlace === "EBEN EZER" ||
+          member.baptisePlace === "Eben Ezer" ||
+          member.baptisePlace === "EbenEzer" ||
+          member.baptisePlace === "Eben-Ezer" ||
+          member.baptisePlace === "EBEN-EZER"
+      );
 
-    // const listBaptist = filteredMembers.reduce((boteze, item) => {
-    //   if (
-    //     !boteze.find((botez) => botez[0].baptiseDate === item[0].baptiseDate)
-    //   ) {
-    //     boteze.push(item);
-    //   }
-    //   return boteze;
-    // }, []);
+      const listBaptist = filteredMembers.reduce((boteze, item) => {
+        if (!boteze.find((botez) => botez.baptiseDate === item.baptiseDate)) {
+          boteze.push(item);
+        }
+        return boteze;
+      }, []);
 
-    // return listBaptist;
+      return listBaptist;
+    }
   }
-  console.log("Lista de boteze", filterMembers(persoane));
+
+  // console.log("Lista de boteze", filterMembers(persoane));
   const goToPerson = (id) => {
     navigate(`/persoane/${id}`);
   };
 
   const listBaptized = (dataBotez) => {
     let listaBotezati = persoane.filter(
-      (data) => data[0]?.baptiseDate === dataBotez
+      (data) => data?.baptiseDate === dataBotez
     );
 
     setListByDateBaptized(listaBotezati);
@@ -121,21 +111,21 @@ function Boteze() {
                 <th>Slujitori Botez</th>
               </tr>
             </thead>
-            {/* <tbody>
+            <tbody>
               {persoane
                 ? filterMembers(persoane).map((p, index) => (
                     <tr
-                      key={p[0]?.id}
+                      key={p?.id}
                       style={{ cursor: "pointer" }}
-                      onClick={() => listBaptized(p[0]?.baptiseDate)}
+                      onClick={() => listBaptized(p?.baptiseDate)}
                     >
                       <td>{index + 1}</td>
-                      <td>{formatDate(p[0]?.baptiseDate)}</td>
-                      <td>{p[0]?.baptisedBy}</td>
+                      <td>{formatDate(p?.baptiseDate)}</td>
+                      <td>{p?.baptisedBy}</td>
                     </tr>
                   ))
                 : null}
-            </tbody> */}
+            </tbody>
           </Table>
         </div>
         <div className="botezati">

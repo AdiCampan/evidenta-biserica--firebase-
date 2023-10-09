@@ -7,7 +7,7 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 
 const Familii = () => {
-  // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
+  // -------------- LISTEN "persons" in REAL TIME  in FIRESTORE -------------------- //
   useEffect(() => {
     const q = query(collection(firestore, "persoane"));
     onSnapshot(q, (querySnapshot) => {

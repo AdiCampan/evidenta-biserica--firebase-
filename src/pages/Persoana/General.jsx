@@ -45,7 +45,7 @@ const General = ({ dataUpdated, data }) => {
   const [mother, setMother] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [enterBirthDate, setEnterBirthDate] = useState(null);
-  const [member, setMember] = useState(false);
+  // const [member, setMember] = useState(false);
   const [membruData, setMembruData] = useState(null);
   const [detalii, setDetalii] = useState("");
   const [persoane, setPersoane] = useState();
@@ -100,7 +100,6 @@ const General = ({ dataUpdated, data }) => {
     mother,
     placeOfBirth,
     enterBirthDate,
-    member,
     detalii,
     selectedFile,
     membruData,
@@ -121,19 +120,24 @@ const General = ({ dataUpdated, data }) => {
       setEnterBirthDate(data[0].birthDate ? data[0].birthDate.toDate() : null);
       setPlaceOfBirth(data[0].placeOfBirth || "");
       setMembruData(data[0].memberDate ? data[0].memberDate.toDate() : null);
-      setMember(!!data[0].memberDate);
+      // setMember(!!data[0].memberDate);
       setDetalii(data[0].details || "");
       setSelectedFile(data[0].profileImage || null);
       setProfileImage(data[0].profileImage || null);
     }
   }, []);
 
-  // ------------------ ADD TRANSFER   (not necessary)--------------- //
+  // ------------------ ADD TRANSFER  --------------- //
 
-  const addTransfer = () => {};
+  const addTransfer = (newData) => {
+    dataUpdated(newData);
+    setMembruData(newData.memberDate || "");
+
+    console.log("newdata", newData);
+  };
 
   // ----------- SELECTEZ "TATA" IN Typeahead -------------- //
-  const onFatherdChange = (p) => {
+  const onParentChange = (p) => {
     if (p.length > 0) {
       setFather(p);
     } else {
@@ -305,7 +309,7 @@ const General = ({ dataUpdated, data }) => {
                 </InputGroup.Text>
                 <Typeahead
                   id="father"
-                  onChange={onFatherdChange}
+                  onChange={onParentChange}
                   labelKey={(option) =>
                     `${option.firstName} ${option.lastName}`
                   }
@@ -330,7 +334,7 @@ const General = ({ dataUpdated, data }) => {
                   options={persoane || []}
                   placeholder="Alege mama..."
                   id="mother"
-                  onChange={onFatherdChange}
+                  onChange={onParentChange}
                   selected={initialMother || []}
                 />
                 <AddPerson label="+" />

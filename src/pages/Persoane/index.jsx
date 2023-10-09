@@ -1,20 +1,33 @@
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import Transferuri from './Transferuri';
-import Boteze from './Boteze';
-import Persoane from './Persoane';
-import Membrii from './Membrii';
-import Speciale from './Speciale';
-import Familii from './Familii';
-
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import Transferuri from "./Transferuri";
+import Boteze from "./Boteze";
+import Persoane from "./Persoane";
+import Membrii from "./Membrii";
+import Speciale from "./Speciale";
+import Familii from "./Familii";
+import { useEffect, useState } from "react";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { firestore } from "../../firebase-config";
 
 const PersonsPage = () => {
-  return (
+  const [persoane, setPersoane] = useState("");
 
-    <Tabs
-      id="controlled-tab-example"
-      className="mb-3"
-    >
+  const q = query(collection(firestore, "persoane"));
+  useEffect(() => {
+    onSnapshot(q, (querySnapshot) => {
+      const tmpArray = [];
+      querySnapshot.forEach((doc) => {
+        const childKey = doc.id;
+        const childData = doc.data();
+        tmpArray.push({ id: childKey, ...childData });
+        setPersoane(tmpArray);
+      });
+    });
+  }, []);
+
+  return (
+    <Tabs id="controlled-tab-example" className="mb-3">
       <Tab eventKey="persoane" title="Persoane">
         {<Persoane />}
       </Tab>
@@ -22,19 +35,19 @@ const PersonsPage = () => {
         {<Membrii />}
       </Tab>
       <Tab eventKey="boteze" title="Boteze">
-        {<Boteze />}
+        {<Boteze persoane={persoane} />}
       </Tab>
       <Tab eventKey="observatii" title="Cazuri Speciale">
         {<Speciale />}
       </Tab>
       <Tab eventKey="transferuri" title="Transferuri">
-        {<Transferuri />}
+        {<Transferuri persoane={persoane} />}
       </Tab>
       <Tab eventKey="familii" title="Familii">
         {<Familii />}
       </Tab>
     </Tabs>
-  )
-}
+  );
+};
 
 export default PersonsPage;

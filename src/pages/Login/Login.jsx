@@ -1,67 +1,110 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import SignUp from './SignUp';
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-} from "react-router-dom";
-import { useLoginMutation } from '../../services/auth';
-
-
-import './Login.css';
+import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase-config";
+import { NavLink, useNavigate } from "react-router-dom";
+import "./Login.css";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
-  const [loginUser, result] = useLoginMutation();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    console.log(data);
-    loginUser({ email: data.email, password: data.password });
+
+  const emailValidation = {
+    required: {
+      value: true,
+      message: "Email e obligatoriu !",
+    },
+    pattern: {
+      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+      message: "Adresa de email nu este valida !",
+    },
+  };
+  const passwordConfirmValidation = {
+    required: {
+      value: true,
+      message: "Trebuie sa confirmi parola",
+    },
+    validate: (val) => {
+      if (watch("password") != val) {
+        return "Parolele trebuie sa fie IDENTICE !";
+      }
+    },
+  };
+
+  const onLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        navigate("/persoane");
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
   };
 
   return (
-    <div id="login">
-      <div className="container">
-        <div id="login-row" className="row justify-content-center align-items-center">
-          <div id="login-column" className="col-md-6">
-            <div id="login-box" className="col-md-12">
-              <form id="login-form" className="form" onSubmit={handleSubmit(onSubmit)}>
-                <h3 className="text-center text-info">Login</h3>
-                <div className="form-group">
-                  <label for="email" className="text-info">Email:</label><br />
-                  <input {...register('email', { required: true })} type="text" className="form-control" />
-                  {errors.email && <p className="error">Email is required.</p>}
-                </div>
-                <div className="form-group">
-                  <label for="password" className="text-info">Password:</label><br />
-                  <input {...register('password', { required: true })} type="password" className="form-control" />
-                  {errors.password && <p className="error">Password is required.</p>}
-                </div>
-                <div className="form-group">
-                  <label for="remember-me" className="text-info">
-                    <span>Remember me</span>&nbsp;
-                    <span><input id="remember-me" name="remember-me" type="checkbox" /></span>
-                  </label>
-                  <br />
-                  <button type="submit" name="submit" className="btn btn-info btn-md">submit</button>
-                </div>
-                <div id="register-link" className="text-right">
-                <Link to="/signup">Register here</Link>
-                  
-                </div>
-              </form>
-            </div>
+    <>
+      <main className="login">
+        <section>
+          <div className="main-container">
+            <p>Introduceti e-mailul si parola </p>
+
+            <form onSubmit={handleSubmit(onLogin)}>
+              <div>
+                {/* <label htmlFor="email-address">Email address</label> */}
+                <input
+                  {...register("email", emailValidation)}
+                  className="input-container"
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="introdu adresa de email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {errors.email && <p className="error">Email obligatoriu.</p>}
+              </div>
+
+              <div className="input-container">
+                {/* <label htmlFor="password">Password</label> */}
+                <input
+                  {...register("password", { required: true })}
+                  className="input-container"
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {errors.password && <p className="error">Lipseste parola.</p>}
+              </div>
+
+              <div className="button-container">
+                <button className="button">LOGIN</button>
+              </div>
+            </form>
+
+            <p className="text">
+              No account yet? <NavLink to="/signup">Sign up</NavLink>
+            </p>
           </div>
-        </div>
-      </div>
-    </div>
-  )
+        </section>
+      </main>
+    </>
+  );
 };
 
 export default Login;

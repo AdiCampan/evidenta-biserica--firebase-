@@ -62,6 +62,15 @@ const Familie = ({ dataUpdated, data }) => {
     waitingPersons();
   }, []);
 
+  // ------------------------------- ALEGE SOT/SOTIE (TypeAhead) ----------------------------- //
+  const onPersonChange = (persons) => {
+    if (persons.length > 0) {
+      setPereche(persons[0].id);
+    } else {
+      setPereche("");
+    }
+  };
+
   // --------------   SETEAZA PERECHEA SI COPII   ---------------------------   //
   useEffect(() => {
     let partener = {};
@@ -85,14 +94,21 @@ const Familie = ({ dataUpdated, data }) => {
     dataUpdated({
       relations: [partener, ...children],
     });
-  }, [pereche, servCivil, servRel, biserica, childList, dataNasteriiCopil]);
+  }, [
+    data,
+    pereche,
+    servCivil,
+    servRel,
+    biserica,
+    childList,
+    dataNasteriiCopil,
+  ]);
 
   // ----------------------------- SET DATE SECUNDARE ------------------------------------- //
+  const spouse = data[0]?.relations?.find(
+    (relation) => relation.type === "wife" || relation.type === "husband"
+  );
   useEffect(() => {
-    const spouse = data[0]?.relations?.find(
-      (relation) => relation.type === "wife" || relation.type === "husband"
-    );
-
     setServCivil(
       spouse?.civilWeddingDate ? (spouse?.civilWeddingDate).toDate() : ""
     );
@@ -104,19 +120,11 @@ const Familie = ({ dataUpdated, data }) => {
     setBiserica(spouse?.weddingChurch || "");
     setDataNasteriiCopil(data?.birthDate || "");
     setSexCopil(data?.sex || "");
-  }, [data, persoane]);
-
-  // ------------------------------- ALEGE SOT/SOTIE (TypeAhead) ----------------------------- //
-  const onPersonChange = (persons) => {
-    if (persons.length > 0) {
-      setPereche(persons[0].id);
-    } else {
-      setPereche("");
-    }
-  };
+  }, []);
 
   //prima data cand se alege partenerul se seteaza in Firestore...
   //... perechea la partenerul persoanei curente :) //
+
   if (pereche) {
     const spouseId = pereche;
     const children =
@@ -138,15 +146,32 @@ const Familie = ({ dataUpdated, data }) => {
     const updateSpouse = { relations: [partener, ...children] };
     const docRef = doc(firestore, "persoane", spouseId);
     updateDoc(docRef, updateSpouse);
-    console.log("updated");
+    console.log("updated in Firestore", spouseId);
+
+    //   SALVEZ DATELE IN FIRESTORE LA PERSOANA CURENTA //
+    let partenerulPersoaneiCurrente = {};
+    partenerulPersoaneiCurrente = {
+      person: pereche,
+      type: data[0].sex ? "wife" : "husband",
+      civilWeddingDate: servCivil,
+      religiousWeddingDate: servRel,
+      weddingChurch: biserica,
+    };
+
+    const updateCurrentPerson = {
+      relations: [partenerulPersoaneiCurrente, ...children],
+    };
+    const docRefOfCurrent = doc(firestore, "persoane", data[1]);
+    updateDoc(docRefOfCurrent, updateCurrentPerson);
+    console.log("updated in Firestore", data[1]);
   }
 
   // -------------- SETEAZA IN FIREBASE RELATIA PERSOANEI CURENTE ----------------------//
+  const relation = data[0]?.relations?.filter(
+    (relation) => relation.type === "wife" || relation.type === "husband"
+  );
   useEffect(() => {
     //   FILTREZ  RELATIA PERSOANEI CURENTE //
-    const relation = data[0]?.relations?.filter(
-      (relation) => relation.type === "wife" || relation.type === "husband"
-    );
     if (relation?.length > 0) {
       //  caut si  FILTREZ PERECHEA PERSOANEI CURENTE //
       const spouseId = relation[0]?.person;
@@ -162,7 +187,7 @@ const Familie = ({ dataUpdated, data }) => {
       let partener = {};
       partener = {
         person: data[1],
-        type: relation[0].type ? "wife" : "husband",
+        type: data.sex ? "husband" : "wife",
         civilWeddingDate: servCivil,
         religiousWeddingDate: servRel,
         weddingChurch: biserica,
@@ -182,7 +207,7 @@ const Familie = ({ dataUpdated, data }) => {
     } else {
       setPereche("");
     }
-  }, [persoane, data, servCivil, servRel, biserica, dataNasteriiCopil]);
+  }, [persoane, data, dataNasteriiCopil]);
 
   const addChildField = () => {
     setChildList([...childList, { childId: "", index: uuid() }]);
