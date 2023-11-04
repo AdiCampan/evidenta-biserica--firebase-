@@ -74,7 +74,10 @@ const Home = () => {
       const years = getMemberHistoryYears();
       for (let i = 0; i < years.length; i++) {
         const personsByYear = persoane?.filter((p) => {
-          if (new Date(p.memberDate).getFullYear() <= years[i]) {
+          if (
+            p.memberDate &&
+            p.memberDate?.toDate().getFullYear() <= years[i]
+          ) {
             // if (p.leaveDate &&  new Date(p.leaveDate).getFullYear() > years[i]) {
             // 	return true;
             // } else if (!p.leaveDate) {

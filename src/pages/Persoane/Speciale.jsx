@@ -32,6 +32,16 @@ import {
   useGetMembersQuery,
   useModifyMemberMutation,
 } from "../../services/members";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { firestore } from "../../firebase-config";
 
 const FILTER_LABEL = {
   1: "Exclus temporar",
@@ -47,7 +57,7 @@ function uuid() {
   );
 }
 
-const Speciale = () => {
+const Speciale = ({ persoane }) => {
   const [filterType, setFilterType] = useState("1");
   const [cazuri, setCazuri] = useState([]);
   const [dataOpencase, setDataOpenCase] = useState("");
@@ -60,24 +70,36 @@ const Speciale = () => {
   const [resolved, setResolved] = useState(false);
   const [caseToEdit, setCaseToEdit] = useState(null);
 
-  const { data: cazuriSpeciale, isLoading: cazuriSpecialeLoading } =
-    useGetSpecialCasesQuery();
+  // const { data: cazuriSpeciale, isLoading: cazuriSpecialeLoading } =
+  //   useGetSpecialCasesQuery();
   const [modifySpecialCase] = useModifySpecialCaseMutation();
-  const [modifyMember] = useModifyMemberMutation();
-  const { data: persoane, isLoading: persoaneLoading } = useGetMembersQuery();
+  // const [modifyMember] = useModifyMemberMutation();
+  // const { data: persoane, isLoading: persoaneLoading } = useGetMembersQuery();
 
+  //  ----------------  get list of all cases fron Firestore dataBase --------  //
+  const q = query(collection(firestore, "specialCases"));
   useEffect(() => {
-    if (!cazuriSpecialeLoading && !persoaneLoading) {
-      setCazuri(
-        cazuriSpeciale?.map((cazSpecial) => {
-          return {
-            ...cazSpecial,
-            person: persoane.find((person) => person.id === cazSpecial.person),
-          };
-        })
-      );
-    }
-  }, [cazuriSpecialeLoading, persoaneLoading]);
+    onSnapshot(q, (querySnapshot) => {
+      const tmpArray = [];
+      querySnapshot.forEach((doc) => {
+        const childKey = doc.id;
+        const childData = doc.data();
+        tmpArray.push({ id: childKey, ...childData });
+        setCazuri(tmpArray);
+      });
+    });
+  }, [persoane]);
+
+  // useEffect(() => {
+  //   setCazuri(
+  //     cazuriSpeciale?.map((cazSpecial) => {
+  //       return {
+  //         ...cazSpecial,
+  //         person: persoane.find((person) => person.id === cazSpecial.person),
+  //       };
+  //     })
+  //   );
+  // }, []);
 
   const editar = (caz) => {
     setShow(true);
@@ -91,35 +113,38 @@ const Speciale = () => {
   const handleUpdate = () => {
     const cazulModificat = {
       id: caseToEdit.id,
-      startDate: dataOpencase,
-      endDate: dataRezolvarii,
+      startDate: caseToEdit?.startDate.toDate(),
+      endDate: dataRezolvarii || "",
       details: detalii,
     };
+    const docRef = doc(firestore, "specialCases", caseToEdit.id);
+    updateDoc(docRef, cazulModificat);
 
-    modifySpecialCase(cazulModificat);
     // exclus definitiv, deci facem un transfer
     if (filterType === "2") {
-      modifyMember({
-        id: caseToEdit.person.id,
-        leaveDate: dataExcluderii,
-        memberDate: "",
-      });
+      const docRef = doc(firestore, "persoane", caseToEdit.person.id);
+      updateDoc(docRef, { leaveDate: dataExcluderii, memberDate: "" });
     }
     setShow(false);
   };
 
   const handleClose = () => setShow(false);
 
-  const addCaz = (caz) => {
-    const cazuriActualizate = [...cazuri, caz];
+  const addCaz = async (newCase) => {
+    await setDoc(doc(firestore, "specialCases", crypto.randomUUID()), {
+      ...newCase,
+    });
+    // const cazuriActualizate = [...cazuri, caz];
   };
 
   const deleteCase = (cazIndex) => {
     setCazuri(
       cazuri.filter((caz) => {
-        if (caz.person.id !== cazIndex) {
+        if (caz.id !== cazIndex) {
           return true;
         }
+        deleteDoc(doc(firestore, "specialCases", cazIndex));
+
         setIdToDelete(null);
         return false;
       })
@@ -135,7 +160,7 @@ const Speciale = () => {
     <div>
       <Col>
         <InputGroup size="sm" className="mb-3">
-          <AddCazSpecial onAddCaz={addCaz} />
+          <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
         </InputGroup>
       </Col>
       <Card>
@@ -175,7 +200,7 @@ const Speciale = () => {
                 <td>
                   <FaTrash
                     style={{ cursor: "pointer" }}
-                    onClick={(event) => showDeleteModal(caz.person.id, event)}
+                    onClick={(event) => showDeleteModal(caz.id, event)}
                   />
                 </td>
               </tr>
@@ -225,7 +250,7 @@ const Speciale = () => {
               aria-label="Small"
               as={DatePicker}
               selected={
-                caseToEdit?.startDate ? new Date(caseToEdit?.startDate) : null
+                caseToEdit?.startDate ? caseToEdit?.startDate.toDate() : null
               }
               // onChange={(date) => setDataOpenCase(date)}
               disabled

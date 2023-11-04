@@ -38,7 +38,7 @@ const PersonsPage = () => {
         {<Boteze persoane={persoane} />}
       </Tab>
       <Tab eventKey="observatii" title="Cazuri Speciale">
-        {<Speciale />}
+        {<Speciale persoane={persoane} />}
       </Tab>
       <Tab eventKey="transferuri" title="Transferuri">
         {<Transferuri persoane={persoane} />}

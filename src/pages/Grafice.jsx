@@ -40,8 +40,6 @@ function Grafice() {
   const familii = persoane ? filterFamilys(persoane) : null;
   const familii1 = familii?.map((p) => p.relation === "child");
 
-  console.log(familii1);
-
   const nrBarbati =
     persoane.length > 0 &&
     persoane.filter(
@@ -78,7 +76,7 @@ function Grafice() {
       const mans = filteredFamilys.filter((person) => person.sex === true);
 
       filteredFamilys = mans.filter((member) =>
-        member.relations?.filter((relation) => relation?.type === "wife")
+        member.relations?.find((relation) => relation?.type === "wife")
       );
       return filteredFamilys;
     }
@@ -129,7 +127,7 @@ function Grafice() {
       const personsByYear =
         persoane.length > 0 &&
         persoane?.filter((p) => {
-          if (p.birthDate.toDate().getFullYear() <= years[i]) {
+          if (p.birthDate?.toDate().getFullYear() <= years[i]) {
             return true;
           }
           return false;

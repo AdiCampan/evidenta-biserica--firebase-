@@ -73,8 +73,14 @@ function Boteze({ persoane }) {
       );
 
       const listBaptist = filteredMembers.reduce((boteze, item) => {
-        if (!boteze.find((botez) => botez.baptiseDate === item.baptiseDate)) {
+        if (
+          !boteze.find(
+            (botez) => botez.baptiseDate.seconds === item.baptiseDate.seconds
+          )
+        ) {
           boteze.push(item);
+          // console.log("boteze", boteze);
+          // console.log("item", item.baptiseDate);
         }
         return boteze;
       }, []);
@@ -90,8 +96,9 @@ function Boteze({ persoane }) {
 
   const listBaptized = (dataBotez) => {
     let listaBotezati = persoane.filter(
-      (data) => data?.baptiseDate === dataBotez
+      (data) => data?.baptiseDate?.seconds === dataBotez.seconds
     );
+    console.log(listaBotezati);
 
     setListByDateBaptized(listaBotezati);
   };

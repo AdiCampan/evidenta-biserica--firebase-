@@ -27,19 +27,21 @@ const Familii = () => {
   const [firstNameFilter, setFirstNameFilter] = useState("");
 
   function filterMembers(members) {
-    let filteredMembers = members;
-    filteredMembers = filterByText(
-      filteredMembers,
-      "firstName",
-      firstNameFilter
-    );
+    if (persoane?.length > 0) {
+      let filteredMembers = members;
+      // filteredMembers = filterByText(
+      //   filteredMembers,
+      //   "firstName",
+      //   firstNameFilter
+      // );
 
-    filteredMembers = filteredMembers.filter((person) => person.sex === true);
+      filteredMembers = filteredMembers.filter((person) => person.sex === true);
 
-    filteredMembers = filteredMembers.filter((member) =>
-      member.relations?.filter((relation) => relation?.type === "wife")
-    );
-    return filteredMembers;
+      filteredMembers = filteredMembers.filter((member) =>
+        member.relations?.find((relation) => relation?.type === "wife")
+      );
+      return filteredMembers;
+    }
   }
 
   const listChildrens = (childrens) => {
