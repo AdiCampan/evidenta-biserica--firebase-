@@ -44,8 +44,8 @@ const Familii = () => {
     }
   }
 
-  const listChildrens = (childrens) => {
-    const childrensFiltered = childrens
+  const listChildrens = (relations) => {
+    const childrensFiltered = relations
       .filter((relation) => relation.type === "child")
       .map((relation) => relation?.person);
     setChildrens(childrensFiltered);
@@ -155,41 +155,43 @@ const Familii = () => {
                       {
                         persoane
                           .filter((child) => child.id === p)
-                          .find((children) => children.lastName).firstName
+                          .find((children) => children.lastName)?.firstName
                       }
                     </td>
                     <td>
                       {
                         persoane
                           .filter((child) => child.id === p)
-                          .find((children) => children.lastName).lastName
+                          .find((children) => children.lastName)?.lastName
                       }
                     </td>
                     <td>
                       {formatDate(
                         persoane
                           .filter((child) => child.id === p)
-                          .find((children) => children.lastName).birthDate || ""
+                          .find((children) => children.lastName)?.birthDate ||
+                          ""
                       )}
                     </td>
                     <td>
                       {calculateAge(
                         persoane
                           .filter((child) => child.id === p)
-                          .find((children) => children.lastName).birthDate || ""
+                          .find((children) => children.lastName)?.birthDate ||
+                          ""
                       )}
                     </td>
                     <td>
                       {persoane
                         .filter((child) => child.id === p)
-                        .find((children) => children.lastName).sex
+                        .find((children) => children.lastName)?.sex
                         ? "M"
                         : "F"}
                     </td>
                     <td>
                       {persoane
                         .filter((child) => child.id === p)
-                        .find((children) => children.lastName).details || ""}
+                        .find((children) => children.lastName)?.details || ""}
                     </td>
                   </tr>
                 ))
