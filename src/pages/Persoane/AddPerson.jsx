@@ -23,7 +23,7 @@ function AddPerson({ label }) {
 
   const [result] = useAddMemberMutation();
 
-  // FIREBASE //
+  // FIRESTORE //
   const addMember = async (newMember) => {
     await setDoc(doc(firestore, "persoane", crypto.randomUUID()), {
       firstName: newMember.firstName,

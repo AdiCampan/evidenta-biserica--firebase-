@@ -74,7 +74,12 @@ function AddTransferModal({
   // ------------ Add new transfer to firestore dataBase --------------- //
   const addTransfer = async (newTransfer) => {
     await setDoc(doc(firestore, "transfers", crypto.randomUUID()), {
-      newTransfer,
+      date: dataTransfer,
+      churchTransfer: bisericaTransfer,
+      docNumber: actTransfer,
+      details: detalii,
+      owner: person,
+      type: filterType === "1" ? "transferTo" : "transferFrom",
     });
   };
 
@@ -111,7 +116,14 @@ function AddTransferModal({
       });
     }
 
-    addTransfer(newTransfer);
+    addTransfer({
+      date: dataTransfer,
+      churchTransfer: bisericaTransfer,
+      docNumber: actTransfer,
+      details: detalii,
+      owner: person,
+      type: filterType === "1" ? "transferTo" : "transferFrom",
+    });
 
     if (person) {
       setBisericaTransfer("");

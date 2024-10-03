@@ -95,7 +95,7 @@ function Membrii() {
             <th>Locul Botezului</th>
             <th>Varsta</th>
             <th>Data nasterii</th>
-            <th>Sex</th>
+            <th>Gen</th>
             <th>Actiuni</th>
           </tr>
         </thead>

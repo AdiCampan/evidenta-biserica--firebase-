@@ -41,16 +41,16 @@ const General = ({ dataUpdated, data }) => {
   const [telefon, setTelefon] = useState("");
   const [email, setEmail] = useState("");
   const [sex, setSex] = useState(null);
-  const [father, setFather] = useState("");
-  const [mother, setMother] = useState("");
+  // const [father, setFather] = useState("");
+  // const [mother, setMother] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [enterBirthDate, setEnterBirthDate] = useState(null);
   // const [member, setMember] = useState(false);
   const [membruData, setMembruData] = useState(null);
   const [detalii, setDetalii] = useState("");
   const [persoane, setPersoane] = useState();
-  const [initialFather, setInitialFather] = useState(null);
-  const [initialMother, setInitialMother] = useState(null);
+  // const [initialFather, setInitialFather] = useState(null);
+  // const [initialMother, setInitialMother] = useState(null);
 
   // ---------- OBTIN DATELE  PERSOANELOR  (DIN FIRESTORE)  ------------- //
   const waitingPersons = async () => {
@@ -71,6 +71,7 @@ const General = ({ dataUpdated, data }) => {
 
   // --------- TRIMIT NOILE SETARI LA "PERSOANA" PT SALVARE IN BAZA DE DATE ------------ //
   useEffect(() => {
+    console.log("datele persoanei curente:", data[0]);
     dataUpdated({
       id: data[1],
       firstName: nume,
@@ -80,8 +81,8 @@ const General = ({ dataUpdated, data }) => {
       mobilePhone: telefon,
       email: email,
       sex: sex === "M" ? true : sex === "F" ? false : null,
-      fatherName: father,
-      motherName: mother,
+      fatherID: "",
+      motherID: "",
       birthDate: enterBirthDate,
       placeOfBirth: placeOfBirth,
       memberDate: membruData,
@@ -96,8 +97,8 @@ const General = ({ dataUpdated, data }) => {
     telefon,
     email,
     sex,
-    father,
-    mother,
+    // father,
+    // mother,
     placeOfBirth,
     enterBirthDate,
     detalii,
@@ -115,8 +116,8 @@ const General = ({ dataUpdated, data }) => {
       setTelefon(data[0].mobilePhone || "");
       setEmail(data[0].email || "");
       setSex(data[0].sex === true ? "M" : data[0].sex === false ? "F" : null);
-      setFather(data[0].fatherName || "");
-      setMother(data[0].motherName || "");
+      // setFather(data[0].fatherID || "");
+      // setMother(data[0].motherID || "");
       setEnterBirthDate(data[0].birthDate ? data[0].birthDate.toDate() : null);
       setPlaceOfBirth(data[0].placeOfBirth || "");
       setMembruData(data[0].memberDate ? data[0].memberDate.toDate() : null);
@@ -132,40 +133,7 @@ const General = ({ dataUpdated, data }) => {
   const addTransfer = (newData) => {
     dataUpdated(newData);
     setMembruData(newData.memberDate || "");
-
-    console.log("newdata", newData);
   };
-
-  // ----------- SELECTEZ "TATA" IN Typeahead -------------- //
-  const onParentChange = (p) => {
-    if (p.length > 0) {
-      setFather(p);
-    } else {
-      setFather(null);
-    }
-  };
-
-  // ------ daca are deja o relatie cu TATA si MAMA....
-  //             ....... le setez ca 'initialFather' si 'initialMother'---- //
-  useEffect(() => {
-    if (data && persoane && data.length > 0 && persoane.length > 0) {
-      //filtrez persoanele care au o relatie "child"..
-      //..si ID = cu ID-ul persoanei curente //
-      const parents =
-        persoane.filter((person) =>
-          person?.relations?.find(
-            (relation) =>
-              relation.type === "child" && relation.person === data[1]
-          )
-        ) || [];
-      const father = parents.filter((p) => p.sex === true);
-      const mother = parents.filter((p) => p.sex === false);
-      setInitialFather(father);
-      setInitialMother(mother);
-    }
-    setFather(null);
-    setMother(null);
-  }, [data, persoane]);
 
   return (
     <Container>
@@ -283,7 +251,7 @@ const General = ({ dataUpdated, data }) => {
             </Col>
           </Row>
           <InputGroup size="sm" className="mb-3">
-            <InputGroup.Text id="inputGroup-sizing-sm">Sexul</InputGroup.Text>
+            <InputGroup.Text id="inputGroup-sizing-sm">GEN: </InputGroup.Text>
             <RadioGroup
               style={{ display: "flex", flexDirection: "row", paddingLeft: 14 }}
               name="use-radio-group"
@@ -301,46 +269,6 @@ const General = ({ dataUpdated, data }) => {
               <FormControlLabel value="F" label="Feminin" control={<Radio />} />
             </RadioGroup>
           </InputGroup>
-          <Row>
-            <Col>
-              <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">
-                  Tata
-                </InputGroup.Text>
-                <Typeahead
-                  id="father"
-                  onChange={onParentChange}
-                  labelKey={(option) =>
-                    `${option.firstName} ${option.lastName}`
-                  }
-                  options={persoane || []}
-                  placeholder="Alege tatal..."
-                  selected={initialFather || []}
-                />
-                <AddPerson label="+" />
-              </InputGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <InputGroup size="sm" className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-sm">
-                  Mama
-                </InputGroup.Text>
-                <Typeahead
-                  labelKey={(option) =>
-                    `${option.firstName} ${option.lastName}`
-                  }
-                  options={persoane || []}
-                  placeholder="Alege mama..."
-                  id="mother"
-                  onChange={onParentChange}
-                  selected={initialMother || []}
-                />
-                <AddPerson label="+" />
-              </InputGroup>
-            </Col>
-          </Row>
           <Row>
             <Col>
               {membruData && (

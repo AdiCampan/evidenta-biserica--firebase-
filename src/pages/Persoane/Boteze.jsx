@@ -69,7 +69,8 @@ function Boteze({ persoane }) {
           member.baptisePlace === "Eben Ezer" ||
           member.baptisePlace === "EbenEzer" ||
           member.baptisePlace === "Eben-Ezer" ||
-          member.baptisePlace === "EBEN-EZER"
+          member.baptisePlace === "EBEN-EZER" ||
+          member.baptisePlace === "EBEN - EZER"
       );
 
       const listBaptist = filteredMembers.reduce((boteze, item) => {
@@ -84,7 +85,6 @@ function Boteze({ persoane }) {
         }
         return boteze;
       }, []);
-
       return listBaptist;
     }
   }
@@ -145,7 +145,7 @@ function Boteze({ persoane }) {
                 <th>Prenume</th>
                 <th>D. Nasterii</th>
                 <th>Varsta</th>
-                <th>Sex</th>
+                <th>Gen</th>
                 <th>Detalii</th>
               </tr>
             </thead>

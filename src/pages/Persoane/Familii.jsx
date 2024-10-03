@@ -93,37 +93,44 @@ const Familii = () => {
                     <td>{index + 1}</td>
                     <td>
                       {p?.firstName} {p?.lastName} și{" "}
-                      {
-                        persoane
-                          ?.filter(
-                            //    to do ---->filtrar solo relatiile de wife       //
-                            (persoana) => persoana.id === p.relations[0].person
+                      {persoane
+                        .filter((member) =>
+                          member.relations?.some(
+                            (relation) =>
+                              relation.type === "husband" &&
+                              relation.person === p.id
                           )
-                          .find((pers) => pers?.lastName)?.lastName
-                      }
+                        )
+                        .map((wife) => wife.firstName)}
                     </td>
                     <td>{formatDate(p.relations[0].civilWeddingDate)}</td>
                     <td>{formatDate(p.relations[0].religiousWeddingDate)}</td>
                     <td>{p.relations[0].weddingChurch}</td>
                     <td>
-                      {
-                        persoane
-                          ?.filter(
-                            //    to do ---->filtrar solo relatiile de wife       //
-                            (persoana) => persoana.id === p.relations[0].person
+                      {persoane
+                        .filter((member) =>
+                          member.relations?.some(
+                            (relation) =>
+                              relation.type === "husband" &&
+                              relation.person === p.id
                           )
-                          .find((pers) => pers.lastName)?.maidenName
-                      }
+                        )
+                        .map((wife) => wife.maidenName)}
                     </td>
                     <td>{calculateAge(p.birthDate)}</td>
                     <td>
                       {calculateAge(
                         persoane
-                          ?.filter(
-                            //    to do ---->filtrar solo relatiile de wife       //
-                            (persoana) => persoana.id === p.relations[0].person
+                          .filter((member) =>
+                            member.relations?.some(
+                              (relation) =>
+                                relation.type === "husband" &&
+                                relation.person === p.id
+                            )
                           )
-                          .find((pers) => pers.lastName)?.birthDate
+                          .map((wife) => wife.birthDate) // Crear un array con `birthDate`
+                          .filter((date) => date && date !== "NULL") // Eliminar fechas inválidas
+                          .find((date) => date) // Obtener la primera fecha válida
                       )}
                     </td>
                   </tr>

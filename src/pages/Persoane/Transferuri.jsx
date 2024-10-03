@@ -21,6 +21,7 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 import Confirmation from "../../Confirmation";
+import ScrollButton from "../../ScrollButton";
 
 const Transferuri = ({ persoane }) => {
   const [transfers, setTransfers] = useState([]);
@@ -62,10 +63,9 @@ const Transferuri = ({ persoane }) => {
   };
 
   const intrati = ["baptise", "transferFrom"];
-  
+
   return (
     <>
-
       <Col>
         <InputGroup size="sm" className="mb-3">
           <Button variant="primary" onClick={() => setShowModal(true)}>
@@ -86,53 +86,57 @@ const Transferuri = ({ persoane }) => {
               <th>Varsta</th>
             </tr>
           </thead>
-          <tbody>
-            {transfers && persoane &&
-              transfers.map((transfer, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    backgroundColor: intrati.includes(
-                      transfer?.newTransfer?.type
-                    )
-                      ? "#00c90057"
-                      : "#ff000021",
-                  }}
-                >
-                  <td>{index + 1}</td>
-                  <td>
-                    {}
-                    {
-                    persoane?.filter((p)=> p?.id === (transfer?.newTransfer?.owner))[0]?.firstName 
-                    }{" "}
-                    { persoane?.filter((p)=> p?.id === (transfer?.newTransfer?.owner))[0]?.lastName }
-                  </td>
-                  <td>
-                    {intrati.includes(transfer.newTransfer?.type)
-                      ? "din"
-                      : "in"}{" "}
-                    {transfer.newTransfer?.churchTransfer}
-                  </td>
-                  <td>{formatDate(transfer.newTransfer?.date)}</td>
-                  <td>{transfer.newTransfer?.docNumber}</td>
-                  <td style={{ wordBreak: "break-all", maxWidth: "200px" }}>
-                    {transfer.newTransfer?.details}
-                  </td>
-                  <td>
-                    {calculateAge(
-                       persoane?.filter((p)=> p?.id === (transfer?.newTransfer?.owner))[0]?.birthDate 
-                    )}
-                  </td>
-                  <td>
-                    <FaTrash
-                      style={{ cursor: "pointer" }}
-                      onClick={() => showDeleteModal(transfer?.id)}
-                    />
-                  </td>
-                </tr>
-              ))}
-          </tbody>
+          <>
+            <tbody>
+              {transfers &&
+                persoane &&
+                transfers.map((transfer, index) => (
+                  <tr
+                    key={index}
+                    style={{
+                      backgroundColor: intrati.includes(transfer?.type)
+                        ? "#00c90057"
+                        : "#ff000021",
+                    }}
+                  >
+                    <td>{index + 1}</td>
+                    <td>
+                      {
+                        persoane?.filter((p) => p?.id === transfer?.owner)[0]
+                          ?.firstName
+                      }{" "}
+                      {
+                        persoane?.filter((p) => p?.id === transfer?.owner)[0]
+                          ?.lastName
+                      }
+                    </td>
+                    <td>
+                      {intrati.includes(transfer.type) ? "din" : "in"}{" "}
+                      {transfer.churchTransfer}
+                    </td>
+                    <td>{formatDate(transfer.date)}</td>
+                    <td>{transfer.docNumber}</td>
+                    <td style={{ wordBreak: "break-all", maxWidth: "200px" }}>
+                      {transfer.details}
+                    </td>
+                    <td>
+                      {calculateAge(
+                        persoane?.filter((p) => p?.id === transfer?.owner)[0]
+                          ?.birthDate
+                      )}
+                    </td>
+                    <td>
+                      <FaTrash
+                        style={{ cursor: "pointer" }}
+                        onClick={() => showDeleteModal(transfer?.id)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </>
         </Table>
+        <ScrollButton />
         <AddTransferModal
           onAddTransfer={addTransfer}
           show={showModal}

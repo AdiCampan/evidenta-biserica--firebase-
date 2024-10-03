@@ -6,6 +6,7 @@ import { calculateAge, formatDate } from "../utils";
 import { Button } from "react-bootstrap";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../firebase-config";
+import CSVUploader from "../components/CSVUploader";
 
 const Home = () => {
   const [persoane, setPersoane] = useState("");
@@ -32,7 +33,6 @@ const Home = () => {
 
   useEffect(() => {
     if (persoane.length > 0) {
-      console.log(persoane);
       setTotalMembri(persoane?.filter((p) => p.memberDate).length);
       setNrCopii(
         persoane?.filter((p) => calculateAge(p.birthDate) < 18).length
@@ -40,19 +40,20 @@ const Home = () => {
       setNrBarbati(
         persoane?.filter(
           (p) =>
-            p.sex == true && p.memberDate && calculateAge(p.birthDate) >= 18
+            p.sex === true && p.memberDate && calculateAge(p.birthDate) >= 18
         ).length
       );
       setNrFemei(
         persoane?.filter(
           (p) =>
-            p.sex == false && p.memberDate && calculateAge(p.birthDate) >= 18
+            p.sex === false && p.memberDate && calculateAge(p.birthDate) >= 18
         ).length
       );
-
-      console.log(nrCopii);
     }
   }, [persoane]);
+  console.log("barbati", nrBarbati);
+  console.log("femei", nrFemei);
+  console.log("persoane", persoane);
 
   const getYearsFromInterval = (from, to) => {
     const listOfYears = [];
@@ -158,6 +159,7 @@ const Home = () => {
           />
         </div>
       </div>
+      <CSVUploader />
       <footer className="footer">copyright © Media EBEN-EZER 2022 </footer>
     </>
   );

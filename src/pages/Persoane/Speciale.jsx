@@ -100,6 +100,7 @@ const Speciale = ({ persoane }) => {
   //     })
   //   );
   // }, []);
+  console.log("cazuri Speciale", cazuri);
 
   const editar = (caz) => {
     setShow(true);

@@ -27,7 +27,7 @@ function AddCazSpecial({ onAddCaz, persoane }) {
     const newCase = {
       startDate: dataOpencase,
       details: detalii,
-      person: person,
+      person: person.id,
     };
     if (person) {
       setDataOpenCase("");

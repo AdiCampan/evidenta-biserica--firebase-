@@ -68,7 +68,6 @@ function Persoana() {
   // }, [result]);
 
   const saveData = () => {
-    console.log("current data", currentData);
     if (currentData.firstName != "" && currentData.lastName != "") {
       modifyMember(currentData);
     } else {

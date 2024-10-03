@@ -78,6 +78,7 @@ function Persoane() {
   const [notMembersOnly, setNotMembersOnly] = useState(false);
   const [persoane, setPersoane] = useState("");
 
+  // console.log("persoane", persoane);
   // --------------  REALTIME DATA BASE -----------  //
 
   // const waytingPersons = () => {
@@ -467,17 +468,6 @@ function Persoane() {
                     onChange={(e) => setFeminin(e.target.checked)}
                   />
                 </div>
-                {/* <RadioGroup
-                  className='radioGroup-box'
-                  style={{ display: 'flex', flexDirection: 'row', paddingLeft: 14 }}
-                  name="use-radio-group"
-                  value={sexFilter}
-                  onChange={(e) => { setSexFilter(e.target.value) }}
-                >
-                  <FormControlLabel value="M" label="M" control={<Radio />} />
-                  <FormControlLabel value="F" label="F" control={<Radio />} />
-                  <FormControlLabel value="" label="M+F" control={<Radio />} />
-                </RadioGroup> */}
               </td>
               <td></td>
             </tr>
