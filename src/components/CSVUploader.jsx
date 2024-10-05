@@ -277,23 +277,44 @@ const CSVUploader = () => {
 
   const uploadSpecialsCasesToFirestore = async () => {
     if (specialCases.length > 0) {
-      const modifiedSpecialCases = specialCases.map((row) => ({
-        id: row.SpecialCaseID ? row.SpecialCaseID.trim() : null,
-        details: row.SpecialCaseDetails ? row.SpecialCaseDetails : null,
-        startDate: row.SpecialCaseDate
-          ? Timestamp.fromDate(new Date(row.SpecialCaseDate.trim()))
-          : null,
-        endDate: row.SolvedDate
-          ? Timestamp.fromDate(new Date(row.SolvedDate.trim()))
-          : null,
-        person: row.PersonID ? row.PersonID : null,
-      }));
-      setNewSpecialCases(modifiedSpecialCases);
-      if (newSpecialCases.length > 0) {
-        newSpecialCases.forEach(async (c) => {
+      const modifiedSpecialCases = specialCases
+        .map((row) => {
+          // Verificar si las fechas existen y son válidas
+          const isValidDate = (dateString) =>
+            dateString && !isNaN(new Date(dateString.trim()));
+
+          // Crear el objeto con las propiedades necesarias
+          return {
+            id:
+              row.SpecialCaseID && row.SpecialCaseID.trim() !== ""
+                ? row.SpecialCaseID.trim()
+                : null,
+            details:
+              row.SpecialCaseDetails && row.SpecialCaseDetails.trim() !== ""
+                ? row.SpecialCaseDetails
+                : null,
+            startDate: isValidDate(row.SpecialCaseDate)
+              ? Timestamp.fromDate(new Date(row.SpecialCaseDate.trim()))
+              : null,
+            endDate: isValidDate(row.SolvedDate)
+              ? Timestamp.fromDate(new Date(row.SolvedDate.trim()))
+              : null,
+            person:
+              row.PersonID && row.PersonID.trim() !== "" ? row.PersonID : null,
+          };
+        })
+        // Filtrar las filas que tienen `id` como `null`
+        .filter((caseItem) => caseItem.id);
+
+      if (modifiedSpecialCases.length > 0) {
+        for (const c of modifiedSpecialCases) {
           await setDoc(doc(firestore, "specialCases", c.id), c);
-        });
+        }
+      } else {
+        console.warn("No hay casos especiales válidos para subir a Firestore.");
       }
+    } else {
+      console.warn("El array `specialCases` está vacío.");
     }
   };
 

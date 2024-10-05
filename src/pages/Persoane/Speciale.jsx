@@ -59,6 +59,7 @@ function uuid() {
 
 const Speciale = ({ persoane }) => {
   const [filterType, setFilterType] = useState("1");
+  const [filter, setFilter] = useState("all"); // Estado para el tipo de filtro
   const [cazuri, setCazuri] = useState([]);
   const [dataOpencase, setDataOpenCase] = useState("");
   const [dataRezolvarii, setDataRezolvarii] = useState("");
@@ -78,6 +79,7 @@ const Speciale = ({ persoane }) => {
 
   //  ----------------  get list of all cases fron Firestore dataBase --------  //
   const q = query(collection(firestore, "specialCases"));
+
   useEffect(() => {
     onSnapshot(q, (querySnapshot) => {
       const tmpArray = [];
@@ -90,17 +92,13 @@ const Speciale = ({ persoane }) => {
     });
   }, [persoane]);
 
-  // useEffect(() => {
-  //   setCazuri(
-  //     cazuriSpeciale?.map((cazSpecial) => {
-  //       return {
-  //         ...cazSpecial,
-  //         person: persoane.find((person) => person.id === cazSpecial.person),
-  //       };
-  //     })
-  //   );
-  // }, []);
-  console.log("cazuri Speciale", cazuri);
+  const filteredCazuri = cazuri.filter((caz) => {
+    // Aplicar el filtro según el estado `filter`
+    if (filter === "all") return true;
+    if (filter === "active") return !caz.endDate; // Casos con solo `startDate`
+    if (filter === "resolved") return !!caz.endDate; // Casos con `endDate`
+    return true;
+  });
 
   const editar = (caz) => {
     setShow(true);
@@ -159,11 +157,33 @@ const Speciale = ({ persoane }) => {
 
   return (
     <div>
-      <Col>
-        <InputGroup size="sm" className="mb-3">
-          <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
-        </InputGroup>
-      </Col>
+      <div style={{ display: "flex", paddingLeft: "20px" }}>
+        <Col>
+          <InputGroup size="sm" className="mb-3">
+            <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
+          </InputGroup>
+        </Col>
+
+        <Col style={{ paddingLeft: "20px" }}>
+          <InputGroup className="mb-3" size="sm">
+            <DropdownButton
+              as={ButtonGroup}
+              title={
+                filter === "all"
+                  ? "Toate cazurile"
+                  : filter === "active"
+                  ? "Active"
+                  : "Rezolvate"
+              }
+              onSelect={(key) => setFilter(key)}
+            >
+              <Dropdown.Item eventKey="all">Toate cazurile</Dropdown.Item>
+              <Dropdown.Item eventKey="active"> Active</Dropdown.Item>
+              <Dropdown.Item eventKey="resolved">Rezolvate</Dropdown.Item>
+            </DropdownButton>
+          </InputGroup>
+        </Col>
+      </div>
       <Card>
         <Table striped bordered hover size="sm">
           <thead>
@@ -177,7 +197,7 @@ const Speciale = ({ persoane }) => {
             </tr>
           </thead>
           <tbody>
-            {cazuri?.map((caz, index) => (
+            {filteredCazuri?.map((caz, index) => (
               <tr
                 key={caz.id}
                 style={{
@@ -186,8 +206,22 @@ const Speciale = ({ persoane }) => {
               >
                 <td>{index + 1}</td>
                 <td>
-                  {caz.person.firstName} {caz.person.lastName}
+                  {persoane &&
+                  persoane.find((person) => person.id === caz.person) ? (
+                    <>
+                      {`${
+                        persoane.find((person) => person.id === caz.person)
+                          .firstName
+                      } ${
+                        persoane.find((person) => person.id === caz.person)
+                          .lastName
+                      }`}
+                    </>
+                  ) : (
+                    "STERS din BAZA DE DATE !"
+                  )}
                 </td>
+
                 <td>{formatDate(caz.startDate)}</td>
                 <td>{formatDate(caz.endDate)}</td>
                 <td>{caz.details}</td>
