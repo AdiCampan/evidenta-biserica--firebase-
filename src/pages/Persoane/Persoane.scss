@@ -1,29 +1,29 @@
 .page-persons {
-    background-color: rgba(211, 211, 211, 0.836);
+  background-color: rgba(211, 211, 211, 0.836);
 
-    .age-input {
-        max-width: 45px;
-    }
+  .age-input {
+    max-width: 45px;
+  }
 
-    .search-phone {
-        max-width: 100px;
-    }
+  .search-phone {
+    max-width: 100px;
+  }
 
-    .search-input {
-        max-width: 150px;
-    }
+  .search-input {
+    max-width: 150px;
+  }
 
-    .barra-buttons {
-        display: flex;
-        justify-content: space-between;
-    }
+  .barra-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .sex-filter {
-       max-width: 150px;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-    }
+  .sex-filter {
+    max-width: 150px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
 }
 
 // .radioGroup-box {
@@ -33,16 +33,16 @@
 // }
 
 .head-list {
-    position: sticky;
-    top: 0px;
-    background-color: #ccc;
+  position: sticky;
+  top: 0px;
+  background-color: #ccc;
 }
-.inputs-list{
-    position: sticky;
-    top: 30px;
-    background-color: #ccc;
+.inputs-list {
+  position: sticky;
+  top: 30px;
+  background-color: #ccc;
 }
-.checkbox-m-f{
-    display: flex;
-    flex-direction: column
+.checkbox-m-f {
+  display: flex;
+  flex-direction: column;
 }

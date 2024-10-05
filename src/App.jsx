@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button, Tab, Tabs } from "react-bootstrap";
 import Home from "./pages/Home";
 import Biserici from "./pages/Biserici";
 import Persoane from "./pages/Persoane";
@@ -8,6 +8,7 @@ import Contributii from "./pages/Contributii";
 import LogIn from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
 import Persoana from "./pages/Persoana/Persoana";
+import Membrii from "./pages/Persoane/Membrii";
 import "./App.scss";
 import Grafice from "./pages/Grafice";
 import {
@@ -23,7 +24,12 @@ import {
   BarElement,
 } from "chart.js";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "./firebase-config";
+import { auth, firestore } from "./firebase-config";
+import Boteze from "./pages/Persoane/Boteze";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import Speciale from "./pages/Persoane/Speciale";
+import Transferuri from "./pages/Persoane/Transferuri";
+import Familii from "./pages/Persoane/Familii";
 
 ChartJS.register(
   CategoryScale,
@@ -39,6 +45,21 @@ ChartJS.register(
 
 function App() {
   const [logedUser, setLogedUser] = useState();
+  const [persoane, setPersoane] = useState("");
+
+  const q = query(collection(firestore, "persoane"));
+  useEffect(() => {
+    onSnapshot(q, (querySnapshot) => {
+      const tmpArray = [];
+      querySnapshot.forEach((doc) => {
+        const childKey = doc.id;
+        const childData = doc.data();
+        tmpArray.push({ id: childKey, ...childData });
+        setPersoane(tmpArray);
+      });
+    });
+  }, []);
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -77,22 +98,24 @@ function App() {
           <Button as={NavLink} to="/" className={navClass} variant="primary">
             Home
           </Button>
-          <Button
-            as={NavLink}
-            to="/biserici"
-            className={navClass}
-            variant="primary"
-            disabled
-          >
-            Biserici
-          </Button>
+
           <Button
             as={NavLink}
             to="/persoane"
             className={navClass}
             variant="primary"
           >
-            Persoane
+            PERSOANE
+          </Button>
+
+          <Button
+            as={NavLink}
+            to="/persoane"
+            className={navClass}
+            variant="primary"
+            disabled
+          >
+            MEMBRII
           </Button>
           <Button
             as={NavLink}
@@ -136,8 +159,31 @@ function App() {
         <Route path="/grafice" element={<Grafice />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/persoane/membrii" element={<Membrii />} />
       </Routes>
     </BrowserRouter>
+    // <BrowserRouter>
+    //   <Tabs id="controlled-tab-example" className="mb-3">
+    //     <Tab eventKey="persoane" title="Persoane">
+    //       {<Persoane />}
+    //     </Tab>
+    //     <Tab eventKey="membrii" title="Membrii">
+    //       {<Membrii />}
+    //     </Tab>
+    //     <Tab eventKey="boteze" title="Boteze">
+    //       {<Boteze persoane={persoane} />}
+    //     </Tab>
+    //     <Tab eventKey="observatii" title="Cazuri Speciale">
+    //       {<Speciale persoane={persoane} />}
+    //     </Tab>
+    //     <Tab eventKey="transferuri" title="Transferuri">
+    //       {<Transferuri persoane={persoane} />}
+    //     </Tab>
+    //     <Tab eventKey="familii" title="Familii">
+    //       {<Familii />}
+    //     </Tab>
+    //   </Tabs>
+    // </BrowserRouter>
   );
 }
 

@@ -3,10 +3,21 @@ import { useGetMembersQuery } from "../../services/members";
 import { formatDate, calculateAge, filterByText } from "../../utils";
 import Table from "react-bootstrap/Table";
 import "./Familii.scss";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 
 const Familii = () => {
+  const [persoane, setPersoane] = useState();
+  const [childrens, setChildrens] = useState([]);
+
+  const [lastNameFilter, setLastNameFilter] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [familia, setFamilia] = useState();
+
+  const handleClose = () => setShowModal(false);
+
   // -------------- LISTEN "persons" in REAL TIME  in FIRESTORE -------------------- //
   useEffect(() => {
     const q = query(collection(firestore, "persoane"));
@@ -21,19 +32,15 @@ const Familii = () => {
     });
   }, []);
 
-  const [persoane, setPersoane] = useState();
-  const [childrens, setChildrens] = useState([]);
-
-  const [firstNameFilter, setFirstNameFilter] = useState("");
-
   function filterMembers(members) {
     if (persoane?.length > 0) {
       let filteredMembers = members;
-      // filteredMembers = filterByText(
-      //   filteredMembers,
-      //   "firstName",
-      //   firstNameFilter
-      // );
+
+      filteredMembers = filterByText(
+        filteredMembers,
+        "lastName",
+        lastNameFilter
+      );
 
       filteredMembers = filteredMembers.filter((person) => person.sex === true);
 
@@ -44,11 +51,13 @@ const Familii = () => {
     }
   }
 
-  const listChildrens = (relations) => {
-    const childrensFiltered = relations
+  const listChildrens = (p) => {
+    setShowModal(true);
+    const childrensFiltered = p.relations
       .filter((relation) => relation.type === "child")
       .map((relation) => relation?.person);
     setChildrens(childrensFiltered);
+    setFamilia(p.lastName);
   };
 
   // const children = persoane.filter(child => child.id === childrens.map() )
@@ -58,24 +67,25 @@ const Familii = () => {
       <div className="familii">
         <div className="title">FAMILII</div>
         <Table striped bordered hover size="sm">
-          <thead>
+          <thead className="header-familii">
             <tr>
               <th>#</th>
               <th>Familia</th>
-              <th>Data serv. Civil</th>
-              <th>Data serv. Relig.</th>
+              <th>Serv. Civil</th>
+              <th>Serv. Relig.</th>
               <th>Biserica Serv. Relig.</th>
               <th>Nume anterior soție</th>
               <th>Varsta soț</th>
               <th>Varsta soție</th>
+              <th>Nr.copii</th>
             </tr>
             <tr>
               <td></td>
               <td>
                 <input
                   className="search-input"
-                  value={firstNameFilter}
-                  onChange={(e) => setFirstNameFilter(e.target.value)}
+                  value={lastNameFilter}
+                  onChange={(e) => setLastNameFilter(e.target.value)}
                   type="text"
                   placeholder="...numele de familie"
                 />
@@ -88,7 +98,8 @@ const Familii = () => {
                   <tr
                     key={p.id}
                     style={{ cursor: "pointer" }}
-                    onClick={() => listChildrens(p.relations)}
+                    onClick={() => listChildrens(p)}
+                    // onClick={handleShow}
                   >
                     <td>{index + 1}</td>
                     <td>
@@ -133,24 +144,39 @@ const Familii = () => {
                           .find((date) => date) // Obtener la primera fecha válida
                       )}
                     </td>
+                    <td>
+                      {
+                        p.relations.filter(
+                          (relation) => relation.type === "child"
+                        ).length
+                      }
+                    </td>
                   </tr>
                 ))
               : null}
           </tbody>
         </Table>
       </div>
-      <div className="copii">
-        <div className="title">Copii</div>
-        <Table striped bordered hover size="sm">
+
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header
+          closeButton
+          style={{ display: "flex", width: "100%" }}
+          // style={{ display: "flex", justifyContent: "center" }}
+        >
+          Copii familiei{" "}
+          <Modal.Title style={{ marginLeft: "20px" }}>{familia}</Modal.Title>
+        </Modal.Header>
+        <Table striped bordered hover variant="dark">
           <thead>
             <tr>
               <th>#</th>
-              <th>Nume</th>
-              <th>Prenume</th>
-              <th>D. Nasterii</th>
-              <th>Varsta</th>
-              <th>Sex</th>
-              <th>Detalii</th>
+              <th>NUME</th>
+              <th>PRENUME</th>
+              <th>DATA NAST.</th>
+              <th>VARSTA</th>
+              <th>GEN</th>
+              <th>DETALII</th>
             </tr>
           </thead>
           <tbody>
@@ -205,7 +231,7 @@ const Familii = () => {
               : null}
           </tbody>
         </Table>
-      </div>
+      </Modal>
     </div>
   );
 };

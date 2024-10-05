@@ -32,6 +32,7 @@ function Persoana() {
   // const [addRelation] = useAddRelationMutation();
   const [activeTab, setActiveTab] = useState("general");
   const [currentData, setCurrentData] = useState(null);
+  const [curentPerson, setCurentPerson] = useState(null);
 
   const getMemberData = async () => {
     const docRef = doc(firestore, "persoane", id);
@@ -44,9 +45,12 @@ function Persoana() {
       console.log("No such document!");
     }
   };
-
+  console.log("currentData", currentData);
   useEffect(() => {
     getMemberData();
+    if (data) {
+      setCurentPerson(data[0]);
+    }
   }, []);
 
   const modifyMember = (newData) => {
@@ -75,9 +79,6 @@ function Persoana() {
     }
     navigate("/persoane");
 
-    const children = data[0]?.relations?.find(
-      (relation) => relation.type === "child"
-    )?.person;
     // if (spouse && children.length > 0) {
     //   console.log("update spouse");
     //   modifyMember({
@@ -106,6 +107,16 @@ function Persoana() {
 
   return (
     <Card>
+      <Card style={{ width: "100%" }}>
+        <Card.Body style={{ display: "flex", justifyContent: "center" }}>
+          FISA PERSONALA:
+          {currentData && (
+            <Card.Title style={{ marginLeft: "20px" }}>
+              {currentData.firstName} {currentData.lastName}
+            </Card.Title>
+          )}
+        </Card.Body>
+      </Card>
       <Tabs
         id="controlled-tab-example"
         activeKey={activeTab}

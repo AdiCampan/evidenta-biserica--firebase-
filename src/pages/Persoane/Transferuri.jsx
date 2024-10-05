@@ -75,7 +75,7 @@ const Transferuri = ({ persoane }) => {
       </Col>
       <Card>
         <Table striped bordered hover size="sm">
-          <thead>
+          <thead className="head-list">
             <tr>
               <th>#</th>
               <th>Nume si Prenume</th>
@@ -103,11 +103,11 @@ const Transferuri = ({ persoane }) => {
                     <td>
                       {
                         persoane?.filter((p) => p?.id === transfer?.owner)[0]
-                          ?.firstName
+                          ?.lastName
                       }{" "}
                       {
                         persoane?.filter((p) => p?.id === transfer?.owner)[0]
-                          ?.lastName
+                          ?.firstName
                       }
                     </td>
                     <td>

@@ -11,6 +11,7 @@ import { firestore } from "../firebase-config";
 
 function Grafice() {
   const [persoane, setPersoane] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const q = query(collection(firestore, "persoane"));
   useEffect(() => {
@@ -25,7 +26,8 @@ function Grafice() {
     });
   }, []);
 
-  // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
+  console.log("persoane", persoane);
+
   const [nrMembrii, setNrMembrii] = useState([]);
   const [ageFilter, setAgeFilter] = useState("18");
   const [startDate, setStartDate] = useState(
@@ -36,9 +38,9 @@ function Grafice() {
     persoane.length > 0 && persoane?.filter((p) => p.memberDate).length;
   const date = new Date();
 
-  const totalFamilii = persoane ? filterFamilys(persoane).length : null;
-  const familii = persoane ? filterFamilys(persoane) : null;
-  const familii1 = familii?.map((p) => p.relation === "child");
+  // const totalFamilii = persoane ? filterFamilys(persoane).length : null;
+  // const familii = persoane ? filterFamilys(persoane) : null;
+  // const familii1 = familii?.map((p) => p.relation === "child");
 
   const nrBarbati =
     persoane.length > 0 &&
@@ -67,20 +69,21 @@ function Grafice() {
     ).length;
   const nrMembriiFilter =
     persoane.length > 0 &&
-    persoane?.filter((p) => calculateAge(p.birthDate) > parseInt(ageFilter))
-      .length;
+    persoane?.filter(
+      (p) => calculateAge(p.birthDate) > parseInt(ageFilter) && p.memberDate
+    ).length;
 
-  function filterFamilys(members) {
-    if (members) {
-      let filteredFamilys = members;
-      const mans = filteredFamilys.filter((person) => person.sex === true);
+  // function filterFamilys(members) {
+  //   if (members) {
+  //     let filteredFamilys = members;
+  //     const mans = filteredFamilys.filter((person) => person.sex === true);
 
-      filteredFamilys = mans.filter((member) =>
-        member.relations?.find((relation) => relation?.type === "wife")
-      );
-      return filteredFamilys;
-    }
-  }
+  //     filteredFamilys = mans.filter((member) =>
+  //       member.relations?.find((relation) => relation?.type === "wife")
+  //     );
+  //     return filteredFamilys;
+  //   }
+  // }
 
   const getMemberHistoryYears = () => {
     const years = getYearsFromInterval(
@@ -107,11 +110,7 @@ function Grafice() {
         persoane.length > 0 &&
         persoane?.filter((p) => {
           if (p.memberDate && p.memberDate.toDate().getFullYear() <= years[i]) {
-            // if (p.leaveDate &&  new Date(p.leaveDate).getFullYear() > years[i]) {
-            // 	return true;
-            // } else if (!p.leaveDate) {
             return true;
-            // }
           }
           return false;
         }).length;
@@ -127,7 +126,10 @@ function Grafice() {
       const personsByYear =
         persoane.length > 0 &&
         persoane?.filter((p) => {
-          if (p.birthDate?.toDate().getFullYear() <= years[i]) {
+          if (
+            calculateAge(p.birthDate) <= 18 &&
+            p.birthDate?.toDate().getFullYear() <= years[i]
+          ) {
             return true;
           }
           return false;
@@ -137,19 +139,45 @@ function Grafice() {
     return childrenByYears;
   };
 
+  const filterFamilys = (persons) => {
+    return Array.isArray(persons)
+      ? persons.filter((person) =>
+          person.relations?.some((relation) => relation.type === "wife")
+        )
+      : [];
+  };
+
+  const getNumberOfChildren = (relations) => {
+    return relations.filter((relation) => relation.type === "child").length;
+  };
+
+  const totalFamilii = filterFamilys(persoane).length;
+
+  const handleSortChildren = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
+  // Filtra las familias y aplica la ordenación según el estado actual
+  const sortedFamilies = filterFamilys(persoane).sort((a, b) => {
+    const childrenA = getNumberOfChildren(a.relations);
+    const childrenB = getNumberOfChildren(b.relations);
+    return sortOrder === "asc" ? childrenA - childrenB : childrenB - childrenA;
+  });
+
   return (
     <>
       <div className="container-principal">
         <div className="chart">
           <Pie
             data={{
-              labels: ["Barbati", "Femei"],
+              labels: ["Barbati", "Femei", "Copii"],
               datasets: [
                 {
-                  data: [nrBarbati, nrFemei],
+                  data: [nrBarbati, nrFemei, nrCopii],
                   backgroundColor: [
                     "rgba(54, 162, 235, 0.7)",
                     "rgba(255, 99, 132, 0.7)",
+                    "rgba(145, 63, 184, 0.7)",
                   ],
                 },
               ],
@@ -173,14 +201,6 @@ function Grafice() {
                     data: getMemberHistory(),
                     backgroundColor: ["rgba(54, 162, 235, 1.9)"],
                   },
-                  // {
-                  //   id: 2,
-                  //   label: 'Nr.de copii',
-                  //   data: getMemberHistory(),
-                  //   backgroundColor: [
-                  //     'rgba(54, 162, 235, 1.9)',
-                  //   ]
-                  // }
                 ],
               }}
             />
@@ -200,7 +220,6 @@ function Grafice() {
                 maxDate={endDate}
                 dateFormat="yyyy"
                 showYearPicker
-                // showMonthYearPicker
               />
             </div>
             <div className="period">
@@ -215,7 +234,6 @@ function Grafice() {
                 maxDate={new Date()}
                 dateFormat="yyyy"
                 showYearPicker
-                // showMonthYearPicker
               />
             </div>
           </div>
@@ -290,26 +308,41 @@ function Grafice() {
           <p>Copii majori care nu sunt membrii {nrCopiiMajoriNebotezati}</p>
         </div>
         <div className="chart">
-          <p>RAPORT FAMILII</p>
-          Total familii:{totalFamilii}
-          <Table>
-            <thead>
-              <tr>
-                <th>Index</th>
-                <th>Familii</th>
-                <th>Copii</th>
-              </tr>
-            </thead>
-            <tbody>
-              {persoane
-                ? filterFamilys(persoane).map((p, index) => (
+          <p>TOTAL FAMILII: {totalFamilii}</p>
+          <div
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+              border: "1px solid #ddd",
+              padding: "5px",
+            }}
+          >
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Index</th>
+                  <th>Familii</th>
+                  {/* Agregar evento de clic en el encabezado para ordenar por número de hijos */}
+                  <th
+                    onClick={handleSortChildren}
+                    style={{ cursor: "pointer" }}
+                  >
+                    Copii {sortOrder === "asc" ? "↑" : "↓"}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(persoane) &&
+                  sortedFamilies.map((p, index) => (
                     <tr key={p.id}>
                       <td>{index + 1}</td>
+                      <td>{`${p.lastName} ${p.firstName}`}</td>
+                      <td>{getNumberOfChildren(p.relations)}</td>
                     </tr>
-                  ))
-                : null}
-            </tbody>
-          </Table>
+                  ))}
+              </tbody>
+            </Table>
+          </div>
         </div>
         <div className="chart"></div>
         <div className="chart"></div>

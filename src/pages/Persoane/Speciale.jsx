@@ -101,6 +101,7 @@ const Speciale = ({ persoane }) => {
   });
 
   const editar = (caz) => {
+    console.log("caz", caz);
     setShow(true);
     setDataRezolvarii(caz.endDate);
     setDataExcluderii(caz.person.leaveDate);
@@ -164,7 +165,7 @@ const Speciale = ({ persoane }) => {
           </InputGroup>
         </Col>
 
-        <Col style={{ paddingLeft: "20px" }}>
+        <Col>
           <InputGroup className="mb-3" size="sm">
             <DropdownButton
               as={ButtonGroup}
@@ -186,14 +187,14 @@ const Speciale = ({ persoane }) => {
       </div>
       <Card>
         <Table striped bordered hover size="sm">
-          <thead>
+          <thead className="head-list">
             <tr>
               <th>#</th>
               <th>Nume si Prenume</th>
               <th>Data Deschiderii</th>
               <th>Data Rezolvarii</th>
               <th>Detalii Caz Special</th>
-              <th>Varsta</th>
+              <th>Actiuni</th>
             </tr>
           </thead>
           <tbody>
@@ -211,30 +212,27 @@ const Speciale = ({ persoane }) => {
                     <>
                       {`${
                         persoane.find((person) => person.id === caz.person)
-                          .firstName
-                      } ${
-                        persoane.find((person) => person.id === caz.person)
                           .lastName
-                      }`}
+                      }  ${
+                        persoane.find((person) => person.id === caz.person)
+                          .firstName
+                      } `}
                     </>
                   ) : (
-                    "STERS din BAZA DE DATE !"
+                    "STERS din EVIDENTA !"
                   )}
                 </td>
 
                 <td>{formatDate(caz.startDate)}</td>
                 <td>{formatDate(caz.endDate)}</td>
                 <td>{caz.details}</td>
-                <td>{calculateAge(caz.person.birthDate)}</td>
                 <td>
                   <FaRegEdit
                     style={{ cursor: "pointer" }}
                     onClick={() => editar(caz)}
                   />
-                </td>
-                <td>
                   <FaTrash
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", marginLeft: "15px" }}
                     onClick={(event) => showDeleteModal(caz.id, event)}
                   />
                 </td>
@@ -258,7 +256,14 @@ const Speciale = ({ persoane }) => {
               <Form.Control
                 aria-label="Small"
                 aria-describedby="inputGroup-sizing-sm"
-                value={caseToEdit?.person.firstName}
+                value={
+                  persoane &&
+                  caseToEdit &&
+                  persoane.find((person) => person.id === caseToEdit.person)
+                    ? persoane.find((person) => person.id === caseToEdit.person)
+                        .lastName
+                    : ""
+                }
                 disabled
               />
               <InputGroup.Text id="inputGroup-sizing-sm">
@@ -268,7 +273,14 @@ const Speciale = ({ persoane }) => {
               <Form.Control
                 aria-label="Small"
                 aria-describedby="inputGroup-sizing-sm"
-                value={caseToEdit?.person.lastName}
+                value={
+                  persoane &&
+                  caseToEdit &&
+                  persoane.find((person) => person.id === caseToEdit.person)
+                    ? persoane.find((person) => person.id === caseToEdit.person)
+                        .firstName
+                    : ""
+                }
                 disabled
               />
             </InputGroup>
@@ -308,7 +320,9 @@ const Speciale = ({ persoane }) => {
             <Form.Control
               aria-label="Small"
               as={DatePicker}
-              selected={dataRezolvarii ? new Date(dataRezolvarii) : null}
+              selected={
+                caseToEdit?.endDate ? caseToEdit?.endDate.toDate() : null
+              }
               onChange={(date) => setDataRezolvarii(date)}
               peekNextMonth
               maxDate={new Date()}

@@ -20,6 +20,7 @@ import { firestore } from "../../firebase-config";
 import AddPerson from "../Persoane/AddPerson";
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
+import Confirmation from "../../Confirmation";
 
 const Familie = ({ data }) => {
   const [pereche, setPereche] = useState("");
@@ -291,6 +292,17 @@ const Familie = ({ data }) => {
     }
   };
 
+  function deletePerson(id) {
+    removeChild(id);
+
+    setIdToDelete(null);
+  }
+
+  const showDeleteModal = (personId, ev) => {
+    setIdToDelete(personId);
+    ev.stopPropagation();
+  };
+
   const removeChild = async (childId) => {
     const currentPersonRef = doc(firestore, "persoane", currentPersonId);
     const currentPersonSnapshot = await getDoc(currentPersonRef);
@@ -381,7 +393,7 @@ const Familie = ({ data }) => {
         </Row>
       </Card>
       <Card>
-        <h5>Set Parents for Person</h5>
+        <h5>PARINTI</h5>
         <Row>
           <Col>
             <InputGroup size="sm" className="mb-3">
@@ -410,14 +422,14 @@ const Familie = ({ data }) => {
             </InputGroup>
           </Col>
         </Row>
-        <h5>Children</h5>
+        <h5>COPII</h5>
         <Table striped bordered hover size="sm">
           <thead>
             <tr>
               <th>#</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Actions</th>
+              <th>Prenume</th>
+              <th>Nume</th>
+              <th>Actiuni</th>
             </tr>
           </thead>
           <tbody>
@@ -430,9 +442,9 @@ const Familie = ({ data }) => {
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={() => removeChild(child.id)}
+                    onClick={() => showDeleteModal(child.id)}
                   >
-                    Remove
+                    Sterge
                   </Button>
                 </td>
               </tr>
@@ -440,6 +452,13 @@ const Familie = ({ data }) => {
           </tbody>
         </Table>
       </Card>
+      <Confirmation
+        showModal={idToDelete != null}
+        id={idToDelete}
+        confirmModal={(id) => deletePerson(id)}
+        message="Esti sigur ca vrei sa stergi copilul din baza de date ?"
+        hideModal={() => setIdToDelete(null)}
+      />
     </Container>
   );
 };

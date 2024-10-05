@@ -148,8 +148,8 @@ const General = ({ dataUpdated, data }) => {
                 <Form.Control
                   aria-label="Small"
                   aria-describedby="inputGroup-sizing-sm"
-                  onChange={(event) => setNume(event.target.value)}
-                  value={nume}
+                  onChange={(event) => setPrenume(event.target.value)}
+                  value={prenume}
                 />
               </InputGroup>
             </Col>
@@ -161,8 +161,8 @@ const General = ({ dataUpdated, data }) => {
                 <Form.Control
                   aria-label="Small"
                   aria-describedby="inputGroup-sizing-sm"
-                  value={prenume}
-                  onChange={(event) => setPrenume(event.target.value)}
+                  value={nume}
+                  onChange={(event) => setNume(event.target.value)}
                 />
               </InputGroup>
             </Col>

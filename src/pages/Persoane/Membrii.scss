@@ -1,27 +1,38 @@
 .page-membrii {
-    background-color: rgba(211, 211, 211, 0.836);
+  background-color: rgba(211, 211, 211, 0.836);
 
-    .age-input {
-        max-width: 35px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
+  .age-input {
+    max-width: 35px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
-    .search-phone {
-        max-width: 100px;
-    }
+  .search-phone {
+    max-width: 100px;
+  }
 
-    .search-input {
-        max-width: 130px;
-    }
+  .search-input {
+    max-width: 130px;
+  }
 
-    .barra-buttons {
-        display: flex;
-        justify-content: space-between;
-    }
+  .barra-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .header-lista {
-        max-width: 140px;
-    }
+  .header-lista {
+    max-width: 140px;
+  }
+  .inputs-list-members {
+    position: sticky;
+    top: 30px;
+    background-color: #ccc;
+  }
+  .head-list-membri {
+    position: sticky;
+    top: 0px;
+    max-height: 70px;
+    background-color: rgb(129, 143, 143);
+  }
 }

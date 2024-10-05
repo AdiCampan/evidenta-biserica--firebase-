@@ -158,8 +158,8 @@ function Boteze({ persoane }) {
                       onClick={() => goToPerson(p.id)}
                     >
                       <td>{index + 1}</td>
-                      <td>{p.firstName}</td>
                       <td>{p.lastName}</td>
+                      <td>{p.firstName}</td>
                       <td>{formatDate(p.birthDate)}</td>
                       <td>{calculateAge(p.birthDate)}</td>
                       <td>{p.sex ? "M" : "F"}</td>

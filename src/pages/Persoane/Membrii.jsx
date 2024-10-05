@@ -19,6 +19,7 @@ import {
 import "./Membrii.scss";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
+import ScrollButton from "../../ScrollButton";
 
 function Membrii() {
   // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
@@ -86,7 +87,7 @@ function Membrii() {
       <br />
       <Table striped bordered hover size="sm">
         <thead>
-          <tr>
+          <tr className="head-list-membri">
             <th>#</th>
             <th className="header-lista">Nume</th>
             <th className="header-lista">Prenume</th>
@@ -100,8 +101,16 @@ function Membrii() {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="inputs-list-members">
             <td></td>
+            <td>
+              <input
+                className="search-input"
+                type="text"
+                value={lastNameFilter}
+                onChange={(e) => setLastNameFilter(e.target.value)}
+              />
+            </td>
             <td>
               <input
                 className="search-input"
@@ -111,14 +120,7 @@ function Membrii() {
                 onChange={(e) => setFirstNameFilter(e.target.value)}
               />
             </td>
-            <td>
-              <input
-                className="search-input"
-                type="text"
-                value={lastNameFilter}
-                onChange={(e) => setLastNameFilter(e.target.value)}
-              />
-            </td>
+
             <td>
               {/* <input
                                 className='search-input'
@@ -164,8 +166,8 @@ function Membrii() {
                   onClick={() => goToPerson(p.id)}
                 >
                   <td>{index + 1}</td>
-                  <td>{p["firstName"]}</td>
                   <td>{p.lastName}</td>
+                  <td>{p["firstName"]}</td>
                   <td>{formatDate(p.memberDate)}</td>
                   <td>{formatDate(p.baptiseDate)}</td>
                   <td>{p.baptisePlace}</td>
@@ -186,6 +188,7 @@ function Membrii() {
             : null}
         </tbody>
       </Table>
+      <ScrollButton />
     </div>
   );
 }

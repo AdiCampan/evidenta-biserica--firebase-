@@ -54,8 +54,8 @@ function AddPerson({ label }) {
 
   const addData = () => {
     const newPerson = {
-      firstName: nume,
-      lastName: prenume,
+      firstName: prenume,
+      lastName: nume,
       // address: adresa,
       // telefon: telefon,
       // email: email,

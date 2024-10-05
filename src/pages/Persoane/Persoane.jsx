@@ -281,9 +281,7 @@ function Persoane() {
     <div className="page-persons">
       <div className="lista_persoane">
         <div className="barra-buttons">
-          <AddPerson />
-        </div>
-        <div>
+          <AddPerson />{" "}
           <Form.Check
             inline
             label="Botezati"
@@ -300,8 +298,6 @@ function Persoane() {
             value={notBabtisedOnly}
             onChange={(e) => setNotBaptisedOnly(e.target.checked)}
           />
-        </div>
-        <div>
           <Form.Check
             inline
             label="Dusi la Binecuvantare"
@@ -318,8 +314,6 @@ function Persoane() {
             value={notBlessedOnly}
             onChange={(e) => setNotBlessedOnly(e.target.checked)}
           />
-        </div>
-        <div>
           <Form.Check
             inline
             label="Membrii"
@@ -337,19 +331,22 @@ function Persoane() {
             onChange={(e) => setNotMembersOnly(e.target.checked)}
           />
         </div>
+        <div></div>
+        <div></div>
+        <div></div>
 
         <Table striped bordered hover size="sm">
           <thead className="head-list">
             <tr>
               <th>#</th>
               <th
-                onClick={() => sorting("firstName")}
+                onClick={() => sorting("lastName")}
                 style={{ cursor: "pointer" }}
               >
                 Nume
               </th>
               <th
-                onClick={() => sorting("lastName")}
+                onClick={() => sorting("firstName")}
                 style={{ cursor: "pointer" }}
               >
                 Prenume
@@ -375,18 +372,18 @@ function Persoane() {
               <td>
                 <input
                   className="search-input"
-                  placeholder="Filtreaza"
                   type="text"
-                  value={firstNameFilter}
-                  onChange={(e) => setFirstNameFilter(e.target.value)}
+                  value={lastNameFilter}
+                  onChange={(e) => setLastNameFilter(e.target.value)}
                 />
               </td>
               <td>
                 <input
                   className="search-input"
+                  placeholder="Filtreaza"
                   type="text"
-                  value={lastNameFilter}
-                  onChange={(e) => setLastNameFilter(e.target.value)}
+                  value={firstNameFilter}
+                  onChange={(e) => setFirstNameFilter(e.target.value)}
                 />
               </td>
               <td>
@@ -481,8 +478,8 @@ function Persoane() {
                       onClick={() => goToPerson(p.id)}
                     >
                       <td>{index + 1}</td>
-                      <td>{p["firstName"]}</td>
                       <td>{p.lastName}</td>
+                      <td>{p["firstName"]}</td>
                       <td>{p.address}</td>
                       <td>{p.mobilePhone}</td>
                       <td>{calculateAge(p.birthDate)}</td>
