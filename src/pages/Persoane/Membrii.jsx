@@ -82,7 +82,6 @@ function Membrii() {
 
   return (
     <div className="page-membrii">
-      Lista cu Membrii Bisericii
       <br />
       <br />
       <Table striped bordered hover size="sm">

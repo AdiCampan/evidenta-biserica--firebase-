@@ -13,6 +13,20 @@ function Grafice() {
   const [persoane, setPersoane] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
 
+  // useEffect(() => {
+  //   // Limpia la instancia anterior si existe
+  //   if (chartRef.current && chartRef.current.chartInstance) {
+  //     chartRef.current.chartInstance.destroy();
+  //   }
+
+  //   return () => {
+  //     // Destruye la instancia al desmontar
+  //     if (chartRef.current && chartRef.current.chartInstance) {
+  //       chartRef.current.chartInstance.destroy();
+  //     }
+  //   };
+  // }, []);
+
   const q = query(collection(firestore, "persoane"));
   useEffect(() => {
     onSnapshot(q, (querySnapshot) => {

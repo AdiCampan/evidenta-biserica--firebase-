@@ -158,32 +158,21 @@ const Speciale = ({ persoane }) => {
 
   return (
     <div>
-      <div style={{ display: "flex", paddingLeft: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          paddingLeft: "20px",
+          position: "sticky",
+          top: 0,
+        }}
+      >
         <Col>
           <InputGroup size="sm" className="mb-3">
             <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
           </InputGroup>
         </Col>
 
-        <Col>
-          <InputGroup className="mb-3" size="sm">
-            <DropdownButton
-              as={ButtonGroup}
-              title={
-                filter === "all"
-                  ? "Toate cazurile"
-                  : filter === "active"
-                  ? "Active"
-                  : "Rezolvate"
-              }
-              onSelect={(key) => setFilter(key)}
-            >
-              <Dropdown.Item eventKey="all">Toate cazurile</Dropdown.Item>
-              <Dropdown.Item eventKey="active"> Active</Dropdown.Item>
-              <Dropdown.Item eventKey="resolved">Rezolvate</Dropdown.Item>
-            </DropdownButton>
-          </InputGroup>
-        </Col>
+        <Col></Col>
       </div>
       <Card>
         <Table striped bordered hover size="sm">
@@ -193,7 +182,26 @@ const Speciale = ({ persoane }) => {
               <th>Nume si Prenume</th>
               <th>Data Deschiderii</th>
               <th>Data Rezolvarii</th>
-              <th>Detalii Caz Special</th>
+              <th style={{ display: "flex" }}>
+                Detalii Caz Special{" "}
+                <InputGroup className="mb-3" size="sm">
+                  <DropdownButton
+                    as={ButtonGroup}
+                    title={
+                      filter === "all"
+                        ? "Toate cazurile"
+                        : filter === "active"
+                        ? "Active"
+                        : "Rezolvate"
+                    }
+                    onSelect={(key) => setFilter(key)}
+                  >
+                    <Dropdown.Item eventKey="all">Toate cazurile</Dropdown.Item>
+                    <Dropdown.Item eventKey="active"> Active</Dropdown.Item>
+                    <Dropdown.Item eventKey="resolved">Rezolvate</Dropdown.Item>
+                  </DropdownButton>
+                </InputGroup>
+              </th>
               <th>Actiuni</th>
             </tr>
           </thead>

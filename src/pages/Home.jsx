@@ -16,6 +16,15 @@ const Home = () => {
   const [nrCopii, setNrCopii] = useState();
   const [nrMembrii, setNrMembrii] = useState([]);
 
+  // useEffect(() => {
+  //   // Esta limpieza asegura que cualquier gráfico anterior se destruye antes de volver a montar uno nuevo
+  //   return () => {
+  //     if (window.Chart.instances[0]) {
+  //       window.Chart.instances[0].destroy();
+  //     }
+  //   };
+  // }, []);
+
   const q = query(collection(firestore, "persoane"));
   useEffect(() => {
     onSnapshot(q, (querySnapshot) => {

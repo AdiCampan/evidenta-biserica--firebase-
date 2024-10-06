@@ -21,6 +21,9 @@ import { firestore } from "../../firebase-config";
 import { list } from "firebase/storage";
 
 function Boteze({ persoane }) {
+  if (!persoane || persoane.length === 0) {
+    return <div>Loading...</div>; // O un mensaje de estado inicial
+  }
   const navigate = useNavigate();
 
   const [firstNameFilter, setFirstNameFilter] = useState("");
@@ -33,7 +36,7 @@ function Boteze({ persoane }) {
   const [baptisms, setBaptisms] = useState([]);
 
   function filterMembers(members) {
-    if (persoane.length > 0) {
+    if (persoane && persoane.length > 0) {
       let filteredMembers = members;
       filteredMembers = filterByText(
         filteredMembers,
