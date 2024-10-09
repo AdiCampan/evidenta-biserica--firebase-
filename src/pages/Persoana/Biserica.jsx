@@ -61,149 +61,151 @@ const Biserica = ({ data, dataUpdated }) => {
   }, [data]);
 
   return (
-    <Row>
-      <Col>
-        <Row>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text id="inputGroup-sizing-sm">
-                Data Binecuvântării
-              </InputGroup.Text>
-              <DatePicker
-                selected={blessingDate}
-                onChange={(date) => setBlessingDate(date)}
-                peekNextMonth
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                dateFormat="dd/MM/yyyy"
-              />
-            </InputGroup>
-          </Col>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text id="inputGroup-sizing-sm">
-                Locul Binecuvântării
-              </InputGroup.Text>
-              <Form.Control
-                aria-label="Small"
-                aria-describedby="inputGroup-sizing-sm"
-                value={blessingPlace}
-                onChange={(event) => setBlessingPLace(event.target.value)}
-              />
-            </InputGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text id="inputGroup-sizing-sm">
-                Data Botezului in apa
-              </InputGroup.Text>
-              <DatePicker
-                selected={baptiseDate}
-                onChange={(date) => setBaptiseDate(date)}
-                peekNextMonth
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                dateFormat="dd/MM/yyyy"
-              />
-            </InputGroup>
-          </Col>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text id="inputGroup-sizing-sm">
-                Locul botezului in apa
-              </InputGroup.Text>
-              <Form.Control
-                aria-label="Small"
-                aria-describedby="inputGroup-sizing-sm"
-                value={baptisePlace}
-                onChange={(event) => setBaptisePlace(event.target.value)}
-              />
-            </InputGroup>
-          </Col>
-        </Row>
-        <InputGroup size="sm" className="mb-3">
-          <InputGroup.Text id="inputGroup-sizing-sm">
-            Botez efectuat de :
-          </InputGroup.Text>
-          <Form.Control
-            aria-label="Small"
-            aria-describedby="inputGroup-sizing-sm"
-            value={baptisedBy}
-            onChange={(e) => setBaptisedBy(e.target.value)}
-          />
-        </InputGroup>
-        <Row>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text id="inputGroup-sizing-sm">
-                Botezat cu Duh Sfânt
-              </InputGroup.Text>
-              <DatePicker
-                selected={dsBotezDate}
-                onChange={(date) => setDsBotezDate(date)}
-                peekNextMonth
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                dateFormat="dd/MM/yyyy"
-              />
-            </InputGroup>
-          </Col>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text id="inputGroup-sizing-sm">
-                Locul botezului cu Duh Sfant
-              </InputGroup.Text>
-              <Form.Control
-                aria-label="Small"
-                aria-describedby="inputGroup-sizing-sm"
-                value={dsBotezPlace}
-                onChange={(event) => setDsBotezPlace(event.target.value)}
-              />
-            </InputGroup>
-          </Col>
-        </Row>
-        <InputGroup size="sm" className="mb-3">
-          <InputGroup.Text id="inputGroup-sizing-sm">
-            DETALII <br />
-            Observatii
-          </InputGroup.Text>
-          <Form.Control
-            aria-label="Small"
-            aria-describedby="inputGroup-sizing-sm"
-            value={detalii}
-            onChange={(event) => setDetalii(event.target.value)}
-          />
-        </InputGroup>
-      </Col>
+    <Row style={{ width: "100%" }}>
+      <div style={{ marginLeft: "20px" }}>
+        <Col>
+          <Row>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Data Binecuvântării
+                </InputGroup.Text>
+                <DatePicker
+                  selected={blessingDate}
+                  onChange={(date) => setBlessingDate(date)}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  dateFormat="dd/MM/yyyy"
+                />
+              </InputGroup>
+            </Col>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Locul Binecuvântării
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  value={blessingPlace}
+                  onChange={(event) => setBlessingPLace(event.target.value)}
+                />
+              </InputGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Data Botezului in apa
+                </InputGroup.Text>
+                <DatePicker
+                  selected={baptiseDate}
+                  onChange={(date) => setBaptiseDate(date)}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  dateFormat="dd/MM/yyyy"
+                />
+              </InputGroup>
+            </Col>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Locul botezului in apa
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  value={baptisePlace}
+                  onChange={(event) => setBaptisePlace(event.target.value)}
+                />
+              </InputGroup>
+            </Col>
+          </Row>
+          <InputGroup size="sm" className="mb-3">
+            <InputGroup.Text id="inputGroup-sizing-sm">
+              Botez efectuat de :
+            </InputGroup.Text>
+            <Form.Control
+              aria-label="Small"
+              aria-describedby="inputGroup-sizing-sm"
+              value={baptisedBy}
+              onChange={(e) => setBaptisedBy(e.target.value)}
+            />
+          </InputGroup>
+          <Row>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Botezat cu Duh Sfânt
+                </InputGroup.Text>
+                <DatePicker
+                  selected={dsBotezDate}
+                  onChange={(date) => setDsBotezDate(date)}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  dateFormat="dd/MM/yyyy"
+                />
+              </InputGroup>
+            </Col>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Locul botezului cu Duh Sfant
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  value={dsBotezPlace}
+                  onChange={(event) => setDsBotezPlace(event.target.value)}
+                />
+              </InputGroup>
+            </Col>
+          </Row>
+          <InputGroup size="sm" className="mb-3">
+            <InputGroup.Text id="inputGroup-sizing-sm">
+              DETALII <br />
+              Observatii
+            </InputGroup.Text>
+            <Form.Control
+              aria-label="Small"
+              aria-describedby="inputGroup-sizing-sm"
+              value={detalii}
+              onChange={(event) => setDetalii(event.target.value)}
+            />
+          </InputGroup>
+        </Col>
+      </div>
     </Row>
   );
 };

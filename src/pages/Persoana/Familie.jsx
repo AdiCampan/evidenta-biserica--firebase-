@@ -327,9 +327,9 @@ const Familie = ({ data }) => {
   };
 
   return (
-    <Container>
-      <Card>
-        <Row>
+    <Container style={{ width: "93%" }}>
+      <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
+        <Row style={{ padding: "5px" }}>
           <Col>
             <InputGroup size="sm" className="mb-3">
               <InputGroup.Text>Sot/Sotie</InputGroup.Text>
@@ -347,7 +347,11 @@ const Familie = ({ data }) => {
             </InputGroup>
           </Col>
           <Col>
-            <InputGroup size="sm" className="mb-3">
+            <InputGroup
+              size="sm"
+              className="mb-3"
+              style={{ display: "flex", flexWrap: "nowrap" }}
+            >
               <InputGroup.Text>Data Serv. Civil</InputGroup.Text>
 
               <DatePicker
@@ -363,9 +367,13 @@ const Familie = ({ data }) => {
             </InputGroup>
           </Col>
         </Row>
-        <Row>
+        <Row style={{ padding: "5px" }}>
           <Col>
-            <InputGroup size="sm" className="mb-3">
+            <InputGroup
+              size="sm"
+              className="mb-3"
+              style={{ display: "flex", flexWrap: "nowrap" }}
+            >
               <InputGroup.Text>Data Serv. Religios</InputGroup.Text>
 
               <DatePicker
@@ -392,15 +400,19 @@ const Familie = ({ data }) => {
           </Col>
         </Row>
       </Card>
-      <Card>
-        <h5>PARINTI</h5>
-        <Row>
+      <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
+        <Row style={{ padding: "5px" }}>
           <Col>
+            <div style={{ marginLeft: "20px" }}>TATA</div>
             <InputGroup size="sm" className="mb-3">
               <Typeahead
                 id="father"
                 onChange={onFatherChange}
-                labelKey={(option) => `${option.firstName} ${option.lastName}`}
+                labelKey={(option) =>
+                  option.firstName && option.lastName
+                    ? `${option.firstName} ${option.lastName}`
+                    : "Numele nu e disponibil"
+                }
                 options={persoane.filter((person) => person.sex)}
                 placeholder="Select Father..."
                 selected={father ? [father] : []}
@@ -409,11 +421,16 @@ const Familie = ({ data }) => {
             </InputGroup>
           </Col>
           <Col>
+            <div style={{ marginLeft: "20px" }}>MAMA</div>
             <InputGroup size="sm" className="mb-3">
               <Typeahead
                 id="mother"
                 onChange={onMotherChange}
-                labelKey={(option) => `${option.firstName} ${option.lastName}`}
+                labelKey={(option) =>
+                  option.firstName && option.lastName
+                    ? `${option.firstName} ${option.lastName}`
+                    : "Numele nu e disponibil"
+                }
                 options={persoane.filter((person) => !person.sex)}
                 placeholder="Select Mother..."
                 selected={mother ? [mother] : []}
@@ -422,7 +439,9 @@ const Familie = ({ data }) => {
             </InputGroup>
           </Col>
         </Row>
-        <h5>COPII</h5>
+      </Card>
+      <Card style={{ backgroundColor: "#dfdfdf" }}>
+        <h5 style={{ marginLeft: "20px" }}> COPII</h5>
         <Table striped bordered hover size="sm">
           <thead>
             <tr>

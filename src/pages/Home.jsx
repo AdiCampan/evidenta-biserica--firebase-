@@ -8,8 +8,8 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../firebase-config";
 import CSVUploader from "../components/CSVUploader";
 
-const Home = () => {
-  const [persoane, setPersoane] = useState("");
+const Home = ({ persoane }) => {
+  // const [persoane, setPersoane] = useState("");
   const [totalMembri, setTotalMembri] = useState();
   const [nrBarbati, setNrBarbati] = useState();
   const [nrFemei, setNrFemei] = useState();
@@ -25,18 +25,18 @@ const Home = () => {
   //   };
   // }, []);
 
-  const q = query(collection(firestore, "persoane"));
-  useEffect(() => {
-    onSnapshot(q, (querySnapshot) => {
-      const tmpArray = [];
-      querySnapshot.forEach((doc) => {
-        const childKey = doc.id;
-        const childData = doc.data();
-        tmpArray.push({ id: childKey, ...childData });
-        setPersoane(tmpArray);
-      });
-    });
-  }, []);
+  // const q = query(collection(firestore, "persoane"));
+  // useEffect(() => {
+  //   onSnapshot(q, (querySnapshot) => {
+  //     const tmpArray = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const childKey = doc.id;
+  //       const childData = doc.data();
+  //       tmpArray.push({ id: childKey, ...childData });
+  //       setPersoane(tmpArray);
+  //     });
+  //   });
+  // }, []);
 
   const date = new Date();
 
@@ -60,9 +60,6 @@ const Home = () => {
       );
     }
   }, [persoane]);
-  console.log("barbati", nrBarbati);
-  console.log("femei", nrFemei);
-  console.log("persoane", persoane);
 
   const getYearsFromInterval = (from, to) => {
     const listOfYears = [];

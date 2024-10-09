@@ -9,38 +9,22 @@ import { Table } from "react-bootstrap";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../firebase-config";
 
-function Grafice() {
-  const [persoane, setPersoane] = useState("");
+function Grafice({ persoane }) {
+  // const [persoane, setPersoane] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
 
+  // const q = query(collection(firestore, "persoane"));
   // useEffect(() => {
-  //   // Limpia la instancia anterior si existe
-  //   if (chartRef.current && chartRef.current.chartInstance) {
-  //     chartRef.current.chartInstance.destroy();
-  //   }
-
-  //   return () => {
-  //     // Destruye la instancia al desmontar
-  //     if (chartRef.current && chartRef.current.chartInstance) {
-  //       chartRef.current.chartInstance.destroy();
-  //     }
-  //   };
+  //   onSnapshot(q, (querySnapshot) => {
+  //     const tmpArray = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const childKey = doc.id;
+  //       const childData = doc.data();
+  //       tmpArray.push({ id: childKey, ...childData });
+  //       setPersoane(tmpArray);
+  //     });
+  //   });
   // }, []);
-
-  const q = query(collection(firestore, "persoane"));
-  useEffect(() => {
-    onSnapshot(q, (querySnapshot) => {
-      const tmpArray = [];
-      querySnapshot.forEach((doc) => {
-        const childKey = doc.id;
-        const childData = doc.data();
-        tmpArray.push({ id: childKey, ...childData });
-        setPersoane(tmpArray);
-      });
-    });
-  }, []);
-
-  console.log("persoane", persoane);
 
   const [nrMembrii, setNrMembrii] = useState([]);
   const [ageFilter, setAgeFilter] = useState("18");

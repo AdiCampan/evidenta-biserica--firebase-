@@ -21,11 +21,11 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 import ScrollButton from "../../ScrollButton";
 
-function Membrii() {
+function Membrii({ persoane }) {
   // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
   const navigate = useNavigate();
 
-  const [persoane, setPersoane] = useState();
+  // const [persoane, setPersoane] = useState();
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
   const [ageFilterGreater, setAgeFilterGreater] = useState("");
@@ -34,18 +34,18 @@ function Membrii() {
   const [addressFilter, setAddressFilter] = useState("");
   const [telefonFilter, setTelefonFilter] = useState("");
 
-  const q = query(collection(firestore, "persoane"));
-  useEffect(() => {
-    onSnapshot(q, (querySnapshot) => {
-      const tmpArray = [];
-      querySnapshot.forEach((doc) => {
-        const childKey = doc.id;
-        const childData = doc.data();
-        tmpArray.push({ id: childKey, ...childData });
-        setPersoane(tmpArray);
-      });
-    });
-  }, []);
+  // const q = query(collection(firestore, "persoane"));
+  // useEffect(() => {
+  //   onSnapshot(q, (querySnapshot) => {
+  //     const tmpArray = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const childKey = doc.id;
+  //       const childData = doc.data();
+  //       tmpArray.push({ id: childKey, ...childData });
+  //       setPersoane(tmpArray);
+  //     });
+  //   });
+  // }, []);
 
   function filterMembers(members) {
     let filteredMembers = members;

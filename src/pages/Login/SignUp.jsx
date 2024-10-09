@@ -1,130 +1,119 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
-import "./Login.css";
 import { useForm } from "react-hook-form";
+import "./Login.css";
 
 const Signup = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
+    setError,
   } = useForm();
+  const navigate = useNavigate();
+  const [signUpError, setSignUpError] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Reglas de validación
   const emailValidation = {
-    required: {
-      value: true,
-      message: "Email e obligatoriu !",
-    },
+    required: "Email este obligatorie!",
     pattern: {
       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-      message: "Adresa de email nu este valida !",
-    },
-  };
-  const passwordConfirmValidation = {
-    required: {
-      value: true,
-      message: "Trebuie sa confirmi parola",
-    },
-    validate: (val) => {
-      if (watch("password") != val) {
-        return "Parolele trebuie sa fie IDENTICE !";
-      }
+      message: "Adresa de email nu este valida!",
     },
   };
 
-  const navigate = useNavigate();
+  const passwordValidation = {
+    required: "Parola este obligatorie!",
+    minLength: {
+      value: 6,
+      message: "Parola trebuie să aibă cel puțin 6 caractere.",
+    },
+  };
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
+  const passwordConfirmValidation = (value, context) => {
+    return (
+      context.getValues("password") === value ||
+      "Parolele trebuie sa fie IDENTICE!"
+    );
+  };
 
-  const [error, setError] = useState(false);
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setSignUpError("");
 
-  const onSubmit = async () => {
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user);
-        navigate("/login");
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        // ..
-      });
+    try {
+      const { email, password } = data;
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/login");
+    } catch (error) {
+      setLoading(false);
+      setSignUpError("A apărut o eroare: " + error.message);
+      setError("email", { type: "manual", message: error.message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <main className="login">
       <section>
         <div className="main-container">
-          <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <p> Inregistreaza-te cu email si parola</p>
-              <div>
-                {/* <label htmlFor="email-address">Email address</label> */}
-                <input
-                  {...register("email", emailValidation)}
-                  className="input-container"
-                  type="email"
-                  label="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Email address"
-                />
-                {errors.email && (
-                  <p className="error">{errors.email.message}</p>
-                )}
-              </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <p>Inregistreaza-te cu email si parola</p>
 
-              <div>
-                {/* <label htmlFor="password">Password</label> */}
-                <input
-                  className="input-container"
-                  type="password"
-                  label="Create password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Parola"
-                />
-              </div>
-              <div>
-                {/* <label htmlFor="password">Password</label> */}
-                <input
-                  {...register("passwordConfirm", passwordConfirmValidation)}
-                  className="input-container"
-                  type="password"
-                  label="Create password"
-                  value={password2}
-                  onChange={(e) => setPassword2(e.target.value)}
-                  required
-                  placeholder="Repeta parola"
-                />
-                {errors.passwordConfirm && (
-                  <p className="error">{errors.passwordConfirm.message}</p>
-                )}
-              </div>
+            <div>
+              <input
+                {...register("email", emailValidation)}
+                className="input-container"
+                type="email"
+                placeholder="Adresa de email"
+              />
+              {errors.email && <p className="error">{errors.email.message}</p>}
+            </div>
 
-              <div className="button-container">
-                <button className="button" type="submit">
-                  INREGISTREAZA-TE
-                </button>
-              </div>
-            </form>
+            <div>
+              <input
+                {...register("password", passwordValidation)}
+                className="input-container"
+                type="password"
+                placeholder="Parola"
+              />
+              {errors.password && (
+                <p className="error">{errors.password.message}</p>
+              )}
+            </div>
 
-            <p className="bottom-text">
-              Ai deja un cont inregistrat ?{" "}
-              <NavLink to="/login">Sign in</NavLink>
-            </p>
-          </div>
+            <div>
+              <input
+                {...register("passwordConfirm", {
+                  required: "Trebuie să confirmi parola!",
+                  validate: (value, context) =>
+                    passwordConfirmValidation(value, context),
+                })}
+                className="input-container"
+                type="password"
+                placeholder="Repeta parola"
+              />
+              {errors.passwordConfirm && (
+                <p className="error">{errors.passwordConfirm.message}</p>
+              )}
+            </div>
+
+            {signUpError && <p className="error">{signUpError}</p>}
+
+            <div className="button-container">
+              <button className="button" type="submit" disabled={loading}>
+                {loading ? "Se înregistrează..." : "INREGISTREAZA-TE"}
+              </button>
+            </div>
+          </form>
+
+          <p className="bottom-text">
+            Ai deja un cont inregistrat? <NavLink to="/login">Sign in</NavLink>
+          </p>
         </div>
       </section>
     </main>

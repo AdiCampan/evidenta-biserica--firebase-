@@ -32,6 +32,7 @@ const FILTER_LABEL = {
 };
 
 function AddTransferModal({
+  persoane,
   show,
   onAddTransfer,
   onClose,
@@ -39,7 +40,7 @@ function AddTransferModal({
   transferredPerson,
 }) {
   // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
-  const [persoane, setPersoane] = useState();
+  // const [persoane, setPersoane] = useState();
   const [filterType, setFilterType] = useState("1");
   const [showModal, setShowModal] = useState(false);
   const [person, setPerson] = useState(transferredPerson || "");
@@ -51,21 +52,21 @@ function AddTransferModal({
   // const [addTransfer] = useAddTransferMutation();
 
   //  ----------------  get list of all persons fron Firestore dataBase --------  //
-  const waitingPersons = async () => {
-    const q = query(collection(firestore, "persoane"));
+  // const waitingPersons = async () => {
+  //   const q = query(collection(firestore, "persoane"));
 
-    const querySnapshot = await getDocs(q);
-    const tmpArray = [];
-    querySnapshot.forEach((doc) => {
-      const childKey = doc.id;
-      const childData = doc.data();
-      tmpArray.push({ id: childKey, ...childData });
-      setPersoane(tmpArray);
-    });
-  };
-  useEffect(() => {
-    waitingPersons();
-  }, []);
+  //   const querySnapshot = await getDocs(q);
+  //   const tmpArray = [];
+  //   querySnapshot.forEach((doc) => {
+  //     const childKey = doc.id;
+  //     const childData = doc.data();
+  //     tmpArray.push({ id: childKey, ...childData });
+  //     setPersoane(tmpArray);
+  //   });
+  // };
+  // useEffect(() => {
+  //   waitingPersons();
+  // }, []);
 
   useEffect(() => {
     setShowModal(show);

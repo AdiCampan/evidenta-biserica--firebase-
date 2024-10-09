@@ -158,23 +158,7 @@ const Speciale = ({ persoane }) => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          paddingLeft: "20px",
-          position: "sticky",
-          top: 0,
-        }}
-      >
-        <Col>
-          <InputGroup size="sm" className="mb-3">
-            <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
-          </InputGroup>
-        </Col>
-
-        <Col></Col>
-      </div>
-      <Card>
+      <Card style={{ position: "inherit" }}>
         <Table striped bordered hover size="sm">
           <thead className="head-list">
             <tr>
@@ -183,7 +167,16 @@ const Speciale = ({ persoane }) => {
               <th>Data Deschiderii</th>
               <th>Data Rezolvarii</th>
               <th style={{ display: "flex" }}>
-                Detalii Caz Special{" "}
+                <div>Detalii Caz Special</div>
+                <InputGroup
+                  style={{
+                    width: "190px",
+                  }}
+                  size="sm"
+                  className="mb-3"
+                >
+                  <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
+                </InputGroup>
                 <InputGroup className="mb-3" size="sm">
                   <DropdownButton
                     as={ButtonGroup}
@@ -202,7 +195,7 @@ const Speciale = ({ persoane }) => {
                   </DropdownButton>
                 </InputGroup>
               </th>
-              <th>Actiuni</th>
+              <th style={{ width: "80px" }}>Actiuni</th>
             </tr>
           </thead>
           <tbody>
@@ -240,7 +233,7 @@ const Speciale = ({ persoane }) => {
                     onClick={() => editar(caz)}
                   />
                   <FaTrash
-                    style={{ cursor: "pointer", marginLeft: "15px" }}
+                    style={{ cursor: "pointer", marginLeft: "30px" }}
                     onClick={(event) => showDeleteModal(caz.id, event)}
                   />
                 </td>

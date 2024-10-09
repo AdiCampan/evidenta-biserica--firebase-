@@ -49,7 +49,7 @@ const AGE_FILTER_LABEL = {
   4: "< >",
 };
 
-function Persoane() {
+function Persoane({ persoane }) {
   const navClass = (isActive) => {
     return isActive ? "active" : "";
   };
@@ -76,39 +76,21 @@ function Persoane() {
   const [notBlessedOnly, setNotBlessedOnly] = useState(false);
   const [membersOnly, setMembersOnly] = useState(false);
   const [notMembersOnly, setNotMembersOnly] = useState(false);
-  const [persoane, setPersoane] = useState("");
-
-  // console.log("persoane", persoane);
-  // --------------  REALTIME DATA BASE -----------  //
-
-  // const waytingPersons = () => {
-  //   const personsQuery = query(ref(db, "members"));
-  //   onValue(personsQuery, (snapshot) => {
-  //     const tmpArray = [];
-
-  //     snapshot.forEach((childSnapshot) => {
-  //       const childKey = childSnapshot.key;
-  //       const childData = childSnapshot.val();
-
-  //       tmpArray.push({ id: childKey, ...childData });
-  //     });
-  //     setPersoane(tmpArray);
-  //   });
-  // };
+  // const [persoane, setPersoane] = useState("");
 
   // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
-  const q = query(collection(firestore, "persoane"));
-  useEffect(() => {
-    onSnapshot(q, (querySnapshot) => {
-      const tmpArray = [];
-      querySnapshot.forEach((doc) => {
-        const childKey = doc.id;
-        const childData = doc.data();
-        tmpArray.push({ id: childKey, ...childData });
-        setPersoane(tmpArray);
-      });
-    });
-  }, []);
+  // const q = query(collection(firestore, "persoane"));
+  // useEffect(() => {
+  //   onSnapshot(q, (querySnapshot) => {
+  //     const tmpArray = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const childKey = doc.id;
+  //       const childData = doc.data();
+  //       tmpArray.push({ id: childKey, ...childData });
+  //       setPersoane(tmpArray);
+  //     });
+  //   });
+  // }, []);
 
   // const [deleteMember] = useDelMemberMutation();
   const deleteMember = async (id) => {

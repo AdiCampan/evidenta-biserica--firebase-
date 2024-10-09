@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Home from "./pages/Home";
-import Persoane from "./pages/Persoane";
+import Persoane from "./pages/Persoane/Persoane";
 import Contributii from "./pages/Contributii";
 import LogIn from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
@@ -36,6 +36,10 @@ import {
   ArcElement,
   BarElement,
 } from "chart.js";
+import ProtectedRoute from "./ProtectedRoute"; // Importa el componente de rutas protegidas
+import { useAuth } from "./Context";
+import { AuthProvider } from "./Context";
+// import MainApp from "./MainApp"; // Separa tu lógica de rutas en un componente separado
 
 // Registro de elementos del gráfico
 ChartJS.register(
@@ -53,7 +57,9 @@ ChartJS.register(
 function App() {
   return (
     <BrowserRouter>
-      <MainApp />
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
@@ -62,6 +68,8 @@ function MainApp() {
   const [logedUser, setLogedUser] = useState();
   const [persoane, setPersoane] = useState([]);
   const location = useLocation(); // Ubicación de la ruta actual
+
+  const { currentUser } = useAuth();
 
   const q = query(collection(firestore, "persoane"));
   useEffect(() => {
@@ -184,29 +192,67 @@ function MainApp() {
       </nav>
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/grafice" element={<Grafice />} />
+        <Route path="/" element={<Home persoane={persoane} />} />
+        <Route path="/grafice" element={<Grafice persoane={persoane} />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/persoane" element={<Persoane />} />
-        <Route path="/persoane/membrii" element={<Membrii />} />
+        {/* Rutas protegidas */}
+        <Route
+          path="/persoane"
+          element={
+            <ProtectedRoute>
+              <Persoane persoane={persoane} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/persoane/membrii"
+          element={
+            <ProtectedRoute>
+              <Membrii persoane={persoane} />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/persoane/boteze"
-          element={<Boteze persoane={persoane} />}
+          element={
+            <ProtectedRoute>
+              <Boteze persoane={persoane} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/persoane/speciale"
-          element={<Speciale persoane={persoane} />}
+          element={
+            <ProtectedRoute>
+              <Speciale persoane={persoane} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/persoane/transferuri"
-          element={<Transferuri persoane={persoane} />}
+          element={
+            <ProtectedRoute>
+              <Transferuri persoane={persoane} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/persoane/familii"
-          element={<Familii persoane={persoane} />}
+          element={
+            <ProtectedRoute>
+              <Familii persoane={persoane} />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/persoane/:id" element={<Persoana />} />
+        <Route
+          path="/persoane/:id"
+          element={
+            <ProtectedRoute>
+              <Persoana persoane={persoane} />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

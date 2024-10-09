@@ -106,61 +106,83 @@ function Persoana() {
   };
 
   return (
-    <Card>
-      <Card style={{ width: "100%" }}>
-        <Card.Body style={{ display: "flex", justifyContent: "center" }}>
-          FISA PERSONALA:
-          {currentData && (
-            <Card.Title style={{ marginLeft: "20px" }}>
-              {currentData.firstName} {currentData.lastName}
-            </Card.Title>
-          )}
-        </Card.Body>
-      </Card>
-      <Tabs
-        id="controlled-tab-example"
-        activeKey={activeTab}
-        onSelect={(k) => setActiveTab(k)}
-        className="mb-3"
+    <div
+      style={{ display: "flex", justifyContent: "center", marginTop: "15px" }}
+    >
+      <div
+        style={{
+          width: "80%",
+          borderRadius: "15%",
+          backgroundColor: "#b1cdd2",
+        }}
       >
-        <Tab eventKey="general" title="General">
-          {data && <General data={data} dataUpdated={dataUpdated} />}
-        </Tab>
-        <Tab eventKey="familie" title="Familie">
-          {data && <Familie data={data} dataUpdated={dataUpdated} />}
-        </Tab>
-        <Tab eventKey="biserica" title="Biserica">
-          {data && <Biserica data={data} dataUpdated={dataUpdated} />}
-        </Tab>
-        <Tab eventKey="observatii" title="Observatii">
-          {data && <Observatii data={data} dataUpdated={dataUpdated} />}
-        </Tab>
-      </Tabs>
-      <Card>
-        <Card.Body>
-          <Form>
-            <Button
-              variant="primary"
-              type="button"
-              onClick={saveData}
-              // disabled={result.isLoading}
+        <Card
+          style={{
+            borderRadius: "15%",
+          }}
+        >
+          <Card style={{ width: "100%" }}>
+            <Card.Body
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "#b1cdd2",
+              }}
             >
-              Salveaza
-            </Button>
+              FISA PERSONALA:
+              {currentData && (
+                <Card.Title style={{ marginLeft: "20px" }}>
+                  {currentData.firstName} {currentData.lastName}
+                </Card.Title>
+              )}
+            </Card.Body>
+          </Card>
+          <Tabs
+            id="controlled-tab-example"
+            activeKey={activeTab}
+            onSelect={(k) => setActiveTab(k)}
+            className="mb-3"
+          >
+            <Tab eventKey="general" title="GENERAL">
+              {data && <General data={data} dataUpdated={dataUpdated} />}
+            </Tab>
+            <Tab eventKey="familie" title="FAMILIE">
+              {data && <Familie data={data} dataUpdated={dataUpdated} />}
+            </Tab>
+            <Tab eventKey="biserica" title="BISERICA">
+              {data && <Biserica data={data} dataUpdated={dataUpdated} />}
+            </Tab>
+            <Tab eventKey="observatii" title="OBSERVATII">
+              {data && <Observatii data={data} dataUpdated={dataUpdated} />}
+            </Tab>
+          </Tabs>
+          <Card>
+            <Card.Body>
+              <Form style={{ marginLeft: "25px" }}>
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={saveData}
+                  // disabled={result.isLoading}
+                >
+                  Salveaza
+                </Button>
 
-            <DownloadLink
-              label="Descarca link Persoana"
-              filename={`/persoane/${id}`}
-              exportFile={() => `/persoane/${id}`}
-            />
-            <Link to={`/persoane/${id}`} target="_blank" download>
-              Download
-            </Link>
-            {/* <a href="https://google.com" download>Download link</a> */}
-          </Form>
-        </Card.Body>
-      </Card>
-    </Card>
+                {/* <DownloadLink
+                  label="Descarca link Persoana"
+                  filename={`/persoane/${id}`}
+                  exportFile={() => `/persoane/${id}`}
+                /> */}
+                {/* <Link to={`/persoane/${id}`} target="_blank" download>
+                  Download
+                </Link> */}
+                {/* <a href="https://google.com" download>Download link</a> */}
+              </Form>
+            </Card.Body>
+          </Card>
+        </Card>
+      </div>
+    </div>
   );
 }
 

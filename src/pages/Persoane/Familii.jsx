@@ -8,8 +8,8 @@ import Button from "react-bootstrap/Button";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 
-const Familii = () => {
-  const [persoane, setPersoane] = useState();
+const Familii = ({ persoane }) => {
+  // const [persoane, setPersoane] = useState();
   const [childrens, setChildrens] = useState([]);
 
   const [lastNameFilter, setLastNameFilter] = useState("");
@@ -19,18 +19,18 @@ const Familii = () => {
   const handleClose = () => setShowModal(false);
 
   // -------------- LISTEN "persons" in REAL TIME  in FIRESTORE -------------------- //
-  useEffect(() => {
-    const q = query(collection(firestore, "persoane"));
-    onSnapshot(q, (querySnapshot) => {
-      const tmpArray = [];
-      querySnapshot.forEach((doc) => {
-        const childKey = doc.id;
-        const childData = doc.data();
-        tmpArray.push({ id: childKey, ...childData });
-        setPersoane(tmpArray);
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   const q = query(collection(firestore, "persoane"));
+  //   onSnapshot(q, (querySnapshot) => {
+  //     const tmpArray = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const childKey = doc.id;
+  //       const childData = doc.data();
+  //       tmpArray.push({ id: childKey, ...childData });
+  //       setPersoane(tmpArray);
+  //     });
+  //   });
+  // }, []);
 
   function filterMembers(members) {
     if (persoane?.length > 0) {

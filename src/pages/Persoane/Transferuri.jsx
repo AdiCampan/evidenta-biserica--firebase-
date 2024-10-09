@@ -22,6 +22,7 @@ import {
 import { firestore } from "../../firebase-config";
 import Confirmation from "../../Confirmation";
 import ScrollButton from "../../ScrollButton";
+import { GoPlusCircle } from "react-icons/go";
 
 const Transferuri = ({ persoane }) => {
   const [transfers, setTransfers] = useState([]);
@@ -66,20 +67,24 @@ const Transferuri = ({ persoane }) => {
 
   return (
     <>
-      <Col>
-        <InputGroup size="sm" className="mb-3">
-          <Button variant="primary" onClick={() => setShowModal(true)}>
-            Adauga transfer
-          </Button>
-        </InputGroup>
-      </Col>
-      <Card>
+      <Card style={{ position: "inherit" }}>
         <Table striped bordered hover size="sm">
           <thead className="head-list">
             <tr>
               <th>#</th>
               <th>Nume si Prenume</th>
-              <th>Transferat</th>
+              <th>
+                Transferat
+                <Button
+                  variant="primary"
+                  style={{
+                    marginLeft: "40px",
+                  }}
+                  onClick={() => setShowModal(true)}
+                >
+                  Adauga un TRANSFER
+                </Button>
+              </th>
               <th>Data transferului</th>
               <th>Act de transfer</th>
               <th>Detalii</th>
@@ -137,7 +142,23 @@ const Transferuri = ({ persoane }) => {
           </>
         </Table>
         <ScrollButton />
+        {/* <Button>
+          <GoPlusCircle
+            style={{
+              position: "fixed",
+              width: "20%",
+              right: "50%",
+              bottom: "590px",
+              height: "50px",
+              fontSize: "3rem",
+              zIndex: "1",
+              cursor: "pointer",
+              color: "#0060ac",
+            }}
+          />
+        </Button> */}
         <AddTransferModal
+          persoane={persoane}
           onAddTransfer={addTransfer}
           show={showModal}
           onClose={() => setShowModal(false)}

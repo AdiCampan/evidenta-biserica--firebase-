@@ -33,7 +33,8 @@ function Boteze({ persoane }) {
   const [addressFilter, setAddressFilter] = useState("");
   const [telefonFilter, setTelefonFilter] = useState("");
   const [listByDateBaptized, setListByDateBaptized] = useState([]);
-  const [baptisms, setBaptisms] = useState([]);
+  const [baptisedBy, setBaptisedBy] = useState();
+  const [baptisedDate, setBaptisedDate] = useState();
 
   function filterMembers(members) {
     if (persoane && persoane.length > 0) {
@@ -97,15 +98,18 @@ function Boteze({ persoane }) {
     navigate(`/persoane/${id}`);
   };
 
-  const listBaptized = (dataBotez) => {
+  const listBaptized = (dataBotez, baptisedBy) => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     let listaBotezati = persoane.filter(
       (data) => data?.baptiseDate?.seconds === dataBotez.seconds
     );
-    console.log(listaBotezati);
-
+    setBaptisedDate(dataBotez);
+    setBaptisedBy(baptisedBy);
     setListByDateBaptized(listaBotezati);
   };
-
   // console.log("lista Botezati", listByDateBaptized);
 
   return (
@@ -127,7 +131,7 @@ function Boteze({ persoane }) {
                     <tr
                       key={p?.id}
                       style={{ cursor: "pointer" }}
-                      onClick={() => listBaptized(p?.baptiseDate)}
+                      onClick={() => listBaptized(p?.baptiseDate, p.baptisedBy)}
                     >
                       <td>{index + 1}</td>
                       <td>{formatDate(p?.baptiseDate)}</td>
@@ -139,7 +143,10 @@ function Boteze({ persoane }) {
           </Table>
         </div>
         <div className="botezati">
-          <h2 className="title">BOTEZATI</h2>
+          <h4 className="title"> LISTA BOTEZATI</h4>
+          {baptisedDate && formatDate(baptisedDate)}
+          {baptisedBy && <div>{`Slujitori:${baptisedBy}`} </div>}
+
           <Table striped bordered hover size="sm">
             <thead>
               <tr>

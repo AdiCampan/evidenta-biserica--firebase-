@@ -34,9 +34,6 @@ const CSVUploader = () => {
     });
   };
 
-  console.log("specialCases", specialCases);
-  console.log("newSpecialCaseas", newSpecialCases);
-
   // Función para combinar los datos de los diferentes arrays
   const mergeData = () => {
     const combined = persons.map((person) => {
@@ -246,7 +243,6 @@ const CSVUploader = () => {
       setShortTransfers(shortT);
       console.log("short Persons", shortPersons);
     }
-    console.log("TransformedPersons", transformedPersons);
     shortPersons.forEach(async (person) => {
       await setDoc(doc(firestore, "persoane", person.id), person);
     });

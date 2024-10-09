@@ -137,7 +137,7 @@ const General = ({ dataUpdated, data }) => {
 
   return (
     <Container>
-      <Row>
+      <Row style={{ marginLeft: "20px" }}>
         <Col>
           <Row>
             <Col>

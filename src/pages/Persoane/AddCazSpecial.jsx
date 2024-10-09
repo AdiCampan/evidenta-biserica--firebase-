@@ -78,13 +78,13 @@ function AddCazSpecial({ onAddCaz, persoane }) {
                     `${option.firstName} ${option.lastName}`
                   }
                   options={
-                    (persoane.length > 0 &&
+                    (persoane?.length > 0 &&
                       persoane?.filter((member) => member.memberDate)) ||
                     []
                   }
                   placeholder="Alege o persoana..."
                   selected={
-                    (persoane.length > 0 &&
+                    (persoane?.length > 0 &&
                       persoane?.filter((p) => p.id === person?.id)) ||
                     []
                   }

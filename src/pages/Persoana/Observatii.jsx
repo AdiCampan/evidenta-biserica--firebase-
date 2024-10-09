@@ -14,7 +14,7 @@ function Observatii({ data, dataUpdated }) {
   }, [data]);
 
   return (
-    <div>
+    <div style={{ paddingLeft: "30px" }}>
       <h3>Observatii</h3>
       <textarea
         className="observatii"
