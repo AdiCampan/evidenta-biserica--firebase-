@@ -1,8 +1,15 @@
 .CSVcontainer {
-  background-color: rgb(70, 126, 230);
+  background-color: rgb(250, 250, 250);
   display: flex;
-  margin-top: 5px;
+  margin-top: 15px;
 }
 .imputCSV {
-  margin-right: 50px;
+  // margin-right: 50px;
+  margin-left: 10px;
+}
+.csv-main {
+  border-radius: 15px;
+  padding: 15px;
+  width: 70%;
+  background-color: rgb(226, 224, 255);
 }

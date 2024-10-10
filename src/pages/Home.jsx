@@ -3,10 +3,12 @@ import "./Home.css";
 import { Line, Bar, Pie } from "react-chartjs-2";
 import { useGetMembersQuery } from "../services/members";
 import { calculateAge, formatDate } from "../utils";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../firebase-config";
 import CSVUploader from "../components/CSVUploader";
+import { useNavigate } from "react-router-dom";
+import ExternalForm from "../components/ExternalForm";
 
 const Home = ({ persoane }) => {
   // const [persoane, setPersoane] = useState("");
@@ -14,16 +16,10 @@ const Home = ({ persoane }) => {
   const [nrBarbati, setNrBarbati] = useState();
   const [nrFemei, setNrFemei] = useState();
   const [nrCopii, setNrCopii] = useState();
+  const [showUploader, setShowUploader] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [nrMembrii, setNrMembrii] = useState([]);
-
-  // useEffect(() => {
-  //   // Esta limpieza asegura que cualquier gráfico anterior se destruye antes de volver a montar uno nuevo
-  //   return () => {
-  //     if (window.Chart.instances[0]) {
-  //       window.Chart.instances[0].destroy();
-  //     }
-  //   };
-  // }, []);
+  const navigate = useNavigate();
 
   // const q = query(collection(firestore, "persoane"));
   // useEffect(() => {
@@ -99,6 +95,16 @@ const Home = ({ persoane }) => {
     }
   };
 
+  const uploadBackups = () => {
+    setShowUploader(true);
+  };
+  const handleShowForm = () => {
+    setShowForm(true);
+  };
+  const handleCloseForm = () => {
+    setShowForm(false);
+  };
+
   return (
     <>
       <div className="home_page">
@@ -109,15 +115,18 @@ const Home = ({ persoane }) => {
         <div className="info-bar">
           <h3>Biserica Eben-Ezer Castellon</h3>
           <p>
-            Adresa: Pg Ind Acceso Sur, Calle Francia Nave 3C, 12006 Castellón de
-            la Plana
+            Adresa: Camí de la Donació, 89, 12004 Castellón de la Plana,
+            Castellón
           </p>
           <br />
           <p>Tel./Fax: 964 37 24 00</p>
           <br />
-          <Button variant="primary">Cere Fișa membru</Button>
+          <Button onClick={uploadBackups}>UPLOAD BACKUP</Button>
+          <Button onClick={handleShowForm}>FORMULAR MEMBRU</Button>
+
           <p>biserica_ebenezer@yahoo.es</p>
         </div>
+
         <div className="chart-container">
           {persoane && (
             <Pie
@@ -164,8 +173,19 @@ const Home = ({ persoane }) => {
             }}
           />
         </div>
+        {showUploader && <CSVUploader />}
       </div>
-      <CSVUploader />
+
+      <Modal style={{ width: "800px" }} show={showForm} onHide={showForm}>
+        <Modal.Header
+          onHide={handleCloseForm}
+          // closeButton
+          style={{ display: "flex", width: "100%" }}
+          // style={{ display: "flex", justifyContent: "center" }}
+        ></Modal.Header>
+        <ExternalForm onCloseModal={handleCloseForm} show={showForm} />
+      </Modal>
+
       <footer className="footer">copyright © Media EBEN-EZER 2022 </footer>
     </>
   );

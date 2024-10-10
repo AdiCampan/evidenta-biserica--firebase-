@@ -88,7 +88,7 @@ const FileUploader = ({
         {/* Vista previa de la imagen */}
         <img className="image-preview" src={imagePreview} alt="Vista previa" />
         <Button onClick={handleClick} variant="success">
-          Subir Nueva Imagen
+          IMAGINE NOUA
         </Button>
       </div>
       {fileError && <Alert variant="danger">{fileError}</Alert>}

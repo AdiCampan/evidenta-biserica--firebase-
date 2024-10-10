@@ -16,6 +16,7 @@ import {
   useDelMemberMutation,
 } from "../../services/members";
 import Confirmation from "../../Confirmation";
+import ExternalFormsReview from "../../components/ExternalFormsReview";
 import {
   calculateAge,
   formatDate,
@@ -263,7 +264,8 @@ function Persoane({ persoane }) {
     <div className="page-persons">
       <div className="lista_persoane">
         <div className="barra-buttons">
-          <AddPerson />{" "}
+          <AddPerson />
+          <ExternalFormsReview />
           <Form.Check
             inline
             label="Botezati"

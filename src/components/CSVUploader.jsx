@@ -390,7 +390,7 @@ const CSVUploader = () => {
   };
 
   return (
-    <div>
+    <div className="csv-main">
       <div className="CSVcontainer">
         <h5>Subir 'persoane' CSV</h5>
         <input
@@ -403,6 +403,7 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'adrese' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setAddresses)}
@@ -411,6 +412,7 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'Binecuvantat de:' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setBlessedBy)}
@@ -419,6 +421,7 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'botezat cu DS ' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setBaptisedByHS)}
@@ -427,6 +430,7 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'botezat de:' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setBaptisedBy)}
@@ -435,6 +439,7 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'members' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setMembers)}
@@ -443,6 +448,7 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'CASATORII' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setWeddings)}
@@ -451,17 +457,19 @@ const CSVUploader = () => {
       <div className="CSVcontainer">
         <h6>Subir 'TRANSFERURI' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setTransfers)}
         />
-        <button onClick={uploadTransfersToFirestore}>
+        <button className="imputCSV" onClick={uploadTransfersToFirestore}>
           Subir TRANSFERURI Firestore
         </button>
       </div>
       <div className="CSVcontainer">
-        <h6>Subir 'Special Cases' CSV</h6>
+        <h6 className="imputCSV">Subir 'Special Cases' CSV</h6>
         <input
+          className="imputCSV"
           type="file"
           accept=".csv"
           onChange={(e) => handleCSV(e, setSpecialCases)}
