@@ -33,22 +33,11 @@ function AddPerson({ label }) {
     setShow(false);
   };
 
-  // REALTIME DATA BASE //
-  // const addMember = (newMember) => {
-  //   const membersRef = ref(db, `members/${crypto.randomUUID()}/`);
-  //   console.log(db);
-  //   set(membersRef, newMember)
-  //     .then((data) => console.log("member added", data))
-  //     .catch((err) => console.error(err));
-  //   setShow(false);
-  // };
-
   const handleClose = () => setShow(false);
 
   useEffect(() => {
     if (result.isSuccess) {
       setShow(false);
-      // onAddChild(result.data_id);
     }
   }, [result]);
 

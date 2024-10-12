@@ -21,11 +21,11 @@ import AddPerson from "../Persoane/AddPerson";
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
 import Confirmation from "../../Confirmation";
+import { calculateAge } from "../../utils";
 
-const Familie = ({ data }) => {
+const Familie = ({ data, persoane }) => {
   const [pereche, setPereche] = useState("");
   const [biserica, setBiserica] = useState("");
-  const [persoane, setPersoane] = useState([]);
   const [idToDelete, setIdToDelete] = useState(null);
   const [childList, setChildList] = useState([]);
   const [father, setFather] = useState(null);
@@ -34,19 +34,6 @@ const Familie = ({ data }) => {
   const [currentPersonId, setCurrentPersonId] = useState("");
   const [servCivil, setServCivil] = useState(null);
   const [servRel, setServRel] = useState(null);
-
-  useEffect(() => {
-    const fetchPersons = async () => {
-      const q = collection(firestore, "persoane");
-      const querySnapshot = await getDocs(q);
-      const personsList = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setPersoane(personsList);
-    };
-    fetchPersons();
-  }, []);
 
   useEffect(() => {
     if (data && data[1]) {
@@ -97,7 +84,6 @@ const Familie = ({ data }) => {
     setFather(fatherRelation ? { id: fatherRelation.person } : null);
     setMother(motherRelation ? { id: motherRelation.person } : null);
   }, [data]);
-
   // Actualizar relaciones en Firestore al cambiar la pareja
   useEffect(() => {
     if (pereche) {
@@ -328,156 +314,166 @@ const Familie = ({ data }) => {
 
   return (
     <Container style={{ width: "93%" }}>
-      <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
-        <Row style={{ padding: "5px" }}>
-          <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Sot/Sotie</InputGroup.Text>
-              <Typeahead
-                id="pereche"
-                onChange={onPersonChange}
-                labelKey={(option) => `${option.firstName} ${option.lastName}`}
-                options={persoane.filter(
-                  (person) => person.sex !== data[0].sex
-                )}
-                placeholder="Alege sot/sotie..."
-                selected={persoane.filter((person) => person.id === pereche)}
-              />
-              <AddPerson label="+" />
-            </InputGroup>
-          </Col>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text>Data Serv. Civil</InputGroup.Text>
+      {persoane && (
+        <>
+          <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
+            <Row style={{ padding: "5px" }}>
+              <Col>
+                <InputGroup size="sm" className="mb-3">
+                  <InputGroup.Text>Sot/Sotie</InputGroup.Text>
+                  <Typeahead
+                    id="pereche"
+                    onChange={onPersonChange}
+                    labelKey={(option) =>
+                      `${option.firstName} ${option.lastName}`
+                    }
+                    options={persoane?.filter(
+                      (person) => person.sex !== data[0].sex
+                    )}
+                    placeholder="Alege sot/sotie..."
+                    selected={persoane?.filter(
+                      (person) => person.id === pereche
+                    )}
+                  />
+                  <AddPerson label="+" />
+                </InputGroup>
+              </Col>
+              <Col>
+                <InputGroup
+                  size="sm"
+                  className="mb-3"
+                  style={{ display: "flex", flexWrap: "nowrap" }}
+                >
+                  <InputGroup.Text>Data Serv. Civil</InputGroup.Text>
 
-              <DatePicker
-                selected={servCivil}
-                onChange={handleCivilDateChange}
-                peekNextMonth
-                maxDate={new Date()}
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                dateFormat="dd/MM/yyyy"
-              />
-            </InputGroup>
-          </Col>
-        </Row>
-        <Row style={{ padding: "5px" }}>
-          <Col>
-            <InputGroup
-              size="sm"
-              className="mb-3"
-              style={{ display: "flex", flexWrap: "nowrap" }}
-            >
-              <InputGroup.Text>Data Serv. Religios</InputGroup.Text>
+                  <DatePicker
+                    selected={servCivil}
+                    onChange={handleCivilDateChange}
+                    peekNextMonth
+                    maxDate={new Date()}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+            <Row style={{ padding: "5px" }}>
+              <Col>
+                <InputGroup
+                  size="sm"
+                  className="mb-3"
+                  style={{ display: "flex", flexWrap: "nowrap" }}
+                >
+                  <InputGroup.Text>Data Serv. Religios</InputGroup.Text>
 
-              <DatePicker
-                selected={servRel}
-                onChange={handleRelDateChange}
-                peekNextMonth
-                maxDate={new Date()}
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                dateFormat="dd/MM/yyyy"
-              />
-            </InputGroup>
-          </Col>
-          <Col>
-            <InputGroup size="sm" className="mb-3">
-              <InputGroup.Text>Biserica</InputGroup.Text>
-              <Form.Control
-                value={biserica}
-                onChange={(e) => setBiserica(e.target.value)}
-                placeholder="Introdu biserica"
-              />
-            </InputGroup>
-          </Col>
-        </Row>
-      </Card>
-      <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
-        <Row style={{ padding: "5px" }}>
-          <Col>
-            <div style={{ marginLeft: "20px" }}>TATA</div>
-            <InputGroup size="sm" className="mb-3">
-              <Typeahead
-                id="father"
-                onChange={onFatherChange}
-                labelKey={(option) =>
-                  option.firstName && option.lastName
-                    ? `${option.firstName} ${option.lastName}`
-                    : "Numele nu e disponibil"
-                }
-                options={persoane.filter((person) => person.sex)}
-                placeholder="Select Father..."
-                selected={father ? [father] : []}
-              />
-              <AddPerson label="+" />
-            </InputGroup>
-          </Col>
-          <Col>
-            <div style={{ marginLeft: "20px" }}>MAMA</div>
-            <InputGroup size="sm" className="mb-3">
-              <Typeahead
-                id="mother"
-                onChange={onMotherChange}
-                labelKey={(option) =>
-                  option.firstName && option.lastName
-                    ? `${option.firstName} ${option.lastName}`
-                    : "Numele nu e disponibil"
-                }
-                options={persoane.filter((person) => !person.sex)}
-                placeholder="Select Mother..."
-                selected={mother ? [mother] : []}
-              />
-              <AddPerson label="+" />
-            </InputGroup>
-          </Col>
-        </Row>
-      </Card>
-      <Card style={{ backgroundColor: "#dfdfdf" }}>
-        <h5 style={{ marginLeft: "20px" }}> COPII</h5>
-        <Table striped bordered hover size="sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Prenume</th>
-              <th>Nume</th>
-              <th>Actiuni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {children.map((child, index) => (
-              <tr key={child.id}>
-                <td>{index + 1}</td>
-                <td>{child.firstName}</td>
-                <td>{child.lastName}</td>
-                <td>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => showDeleteModal(child.id)}
-                  >
-                    Sterge
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Card>
-      <Confirmation
-        showModal={idToDelete != null}
-        id={idToDelete}
-        confirmModal={(id) => deletePerson(id)}
-        message="Esti sigur ca vrei sa stergi copilul din baza de date ?"
-        hideModal={() => setIdToDelete(null)}
-      />
+                  <DatePicker
+                    selected={servRel}
+                    onChange={handleRelDateChange}
+                    peekNextMonth
+                    maxDate={new Date()}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                </InputGroup>
+              </Col>
+              <Col>
+                <InputGroup size="sm" className="mb-3">
+                  <InputGroup.Text>Biserica</InputGroup.Text>
+                  <Form.Control
+                    value={biserica}
+                    onChange={(e) => setBiserica(e.target.value)}
+                    placeholder="Introdu biserica"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+          </Card>
+          <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
+            <Row style={{ padding: "5px" }}>
+              <Col>
+                <div style={{ marginLeft: "20px" }}>TATA</div>
+                <InputGroup size="sm" className="mb-3">
+                  <Typeahead
+                    id="father"
+                    onChange={onFatherChange}
+                    labelKey={(option) =>
+                      option.firstName && option.lastName
+                        ? `${option.firstName} ${option.lastName}`
+                        : "Numele nu e disponibil"
+                    }
+                    options={persoane?.filter((person) => person.sex)}
+                    placeholder="Select Father..."
+                    selected={father ? [father] : []}
+                  />
+                  <AddPerson label="+" />
+                </InputGroup>
+              </Col>
+              <Col>
+                <div style={{ marginLeft: "20px" }}>MAMA</div>
+                <InputGroup size="sm" className="mb-3">
+                  <Typeahead
+                    id="mother"
+                    onChange={onMotherChange}
+                    labelKey={(option) =>
+                      option.firstName && option.lastName
+                        ? `${option.firstName} ${option.lastName}`
+                        : "Numele nu e disponibil"
+                    }
+                    options={persoane?.filter((person) => !person.sex)}
+                    placeholder="Select Mother..."
+                    selected={mother ? [mother] : []}
+                  />
+                  <AddPerson label="+" />
+                </InputGroup>
+              </Col>
+            </Row>
+          </Card>
+          <Card style={{ backgroundColor: "#dfdfdf" }}>
+            <h5 style={{ marginLeft: "20px" }}> COPII</h5>
+            <Table striped bordered hover size="sm">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Prenume</th>
+                  <th>Nume</th>
+                  <th>Varsta</th>
+                  <th>Actiuni</th>
+                </tr>
+              </thead>
+              <tbody>
+                {children.map((child, index) => (
+                  <tr key={child.id}>
+                    <td>{index + 1}</td>
+                    <td>{child.firstName}</td>
+                    <td>{child.lastName}</td>
+                    <td>{calculateAge(child.birthDate)}</td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => showDeleteModal(child.id)}
+                      >
+                        Sterge
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Card>
+          <Confirmation
+            showModal={idToDelete != null}
+            id={idToDelete}
+            confirmModal={(id) => deletePerson(id)}
+            message="Esti sigur ca vrei sa stergi copilul din baza de date ?"
+            hideModal={() => setIdToDelete(null)}
+          />
+        </>
+      )}
     </Container>
   );
 };

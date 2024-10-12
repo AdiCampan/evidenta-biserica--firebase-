@@ -42,6 +42,8 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import CSVUploader from "../../components/CSVUploader";
+import { Modal } from "react-bootstrap";
 
 const AGE_FILTER_LABEL = {
   1: ">=",
@@ -77,7 +79,7 @@ function Persoane({ persoane }) {
   const [notBlessedOnly, setNotBlessedOnly] = useState(false);
   const [membersOnly, setMembersOnly] = useState(false);
   const [notMembersOnly, setNotMembersOnly] = useState(false);
-  // const [persoane, setPersoane] = useState("");
+  const [persons, setPersons] = useState("");
 
   // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
   // const q = query(collection(firestore, "persoane"));
@@ -92,6 +94,12 @@ function Persoane({ persoane }) {
   //     });
   //   });
   // }, []);
+
+  useEffect(() => {
+    if (persoane) {
+      setPersons(persoane);
+    }
+  }, []);
 
   // const [deleteMember] = useDelMemberMutation();
   const deleteMember = async (id) => {
@@ -206,7 +214,9 @@ function Persoane({ persoane }) {
   };
 
   const goToPerson = (id) => {
-    navigate(`/persoane/${id}`);
+    if (persons) {
+      navigate(`/persoane/${id}`, { state: { persons } });
+    }
   };
 
   const filterBaptize = (members) => {
@@ -265,7 +275,8 @@ function Persoane({ persoane }) {
       <div className="lista_persoane">
         <div className="barra-buttons">
           <AddPerson />
-          <ExternalFormsReview />
+          <ExternalFormsReview persoane={persoane} />
+          <CSVUploader persoane={persoane} />
           <Form.Check
             inline
             label="Botezati"
@@ -315,7 +326,7 @@ function Persoane({ persoane }) {
             onChange={(e) => setNotMembersOnly(e.target.checked)}
           />
         </div>
-        <div></div>
+
         <div></div>
         <div></div>
 

@@ -1,9 +1,8 @@
-// ExternalForm.jsx
-
 import React, { useState, useEffect } from "react";
-import { firestore } from "../firebase-config"; // Importa tu configuración de Firestore
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-
+import { firestore } from "../firebase-config";
+import { collection, addDoc } from "firebase/firestore"; // No más Timestamp
+import DatePicker from "react-datepicker"; // Importamos el DatePicker
+import "react-datepicker/dist/react-datepicker.css";
 import "./ExternalForm.scss";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 
@@ -11,16 +10,19 @@ const ExternalForm = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [show, setShow] = useState(false);
 
+  // Estado para las fechas como objetos Date
+  const [birthDate, setBirthDate] = useState(null);
+  const [baptiseDate, setBaptiseDate] = useState(null);
+  const [blessingDate, setBlessingDate] = useState(null);
+
   const [personData, setPersonData] = useState({
     firstName: "",
     lastName: "",
     address: "",
     mobilePhone: "",
-    birthDate: "",
     sex: "",
-    baptiseDate: "",
-    blessingDate: "",
     profileImage: selectedFile,
+    details: "",
   });
 
   useEffect(() => {
@@ -39,30 +41,21 @@ const ExternalForm = ({ onCloseModal }) => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     setShow(false);
     onCloseModal();
-    e.preventDefault();
 
     try {
-      // Crear un objeto con las fechas convertidas a Timestamp
-      const personDataWithTimestamp = {
+      // Crear un objeto con las fechas directamente como Date
+      const personDataWithDates = {
         ...personData,
-        birthDate: personData.birthDate
-          ? Timestamp.fromDate(new Date(personData.birthDate))
-          : null,
-        baptiseDate: personData.baptiseDate
-          ? Timestamp.fromDate(new Date(personData.baptiseDate))
-          : null,
-        blessingDate: personData.blessingDate
-          ? Timestamp.fromDate(new Date(personData.blessingDate))
-          : null,
+        birthDate: birthDate ? birthDate : null,
+        baptiseDate: baptiseDate ? baptiseDate : null,
+        blessingDate: blessingDate ? blessingDate : null,
       };
 
-      // Guardar en una colección temporal en Firestore
-      await addDoc(
-        collection(firestore, "externalForms"),
-        personDataWithTimestamp
-      );
+      // Guardar en Firestore
+      await addDoc(collection(firestore, "externalForms"), personDataWithDates);
       alert("Formulario enviado con éxito!");
     } catch (err) {
       console.error("Error al enviar el formulario: ", err);
@@ -71,7 +64,7 @@ const ExternalForm = ({ onCloseModal }) => {
 
   return (
     <div className="form-container">
-      <h1 className="form-title">Formulario de Registro</h1>
+      <h1 className="form-title">FORMULAR ACTUALIZARE REGISTRU </h1>
       <form className="form-group" onSubmit={handleSubmit}>
         <div className="colums">
           <div className="colum-form">
@@ -97,7 +90,6 @@ const ExternalForm = ({ onCloseModal }) => {
                 onChange={handleChange}
               />
             </label>
-
             <label className="label">
               Adresa {`(obligatoriu)`}:
               <input
@@ -122,12 +114,16 @@ const ExternalForm = ({ onCloseModal }) => {
             </label>
             <label className="label">
               Data nasterii {`(obligatoriu)`}:
-              <input
+              <DatePicker
+                selected={birthDate}
+                onChange={(date) => setBirthDate(date)}
+                peekNextMonth
+                maxDate={new Date()}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                dateFormat="dd/MM/yyyy"
                 className="input"
-                type="date"
-                name="birthDate"
-                value={personData.birthDate}
-                onChange={handleChange}
               />
             </label>
             <label className="label">
@@ -149,27 +145,32 @@ const ExternalForm = ({ onCloseModal }) => {
             <ImageUploader
               onFileSelectSuccess={(file) => setSelectedFile(file)}
               onFileSelectError={({ error }) => alert(error)}
-              // initialImage={profileImage}
             />
 
             <label className="label">
               Data Binecuvantarii:
-              <input
+              <DatePicker
+                selected={blessingDate}
+                onChange={(date) => setBlessingDate(date)}
+                peekNextMonth
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                dateFormat="dd/MM/yyyy"
                 className="input"
-                type="date"
-                name="blessingDate"
-                value={personData.blessingDate}
-                onChange={handleChange}
               />
             </label>
             <label className="label">
               Data Botezului:
-              <input
+              <DatePicker
+                selected={baptiseDate}
+                onChange={(date) => setBaptiseDate(date)}
+                peekNextMonth
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                dateFormat="dd/MM/yyyy"
                 className="input"
-                type="date"
-                name="baptiseDate"
-                value={personData.baptiseDate}
-                onChange={handleChange}
               />
             </label>
           </div>
@@ -178,8 +179,13 @@ const ExternalForm = ({ onCloseModal }) => {
         <label>Comentarios:</label>
         <textarea
           id="comments"
+          name="details" // Asegúrate de usar el nombre correcto
           rows="4"
           placeholder="Escribe tus comentarios aquí..."
+          value={personData.details} // Vinculamos el valor al estado
+          onChange={(e) =>
+            setPersonData({ ...personData, details: e.target.value })
+          } // Actualizamos el estado cuando el usuario escribe
         ></textarea>
         <button className="submit-btn" type="submit">
           Enviar

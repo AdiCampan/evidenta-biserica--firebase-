@@ -4,8 +4,9 @@ import { setDoc, doc } from "firebase/firestore";
 import { firestore } from "../firebase-config";
 import "./CSVuploader.scss";
 import { Timestamp } from "../firebase-config";
+import { Modal, ModalBody, Button } from "react-bootstrap";
 
-const CSVUploader = () => {
+const CSVUploader = ({ persoane }) => {
   const [transfers, setTransfers] = useState([]);
   const [specialCases, setSpecialCases] = useState([]);
   const [newSpecialCases, setNewSpecialCases] = useState([]);
@@ -21,9 +22,14 @@ const CSVUploader = () => {
   const [weddings, setWeddings] = useState([]);
   const [shortPersons, setShortPersons] = useState([]);
   const [shortTransfers, setShortTransfers] = useState([]);
+  const [show, setShow] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
+
+  const handleClose = () => setShow(false);
 
   const handleCSV = (event, setter) => {
     const file = event.target.files[0];
+
     Papa.parse(file, {
       header: true,
       delimiter: ";",
@@ -31,8 +37,16 @@ const CSVUploader = () => {
         setter(results.data);
       },
       encoding: "UTF-8",
+      dynamicTyping: true, // Para convertir los valores automáticamente
+      skipEmptyLines: true, // Asegúrate de que esto solo salte líneas completamente vacías
     });
   };
+  console.log("persons", persons);
+  console.log("addresses:", addresses);
+  console.log("blessedBy:", blessedBy);
+  console.log("baptisedBy:", baptisedBy);
+  console.log("baptisedByHS:", baptisedByHS);
+  console.log("members:", members);
 
   // Función para combinar los datos de los diferentes arrays
   const mergeData = () => {
@@ -236,19 +250,23 @@ const CSVUploader = () => {
 
   // Functie solo para hacer un  Array  scurt pt. probe//
   useEffect(() => {
-    if (transformedPersons.length > 0 || newTransfers.length > 0) {
-      const shortP = transformedPersons.slice(0, 300);
-      const shortT = newTransfers.slice(0, 300);
-      setShortPersons(shortP);
-      setShortTransfers(shortT);
-      console.log("short Persons", shortPersons);
-    }
-    shortPersons.forEach(async (person) => {
-      await setDoc(doc(firestore, "persoane", person.id), person);
+    // if (transformedPersons.length > 0 || newTransfers.length > 0) {
+    //   const shortP = transformedPersons.slice(0, 300);
+    //   const shortT = newTransfers.slice(0, 300);
+    //   setShortPersons(shortP);
+    //   setShortTransfers(shortT);
+    //   console.log("short Persons", shortPersons);
+    // }
+    transformedPersons.forEach(async (person) => {
+      try {
+        await setDoc(doc(firestore, "persoane", person.id), person);
+        console.log(`Person ${person.id} uploaded successfully`);
+      } catch (error) {
+        console.error(`Error uploading person ${person.id}:`, error);
+      }
     });
   }, [transformedPersons, newTransfers, persons, mergedPersons]);
 
-  //Subir los CSV  a Firestore//
   const uploadTransfersToFirestore = async () => {
     if (transfers.length > 0) {
       const modifiedTransfers = transfers.map((row) => ({
@@ -264,10 +282,22 @@ const CSVUploader = () => {
         owner: row.PersonID ? row.PersonID.trim() : null,
         type: "transferTo",
       }));
+
       setNewTransfers(modifiedTransfers);
-      shortTransfers.forEach(async (transfer) => {
-        await setDoc(doc(firestore, "transfers", transfer.id), transfer);
-      });
+
+      // Usar un bucle for...of para asegurarse de que todas las operaciones se completen
+      for (const transfer of modifiedTransfers) {
+        try {
+          await setDoc(doc(firestore, "transfers", transfer.id), transfer);
+        } catch (error) {
+          console.error(
+            `Error al subir el transfer con id ${transfer.id}:`,
+            error
+          );
+        }
+      }
+
+      alert("Todos los transfers han sido subidos correctamente.");
     }
   };
 
@@ -275,11 +305,9 @@ const CSVUploader = () => {
     if (specialCases.length > 0) {
       const modifiedSpecialCases = specialCases
         .map((row) => {
-          // Verificar si las fechas existen y son válidas
           const isValidDate = (dateString) =>
             dateString && !isNaN(new Date(dateString.trim()));
 
-          // Crear el objeto con las propiedades necesarias
           return {
             id:
               row.SpecialCaseID && row.SpecialCaseID.trim() !== ""
@@ -299,18 +327,26 @@ const CSVUploader = () => {
               row.PersonID && row.PersonID.trim() !== "" ? row.PersonID : null,
           };
         })
-        // Filtrar las filas que tienen `id` como `null`
         .filter((caseItem) => caseItem.id);
 
       if (modifiedSpecialCases.length > 0) {
-        for (const c of modifiedSpecialCases) {
-          await setDoc(doc(firestore, "specialCases", c.id), c);
+        for (const caz of modifiedSpecialCases) {
+          try {
+            await setDoc(doc(firestore, "specialCases", caz.id), caz);
+          } catch (error) {
+            console.error(
+              `Error al subir el caso especial con id ${caz.id}:`,
+              error
+            );
+          }
         }
+
+        alert("Todos los casos especiales han sido subidos correctamente.");
       } else {
-        console.warn("No hay casos especiales válidos para subir a Firestore.");
+        alert("No hay casos especiales válidos para subir a Firestore.");
       }
     } else {
-      console.warn("El array `specialCases` está vacío.");
+      alert("El array `specialCases` está vacío.");
     }
   };
 
@@ -321,9 +357,10 @@ const CSVUploader = () => {
         firstName: row.FirstName ? row.FirstName.trim() : null,
         lastName: row.LastName ? row.LastName.trim() : null,
         AddressID: row.AddressID ? row.AddressID.trim() : null,
-        birthDate: row.BirthDate
-          ? Timestamp.fromDate(new Date(row.BirthDate.trim()))
-          : null,
+        birthDate:
+          row.BirthDate.trim() !== ""
+            ? Timestamp.fromDate(new Date(row.BirthDate.trim()))
+            : null,
         maidenName: row.MaidenName ? row.MaidenName.trim() : null,
         churchID: row.ChurchID ? row.ChurchID.trim() : null,
         churchName: row.ChurchName ? row.ChurchName.trim() : null,
@@ -389,104 +426,133 @@ const CSVUploader = () => {
     }
   };
 
+  const uploadBackups = () => {
+    setShow(true);
+  };
+
+  const handleCloseForm = () => {
+    setShow(false);
+  };
+
   return (
-    <div className="csv-main">
-      <div className="CSVcontainer">
-        <h5>Subir 'persoane' CSV</h5>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setPersons)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'adrese' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setAddresses)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'Binecuvantat de:' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setBlessedBy)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'botezat cu DS ' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setBaptisedByHS)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'botezat de:' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setBaptisedBy)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'members' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setMembers)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'CASATORII' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setWeddings)}
-        />
-      </div>
-      <div className="CSVcontainer">
-        <h6>Subir 'TRANSFERURI' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setTransfers)}
-        />
-        <button className="imputCSV" onClick={uploadTransfersToFirestore}>
-          Subir TRANSFERURI Firestore
-        </button>
-      </div>
-      <div className="CSVcontainer">
-        <h6 className="imputCSV">Subir 'Special Cases' CSV</h6>
-        <input
-          className="imputCSV"
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleCSV(e, setSpecialCases)}
-        />
-        <button onClick={uploadSpecialsCasesToFirestore}>
-          Subir SpecialCases to Firestore
-        </button>
-      </div>
+    <>
+      <Button onClick={uploadBackups}>UPLOAD BACKUP</Button>
+      <Modal
+        className="custom-modal" // Aplica estilos al dialog
+        centered
+        style={{ width: "100%", justifyContent: "center" }}
+        show={show}
+        onHide={handleCloseForm}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>UPDATE DIN Evidenta Biserica </Modal.Title>
+        </Modal.Header>
+        <ModalBody>
+          <div className="csv-main">
+            <div className="CSVcontainer">
+              <h5>Subir 'persoane' CSV</h5>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setPersons)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'adrese' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setAddresses)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'Binecuvantat de:' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setBlessedBy)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'botezat cu DS ' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setBaptisedByHS)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'botezat de:' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setBaptisedBy)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'members' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setMembers)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'CASATORII' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setWeddings)}
+              />
+            </div>
+            <div className="CSVcontainer">
+              <h6>Subir 'TRANSFERURI' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setTransfers)}
+              />
+              <button className="imputCSV" onClick={uploadTransfersToFirestore}>
+                Update Firestore
+              </button>
+            </div>
+            <div className="CSVcontainer">
+              <h6 className="imputCSV">Subir 'Special Cases' CSV</h6>
+              <input
+                className="imputCSV"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleCSV(e, setSpecialCases)}
+              />
+              <button onClick={uploadSpecialsCasesToFirestore}>
+                Subir SpecialCases to Firestore
+              </button>
+            </div>
 
-      {/* Botón para combinar datos */}
-      <button onClick={mergeData}>Combinar Datos</button>
+            {/* Botón para combinar datos */}
+            <button onClick={mergeData}>Combinar Datos</button>
 
-      {/* Botón para subir los datos combinados a Firestore */}
-      <button onClick={uploadPersonsToFirestore}>
-        Subir PERSOANE a Firestore
-      </button>
-    </div>
+            {/* Botón para subir los datos combinados a Firestore */}
+            <button onClick={uploadPersonsToFirestore}>
+              Subir PERSOANE a Firestore
+            </button>
+          </div>
+        </ModalBody>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import React, { useState, useEffect } from "react";
@@ -26,6 +26,8 @@ function Persoana() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const location = useLocation(); // Se usa para obtener el estado
+  const { persons } = location.state || {}; // Desestructuramos persons del state
   // const { data, error, isLoading, isFetching } = useGetMemberQuery(id);
   const [data, setData] = useState();
   // const [modifyMember, result] = useModifyMemberMutation();
@@ -45,7 +47,7 @@ function Persoana() {
       console.log("No such document!");
     }
   };
-  console.log("currentData", currentData);
+
   useEffect(() => {
     getMemberData();
     if (data) {
@@ -144,16 +146,40 @@ function Persoana() {
             className="mb-3"
           >
             <Tab eventKey="general" title="GENERAL">
-              {data && <General data={data} dataUpdated={dataUpdated} />}
+              {data && (
+                <General
+                  data={data}
+                  dataUpdated={dataUpdated}
+                  persoane={persons}
+                />
+              )}
             </Tab>
             <Tab eventKey="familie" title="FAMILIE">
-              {data && <Familie data={data} dataUpdated={dataUpdated} />}
+              {data && (
+                <Familie
+                  data={data}
+                  dataUpdated={dataUpdated}
+                  persoane={persons}
+                />
+              )}
             </Tab>
             <Tab eventKey="biserica" title="BISERICA">
-              {data && <Biserica data={data} dataUpdated={dataUpdated} />}
+              {data && (
+                <Biserica
+                  data={data}
+                  dataUpdated={dataUpdated}
+                  persoane={persons}
+                />
+              )}
             </Tab>
             <Tab eventKey="observatii" title="OBSERVATII">
-              {data && <Observatii data={data} dataUpdated={dataUpdated} />}
+              {data && (
+                <Observatii
+                  data={data}
+                  dataUpdated={dataUpdated}
+                  persoane={persons}
+                />
+              )}
             </Tab>
           </Tabs>
           <Card>

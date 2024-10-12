@@ -103,29 +103,40 @@ const Speciale = ({ persoane }) => {
   const editar = (caz) => {
     console.log("caz", caz);
     setShow(true);
-    setDataRezolvarii(caz.endDate);
-    setDataExcluderii(caz.person.leaveDate);
+    setCaseToEdit(caz);
+
+    // Inicializar las fechas desde `caseToEdit`
+    setDataRezolvarii(caz.endDate ? caz.endDate.toDate() : null);
+    setDataExcluderii(
+      caz.person?.leaveDate ? new Date(caz.person.leaveDate) : null
+    );
+
     setDetalii(caz.details);
     setIdToEdit(caz.id);
-    setCaseToEdit(caz);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     const cazulModificat = {
       id: caseToEdit.id,
-      startDate: caseToEdit?.startDate.toDate(),
-      endDate: dataRezolvarii || "",
-      details: detalii,
+      startDate: caseToEdit?.startDate.toDate(), // Mantén la fecha de inicio
+      endDate: dataRezolvarii || null, // Actualiza la fecha de resolución si existe
+      details: detalii, // Actualiza los detalles
     };
-    const docRef = doc(firestore, "specialCases", caseToEdit.id);
-    updateDoc(docRef, cazulModificat);
 
-    // exclus definitiv, deci facem un transfer
+    // Actualiza el caso en Firestore
+    const docRef = doc(firestore, "specialCases", caseToEdit.id);
+    await updateDoc(docRef, cazulModificat);
+
+    // Si es un caso de exclusión definitiva, actualiza los datos de la persona
     if (filterType === "2") {
-      const docRef = doc(firestore, "persoane", caseToEdit.person.id);
-      updateDoc(docRef, { leaveDate: dataExcluderii, memberDate: "" });
+      const personDocRef = doc(firestore, "persoane", caseToEdit.person.id);
+      await updateDoc(personDocRef, {
+        leaveDate: dataExcluderii,
+        memberDate: "",
+      });
     }
-    setShow(false);
+
+    setShow(false); // Cierra el modal
   };
 
   const handleClose = () => setShow(false);
@@ -171,6 +182,7 @@ const Speciale = ({ persoane }) => {
                 <InputGroup
                   style={{
                     width: "190px",
+                    marginRight: "20px",
                   }}
                   size="sm"
                   className="mb-3"
@@ -321,12 +333,10 @@ const Speciale = ({ persoane }) => {
             <Form.Control
               aria-label="Small"
               as={DatePicker}
-              selected={
-                caseToEdit?.endDate ? caseToEdit?.endDate.toDate() : null
-              }
-              onChange={(date) => setDataRezolvarii(date)}
+              selected={dataRezolvarii} // Usa el estado `dataRezolvarii`
+              onChange={(date) => setDataRezolvarii(date)} // Actualiza el estado con la nueva fecha seleccionada
               peekNextMonth
-              maxDate={new Date()}
+              maxDate={new Date()} // No permitir fechas futuras
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"
@@ -365,10 +375,10 @@ const Speciale = ({ persoane }) => {
             <Form.Control
               aria-label="Small"
               as={DatePicker}
-              selected={dataExcluderii ? new Date(dataExcluderii) : null}
-              onChange={(date) => setDataExcluderii(date)}
+              selected={dataExcluderii} // Usa el estado `dataExcluderii`
+              onChange={(date) => setDataExcluderii(date)} // Actualiza el estado con la nueva fecha seleccionada
               peekNextMonth
-              maxDate={new Date()}
+              maxDate={new Date()} // No permitir fechas futuras
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"

@@ -93,7 +93,7 @@ const Familii = ({ persoane }) => {
             </tr>
           </thead>
           <tbody>
-            {persoane
+            {persoane.length > 0 && persoane
               ? filterMembers(persoane).map((p, index) => (
                   <tr
                     key={p.id}
@@ -158,7 +158,12 @@ const Familii = ({ persoane }) => {
         </Table>
       </div>
 
-      <Modal show={showModal} onHide={handleClose}>
+      <Modal
+        centered
+        dialogClassName="custom-modal"
+        show={showModal}
+        onHide={handleClose}
+      >
         <Modal.Header
           closeButton
           style={{ display: "flex", width: "100%" }}

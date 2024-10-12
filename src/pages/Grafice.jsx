@@ -33,7 +33,7 @@ function Grafice({ persoane }) {
   );
   const [endDate, setEndDate] = useState(new Date());
   const totalMembrii =
-    persoane.length > 0 && persoane?.filter((p) => p.memberDate).length;
+    persoane?.length > 0 && persoane?.filter((p) => p.memberDate).length;
   const date = new Date();
 
   // const totalFamilii = persoane ? filterFamilys(persoane).length : null;
@@ -41,24 +41,24 @@ function Grafice({ persoane }) {
   // const familii1 = familii?.map((p) => p.relation === "child");
 
   const nrBarbati =
-    persoane.length > 0 &&
+    persoane?.length > 0 &&
     persoane.filter(
       (p) => p.sex == true && p.memberDate && calculateAge(p.birthDate) >= 18
     ).length;
   const nrFemei =
-    persoane.length > 0 &&
+    persoane?.length > 0 &&
     persoane?.filter(
       (p) => p.sex == false && p.memberDate && calculateAge(p.birthDate) >= 18
     ).length;
   const nrCopii =
-    persoane.length > 0 &&
+    persoane?.length > 0 &&
     persoane?.filter(
       (p) =>
         calculateAge(p.birthDate) < 18 &&
         ((relation) => relation.type === "child")
     ).length;
   const nrCopiiMajoriNebotezati =
-    persoane.length > 0 &&
+    persoane?.length > 0 &&
     persoane?.filter(
       (p) =>
         calculateAge(p.birthDate) >= 18 &&
@@ -66,7 +66,7 @@ function Grafice({ persoane }) {
         p.memberDate === null
     ).length;
   const nrMembriiFilter =
-    persoane.length > 0 &&
+    persoane?.length > 0 &&
     persoane?.filter(
       (p) => calculateAge(p.birthDate) > parseInt(ageFilter) && p.memberDate
     ).length;
@@ -105,7 +105,7 @@ function Grafice({ persoane }) {
     const years = getMemberHistoryYears();
     for (let i = 0; i < years.length; i++) {
       const personsByYear =
-        persoane.length > 0 &&
+        persoane?.length > 0 &&
         persoane?.filter((p) => {
           if (p.memberDate && p.memberDate.toDate().getFullYear() <= years[i]) {
             return true;
@@ -122,7 +122,7 @@ function Grafice({ persoane }) {
     const years = getMemberHistoryYears();
     for (let i = 0; i < years.length; i++) {
       const personsByYear =
-        persoane.length > 0 &&
+        persoane?.length > 0 &&
         persoane?.filter((p) => {
           if (
             calculateAge(p.birthDate) <= 18 &&

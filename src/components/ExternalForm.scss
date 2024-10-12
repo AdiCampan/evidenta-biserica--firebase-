@@ -15,7 +15,7 @@ $font-family: "Roboto", sans-serif;
   background: $background-color;
   border-radius: 8px;
   padding: 20px 40px;
-  max-width: 800px;
+  width: 900px;
   margin: 20px auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-family: $font-family;
@@ -128,4 +128,13 @@ $font-family: "Roboto", sans-serif;
   .form-container {
     padding: 15px 20px;
   }
+}
+.custom-modal .modal-dialog {
+  display: flex;
+  justify-content: center; /* Para centrar horizontalmente */
+  align-items: center; /* Para centrar verticalmente si es necesario */
+}
+
+.custom-modal .modal-content {
+  width: fit-content; /* Ajusta el ancho del contenido del modal */
 }

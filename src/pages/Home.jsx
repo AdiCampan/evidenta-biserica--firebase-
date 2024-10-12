@@ -36,26 +36,26 @@ const Home = ({ persoane }) => {
 
   const date = new Date();
 
-  useEffect(() => {
-    if (persoane.length > 0) {
-      setTotalMembri(persoane?.filter((p) => p.memberDate).length);
-      setNrCopii(
-        persoane?.filter((p) => calculateAge(p.birthDate) < 18).length
-      );
-      setNrBarbati(
-        persoane?.filter(
-          (p) =>
-            p.sex === true && p.memberDate && calculateAge(p.birthDate) >= 18
-        ).length
-      );
-      setNrFemei(
-        persoane?.filter(
-          (p) =>
-            p.sex === false && p.memberDate && calculateAge(p.birthDate) >= 18
-        ).length
-      );
-    }
-  }, [persoane]);
+  // useEffect(() => {
+  //   if (persoane.length > 0) {
+  //     setTotalMembri(persoane?.filter((p) => p.memberDate).length);
+  //     setNrCopii(
+  //       persoane?.filter((p) => calculateAge(p.birthDate) < 18).length
+  //     );
+  //     setNrBarbati(
+  //       persoane?.filter(
+  //         (p) =>
+  //           p.sex === true && p.memberDate && calculateAge(p.birthDate) >= 18
+  //       ).length
+  //     );
+  //     setNrFemei(
+  //       persoane?.filter(
+  //         (p) =>
+  //           p.sex === false && p.memberDate && calculateAge(p.birthDate) >= 18
+  //       ).length
+  //     );
+  //   }
+  // }, [persoane]);
 
   const getYearsFromInterval = (from, to) => {
     const listOfYears = [];
@@ -95,9 +95,6 @@ const Home = ({ persoane }) => {
     }
   };
 
-  const uploadBackups = () => {
-    setShowUploader(true);
-  };
   const handleShowForm = () => {
     setShowForm(true);
   };
@@ -121,14 +118,13 @@ const Home = ({ persoane }) => {
           <br />
           <p>Tel./Fax: 964 37 24 00</p>
           <br />
-          <Button onClick={uploadBackups}>UPLOAD BACKUP</Button>
           <Button onClick={handleShowForm}>FORMULAR MEMBRU</Button>
 
           <p>biserica_ebenezer@yahoo.es</p>
         </div>
 
         <div className="chart-container">
-          {persoane && (
+          {/* {persoane && (
             <Pie
               data={{
                 labels: ["Barbați", "Femei", "Copii"],
@@ -171,18 +167,24 @@ const Home = ({ persoane }) => {
                 },
               ],
             }}
-          />
+          /> */}
         </div>
         {showUploader && <CSVUploader />}
       </div>
 
-      <Modal style={{ width: "800px" }} show={showForm} onHide={showForm}>
-        <Modal.Header
+      <Modal
+        className="custom-modal" // Aplica estilos al dialog
+        centered
+        style={{ width: "100%", justifyContent: "center" }}
+        show={showForm}
+        onHide={handleCloseForm}
+      >
+        {/* <Modal.Header
           onHide={handleCloseForm}
           // closeButton
           style={{ display: "flex", width: "100%" }}
           // style={{ display: "flex", justifyContent: "center" }}
-        ></Modal.Header>
+        ></Modal.Header> */}
         <ExternalForm onCloseModal={handleCloseForm} show={showForm} />
       </Modal>
 

@@ -25,9 +25,9 @@ import { firestore } from "../../firebase-config";
 import { query } from "firebase/database";
 import { collection, getDocs } from "firebase/firestore";
 
-const General = ({ dataUpdated, data }) => {
+const General = ({ dataUpdated, data, persoane }) => {
   const { id } = useParams();
-  const [modifyMember, result] = useModifyMemberMutation();
+  // const [modifyMember, result] = useModifyMemberMutation();
   const [showTransferModal, setShowTransferModal] = useState(false);
   // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
 
@@ -48,30 +48,29 @@ const General = ({ dataUpdated, data }) => {
   // const [member, setMember] = useState(false);
   const [membruData, setMembruData] = useState(null);
   const [detalii, setDetalii] = useState("");
-  const [persoane, setPersoane] = useState();
+  // const [persoane, setPersoane] = useState();
   // const [initialFather, setInitialFather] = useState(null);
   // const [initialMother, setInitialMother] = useState(null);
 
   // ---------- OBTIN DATELE  PERSOANELOR  (DIN FIRESTORE)  ------------- //
-  const waitingPersons = async () => {
-    const q = query(collection(firestore, "persoane"));
+  // const waitingPersons = async () => {
+  //   const q = query(collection(firestore, "persoane"));
 
-    const querySnapshot = await getDocs(q);
-    const tmpArray = [];
-    querySnapshot.forEach((doc) => {
-      const childKey = doc.id;
-      const childData = doc.data();
-      tmpArray.push({ id: childKey, ...childData });
-      setPersoane(tmpArray);
-    });
-  };
-  useEffect(() => {
-    waitingPersons();
-  }, []);
+  //   const querySnapshot = await getDocs(q);
+  //   const tmpArray = [];
+  //   querySnapshot.forEach((doc) => {
+  //     const childKey = doc.id;
+  //     const childData = doc.data();
+  //     tmpArray.push({ id: childKey, ...childData });
+  //     setPersoane(tmpArray);
+  //   });
+  // };
+  // useEffect(() => {
+  //   waitingPersons();
+  // }, []);
 
   // --------- TRIMIT NOILE SETARI LA "PERSOANA" PT SALVARE IN BAZA DE DATE ------------ //
   useEffect(() => {
-    console.log("datele persoanei curente:", data[0]);
     dataUpdated({
       id: data[1],
       firstName: nume,
