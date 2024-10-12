@@ -248,25 +248,6 @@ const CSVUploader = ({ persoane }) => {
     );
   }
 
-  // Functie solo para hacer un  Array  scurt pt. probe//
-  useEffect(() => {
-    // if (transformedPersons.length > 0 || newTransfers.length > 0) {
-    //   const shortP = transformedPersons.slice(0, 300);
-    //   const shortT = newTransfers.slice(0, 300);
-    //   setShortPersons(shortP);
-    //   setShortTransfers(shortT);
-    //   console.log("short Persons", shortPersons);
-    // }
-    transformedPersons.forEach(async (person) => {
-      try {
-        await setDoc(doc(firestore, "persoane", person.id), person);
-        console.log(`Person ${person.id} uploaded successfully`);
-      } catch (error) {
-        console.error(`Error uploading person ${person.id}:`, error);
-      }
-    });
-  }, [transformedPersons, newTransfers, persons, mergedPersons]);
-
   const uploadTransfersToFirestore = async () => {
     if (transfers.length > 0) {
       const modifiedTransfers = transfers.map((row) => ({
@@ -356,25 +337,45 @@ const CSVUploader = ({ persoane }) => {
       const modifiedPersons = mergedPersons.map((row) => ({
         firstName: row.FirstName ? row.FirstName.trim() : null,
         lastName: row.LastName ? row.LastName.trim() : null,
-        AddressID: row.AddressID ? row.AddressID.trim() : null,
-        birthDate:
-          row.BirthDate.trim() !== ""
-            ? Timestamp.fromDate(new Date(row.BirthDate.trim()))
+        addressID:
+          row.AddressID && typeof row.AddressID === "string"
+            ? row.AddressID.trim()
             : null,
+        birthDate: row.BirthDate ? row.BirthDate : null, // Si BirthDate es null o no válido, lo asignamos a null
         maidenName: row.MaidenName ? row.MaidenName.trim() : null,
-        churchID: row.ChurchID ? row.ChurchID.trim() : null,
+        churchID:
+          row.ChurchID && typeof row.ChurchID === "string"
+            ? row.ChurchID.trim()
+            : null,
         churchName: row.ChurchName ? row.ChurchName.trim() : null,
         deathDate:
           row.DeathDate && row.DeathDate.trim() !== "NULL"
             ? Timestamp.fromDate(new Date(row.DeathDate.trim()))
             : null, // Conversión de fecha
         details: row.Details ? row.Details.trim() : "",
-        fatherID: row.FatherID ? row.FatherID.trim() : null,
-        motherID: row.MotherID ? row.MotherID.trim() : null,
+        fatherID:
+          row.FatherID && typeof row.FatherID === "string"
+            ? row.FatherID.trim()
+            : null,
+        motherID:
+          row.MotherID && typeof row.MotherID === "string"
+            ? row.MotherID.trim()
+            : null,
         placeOfBirth: row.PlaceOfBirth ? row.PlaceOfBirth.trim() : null,
-        mobilePhone: row.MobilePhone ? row.MobilePhone.trim() : null,
-        sex: row.Sex ? (row.Sex.trim() === "1" ? true : false) : null,
-        id: row.PersonID ? row.PersonID.trim() : null,
+        mobilePhone:
+          row.MobilePhone && typeof row.MobilePhone === "string"
+            ? row.MobilePhone.trim()
+            : null,
+        sex:
+          row.Sex && typeof row.Sex === "string"
+            ? row.Sex.trim() === "1"
+              ? true
+              : false
+            : null,
+        id:
+          row.PersonID && typeof row.PersonID === "string"
+            ? row.PersonID.trim()
+            : null,
         address: row.address || null,
         blessingDate:
           row.blessingDate && row.blessingDate !== "NULL"
@@ -416,9 +417,9 @@ const CSVUploader = ({ persoane }) => {
       }));
       setTransformedPersons(modifiedPersons);
 
-      // shortPersons.forEach(async (person) => {
-      //   await setDoc(doc(firestore, "persoane", person.id), person);
-      // });
+      transformedPersons.forEach(async (person) => {
+        await setDoc(doc(firestore, "persoane", person.id), person);
+      });
 
       alert("Datos subidos correctamente a Firestore");
     } else {
