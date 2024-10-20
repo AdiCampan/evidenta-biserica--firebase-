@@ -60,7 +60,6 @@ const ExternalFormsReview = ({ persoane }) => {
       });
     }
   }, [form]);
-
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
@@ -68,9 +67,10 @@ const ExternalFormsReview = ({ persoane }) => {
       try {
         const existingPerson = persoane?.find(
           (p) =>
-            p.firstName === personData.firstName &&
-            p.lastName === personData.lastName
-          // Puedes agregar la comparación de la fecha de nacimiento aquí si es necesario
+            p.firstName?.toLowerCase().trim() ===
+              personData.firstName?.toLowerCase().trim() &&
+            p.lastName?.toLowerCase().trim() ===
+              personData.lastName?.toLowerCase().trim()
         );
 
         if (existingPerson) {

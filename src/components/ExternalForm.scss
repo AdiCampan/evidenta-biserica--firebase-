@@ -138,3 +138,30 @@ $font-family: "Roboto", sans-serif;
 .custom-modal .modal-content {
   width: fit-content; /* Ajusta el ancho del contenido del modal */
 }
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;
+  transform: scale(1.5); /* Aumenta el tamaño del checkbox */
+}
+
+.checkbox-container label {
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  user-select: none; /* Evita la selección accidental del texto */
+}
+
+.checkbox-container a {
+  color: #007bff; /* Color del enlace */
+  text-decoration: none;
+}
+
+.checkbox-container a:hover {
+  text-decoration: underline;
+}

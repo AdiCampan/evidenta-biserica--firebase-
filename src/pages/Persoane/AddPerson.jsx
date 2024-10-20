@@ -25,10 +25,11 @@ function AddPerson({ label }) {
 
   // FIRESTORE //
   const addMember = async (newMember) => {
-    await setDoc(doc(firestore, "persoane", crypto.randomUUID()), {
+    await setDoc(doc(firestore, "persoane", newMember.id), {
       firstName: newMember.firstName,
       lastName: newMember.lastName,
       sex: newMember.sex,
+      id: newMember.id,
     });
     setShow(false);
   };
@@ -45,6 +46,7 @@ function AddPerson({ label }) {
     const newPerson = {
       firstName: prenume,
       lastName: nume,
+      id: crypto.randomUUID(),
       // address: adresa,
       // telefon: telefon,
       // email: email,

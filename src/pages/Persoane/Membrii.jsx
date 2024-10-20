@@ -77,7 +77,7 @@ function Membrii({ persoane }) {
   }
 
   const goToPerson = (id) => {
-    navigate(`/persoane/${id}`);
+    navigate(`/persoane/${id}`, { state: { persons: persoane } });
   };
 
   return (

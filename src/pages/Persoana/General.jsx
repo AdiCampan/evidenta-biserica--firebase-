@@ -311,6 +311,7 @@ const General = ({ dataUpdated, data, persoane }) => {
         </Col>
       </Row>
       <AddTransferModal
+        persoane={persoane}
         isDisabled
         onAddTransfer={addTransfer}
         show={showTransferModal}

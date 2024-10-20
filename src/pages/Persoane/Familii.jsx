@@ -193,14 +193,14 @@ const Familii = ({ persoane }) => {
                       {
                         persoane
                           .filter((child) => child.id === p)
-                          .find((children) => children.lastName)?.firstName
+                          .find((children) => children.lastName)?.lastName
                       }
                     </td>
                     <td>
                       {
                         persoane
                           .filter((child) => child.id === p)
-                          .find((children) => children.lastName)?.lastName
+                          .find((children) => children.firstName)?.firstName
                       }
                     </td>
                     <td>

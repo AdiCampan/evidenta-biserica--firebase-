@@ -100,7 +100,7 @@ function Persoane({ persoane }) {
       setPersons(persoane);
     }
   }, []);
-
+  // console.log("persoane", persoane);
   // const [deleteMember] = useDelMemberMutation();
   const deleteMember = async (id) => {
     await deleteDoc(doc(firestore, "persoane", id));

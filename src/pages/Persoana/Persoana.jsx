@@ -54,6 +54,7 @@ function Persoana() {
       setCurentPerson(data[0]);
     }
   }, []);
+  console.log("persons", persons);
 
   const modifyMember = (newData) => {
     const docRef = doc(firestore, "persoane", id);

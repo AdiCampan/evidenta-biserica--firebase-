@@ -244,12 +244,12 @@ function Grafice({ persoane }) {
                 {
                   label: "Barbati",
                   data: [nrBarbati],
-                  backgroundColor: "rgba(255, 99, 132, 0.7)",
+                  backgroundColor: "rgba(53, 162, 235, 0.7)",
                 },
                 {
                   label: "Femei",
                   data: [nrFemei],
-                  backgroundColor: "rgba(53, 162, 235, 0.7)",
+                  backgroundColor: "rgba(255, 99, 132, 0.7)",
                 },
               ],
             }}

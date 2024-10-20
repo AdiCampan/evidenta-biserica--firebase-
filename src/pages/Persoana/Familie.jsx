@@ -153,6 +153,48 @@ const Familie = ({ data, persoane }) => {
     }
   };
 
+  // useEffect(() => {
+  //   if (currentPersonId) {
+  //     loadRelations().catch(console.error);
+  //   }
+  // }, [currentPersonId]);
+
+  // const loadRelations = async () => {
+  //   if (!currentPersonId) return;
+
+  //   // Obtener el documento de la persona actual
+  //   const currentPersonRef = doc(firestore, "persoane", currentPersonId);
+  //   const currentPersonSnapshot = await getDoc(currentPersonRef);
+
+  //   if (currentPersonSnapshot.exists()) {
+  //     const { relations } = currentPersonSnapshot.data();
+
+  //     // Filtrar relaciones de padre y madre
+  //     const fatherRelation = relations?.find((rel) => rel.type === "father");
+  //     const motherRelation = relations?.find((rel) => rel.type === "mother");
+  //     // const fatherId = String(fatherRelation.person); // Convertir a string si es un número
+  //     // const motherId = String(motherRelation.person); // Hacer lo mismo con la madre
+
+  //     // Cargar los datos del padre y la madre usando sus IDs
+  //     setFather(fatherRelation ? await getPersonById(fatherRelation) : null);
+  //     setMother(motherRelation ? await getPersonById(motherRelation) : null);
+
+  //     // Filtrar relaciones de hijos
+  //     const childRelations =
+  //       relations?.filter((rel) => rel.type === "child") || [];
+  //     const childrenData = await Promise.all(
+  //       childRelations.map(async (rel) => await getPersonById(rel.person))
+  //     );
+  //     setChildren(childrenData);
+  //   }
+  // };
+
+  // const getPersonById = async (id) => {
+  //   const personRef = doc(firestore, "persoane", id);
+  //   const personSnapshot = await getDoc(personRef);
+  //   return { id, ...personSnapshot.data() }; // Retornar el objeto con datos de la persona
+  // };
+
   useEffect(() => {
     if (currentPersonId) {
       loadRelations().catch(console.error);
@@ -314,7 +356,7 @@ const Familie = ({ data, persoane }) => {
 
   return (
     <Container style={{ width: "93%" }}>
-      {persoane && (
+      {currentPersonId && (
         <>
           <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
             <Row style={{ padding: "5px" }}>

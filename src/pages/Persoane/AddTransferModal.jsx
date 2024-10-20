@@ -67,7 +67,7 @@ function AddTransferModal({
   // useEffect(() => {
   //   waitingPersons();
   // }, []);
-
+  console.log("persoane", persoane);
   useEffect(() => {
     setShowModal(show);
   }, [show]);
