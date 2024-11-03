@@ -16,6 +16,8 @@ import {
   calculateAge,
 } from "../../utils";
 import "./Boteze.scss";
+import Modal from "react-bootstrap/Modal";
+
 import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "../../firebase-config";
 import { list } from "firebase/storage";
@@ -35,6 +37,9 @@ function Boteze({ persoane }) {
   const [listByDateBaptized, setListByDateBaptized] = useState([]);
   const [baptisedBy, setBaptisedBy] = useState();
   const [baptisedDate, setBaptisedDate] = useState();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClose = () => setShowModal(false);
 
   function filterMembers(members) {
     if (persoane && persoane.length > 0) {
@@ -66,15 +71,9 @@ function Boteze({ persoane }) {
         ageFilterSmaller
       );
       filteredMembers = filteredMembers.filter((member) => member?.baptiseDate);
-
-      filteredMembers = filteredMembers.filter(
-        (member) =>
-          member?.baptisePlace === "EBEN EZER" ||
-          member.baptisePlace === "Eben Ezer" ||
-          member.baptisePlace === "EbenEzer" ||
-          member.baptisePlace === "Eben-Ezer" ||
-          member.baptisePlace === "EBEN-EZER" ||
-          member.baptisePlace === "EBEN - EZER"
+      const regex = /\beben\b.*\bezer\b|\bezer\b.*\beben\b/i;
+      filteredMembers = filteredMembers.filter((member) =>
+        regex.test(member.baptisePlace)
       );
 
       const listBaptist = filteredMembers.reduce((boteze, item) => {
@@ -84,8 +83,6 @@ function Boteze({ persoane }) {
           )
         ) {
           boteze.push(item);
-          // console.log("boteze", boteze);
-          // console.log("item", item.baptiseDate);
         }
         return boteze;
       }, []);
@@ -99,13 +96,10 @@ function Boteze({ persoane }) {
   };
 
   const listBaptized = (dataBotez, baptisedBy) => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
     let listaBotezati = persoane.filter(
       (data) => data?.baptiseDate?.seconds === dataBotez.seconds
     );
+    setShowModal(true);
     setBaptisedDate(dataBotez);
     setBaptisedBy(baptisedBy);
     setListByDateBaptized(listaBotezati);
@@ -116,13 +110,16 @@ function Boteze({ persoane }) {
     <>
       <div className="pagina-boteze">
         <div className="boteze">
-          <h3 className="title">BOTEZE în EBEN EZER</h3>
+          <div className="title">
+            <h3>BOTEZE în EBEN EZER</h3>
+          </div>
           <Table striped bordered hover size="sm">
             <thead>
               <tr>
                 <th>#</th>
                 <th>Data Botezului</th>
                 <th>Slujitori Botez</th>
+                <th>Slujitori Invitati</th>
               </tr>
             </thead>
             <tbody>
@@ -136,18 +133,39 @@ function Boteze({ persoane }) {
                       <td>{index + 1}</td>
                       <td>{formatDate(p?.baptiseDate)}</td>
                       <td>{p?.baptisedBy}</td>
+                      <td>{}</td>
                     </tr>
                   ))
                 : null}
             </tbody>
           </Table>
         </div>
-        <div className="botezati">
-          <h4 className="title"> LISTA BOTEZATI</h4>
-          {baptisedDate && formatDate(baptisedDate)}
-          {baptisedBy && <div>{`Slujitori:${baptisedBy}`} </div>}
-
-          <Table striped bordered hover size="sm">
+        <Modal
+          centered
+          dialogClassName="custom-modal"
+          show={showModal}
+          onHide={handleClose}
+        >
+          <Modal.Header
+            closeButton
+            style={{ display: "flex", width: "100%" }}
+            // style={{ display: "flex", justifyContent: "center" }}
+          >
+            <Modal.Title style={{ marginLeft: "20px" }}>
+              <div className="Modal-title">
+                <h3> LISTA BOTEZATI</h3>
+              </div>
+              {baptisedDate && <h6>{` Data: ${formatDate(baptisedDate)}`}</h6>}
+              {baptisedBy && <div>{`Slujitori: ${baptisedBy}`} </div>}
+            </Modal.Title>
+          </Modal.Header>
+          <Table
+            striped
+            bordered
+            hover
+            variant="dark"
+            style={{ width: "800px" }}
+          >
             <thead>
               <tr>
                 <th>#</th>
@@ -179,7 +197,7 @@ function Boteze({ persoane }) {
                 : null}
             </tbody>
           </Table>
-        </div>
+        </Modal>
       </div>
     </>
   );

@@ -67,7 +67,6 @@ function AddTransferModal({
   // useEffect(() => {
   //   waitingPersons();
   // }, []);
-  console.log("persoane", persoane);
   useEffect(() => {
     setShowModal(show);
   }, [show]);
@@ -194,9 +193,9 @@ function AddTransferModal({
                   id="transfered"
                   onChange={onTrasferedChange}
                   labelKey={(option) =>
-                    `${option.firstName} ${option.lastName}`
+                    `${option.firstName} ${""}${option.lastName}`
                   }
-                  options={persoane?.filter(filterByMember) || []}
+                  options={persoane || []}
                   placeholder="Alege o persoana..."
                   selected={persoane?.filter((p) => p.id === person) || []}
                 />

@@ -1,30 +1,13 @@
 import "./Grafice.scss";
 import DatePicker from "react-datepicker";
 import { Line, Bar, Pie } from "react-chartjs-2";
-import { useGetMembersQuery } from "../services/members";
 import { useEffect, useState } from "react";
 import { calculateAge, formatDate, filterByText } from "../utils";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Table } from "react-bootstrap";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { firestore } from "../firebase-config";
 
 function Grafice({ persoane }) {
-  // const [persoane, setPersoane] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-
-  // const q = query(collection(firestore, "persoane"));
-  // useEffect(() => {
-  //   onSnapshot(q, (querySnapshot) => {
-  //     const tmpArray = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const childKey = doc.id;
-  //       const childData = doc.data();
-  //       tmpArray.push({ id: childKey, ...childData });
-  //       setPersoane(tmpArray);
-  //     });
-  //   });
-  // }, []);
 
   const [nrMembrii, setNrMembrii] = useState([]);
   const [ageFilter, setAgeFilter] = useState("18");
@@ -32,6 +15,7 @@ function Grafice({ persoane }) {
     new Date((new Date().getFullYear() - 10).toString())
   );
   const [endDate, setEndDate] = useState(new Date());
+
   const totalMembrii =
     persoane?.length > 0 && persoane?.filter((p) => p.memberDate).length;
   const date = new Date();
@@ -40,23 +24,29 @@ function Grafice({ persoane }) {
   // const familii = persoane ? filterFamilys(persoane) : null;
   // const familii1 = familii?.map((p) => p.relation === "child");
 
+  const regex = /\beben\b.*\bezer\b|\bezer\b.*\beben\b/i;
+
   const nrBarbati =
     persoane?.length > 0 &&
     persoane.filter(
-      (p) => p.sex == true && p.memberDate && calculateAge(p.birthDate) >= 18
+      (p) => p.sex == true && p.memberDate && regex.test(p.churchName)
     ).length;
+
   const nrFemei =
     persoane?.length > 0 &&
     persoane?.filter(
-      (p) => p.sex == false && p.memberDate && calculateAge(p.birthDate) >= 18
+      (p) => p.sex == false && p.memberDate && regex.test(p.churchName)
     ).length;
+
   const nrCopii =
     persoane?.length > 0 &&
     persoane?.filter(
       (p) =>
-        calculateAge(p.birthDate) < 18 &&
-        ((relation) => relation.type === "child")
+        // calculateAge(p.birthDate) < 18 &&
+        regex.test(p.churchName) && !p.memberDate && !p.baptiseDate
+      // ((relation) => relation.type === "child")
     ).length;
+
   const nrCopiiMajoriNebotezati =
     persoane?.length > 0 &&
     persoane?.filter(
@@ -65,6 +55,7 @@ function Grafice({ persoane }) {
         ((relation) => relation.type === "child") &&
         p.memberDate === null
     ).length;
+
   const nrMembriiFilter =
     persoane?.length > 0 &&
     persoane?.filter(

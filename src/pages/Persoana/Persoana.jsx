@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   useGetMemberQuery,
   useModifyMemberMutation,
@@ -22,20 +22,55 @@ import { db, firestore } from "../../firebase-config";
 import { memo } from "react";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
+/// Hook para manejar la advertencia de salida
+const useBeforeUnload = (isModified) => {
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (isModified) {
+        const message = "Există modificări nesalvate. Doriți să ieșiți?";
+        event.preventDefault();
+        event.returnValue = message; // Para navegadores modernos
+        return message; // Para navegadores más antiguos
+      }
+    };
+    const handleWindowUnload = (event) => {
+      if (isModified) {
+        const confirmed = window.confirm(
+          "You have unsaved changes. Do you really want to leave?"
+        );
+        if (confirmed) {
+          setIsModified(false); // Desactiva la advertencia después de aceptar
+        } else {
+          event.preventDefault(); // Evita que la navegación ocurra si cancelas
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handleWindowUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handleWindowUnload);
+    };
+  }, [isModified]);
+};
+
 function Persoana() {
   const navigate = useNavigate();
 
   const { id } = useParams();
   const location = useLocation(); // Se usa para obtener el estado
   const { persons } = location.state || {}; // Desestructuramos persons del state
-  // const { data, error, isLoading, isFetching } = useGetMemberQuery(id);
   const [data, setData] = useState();
-  // const [modifyMember, result] = useModifyMemberMutation();
-  // const [addRelation] = useAddRelationMutation();
+  const [isModified, setIsModified] = useState(false); // Estado para cambios no guardados
   const [activeTab, setActiveTab] = useState("general");
   const [currentData, setCurrentData] = useState(null);
-  const [curentPerson, setCurentPerson] = useState(null);
-
+  const [isInitialLoad, setIsInitialLoad] = useState(true); // Estado para controlar la carga inicial
+  const initialDataRef = useRef(null); // Para almacenar los datos iniciales
+  const hasLoadedData = useRef(false); // Controla si los datos ya han sido cargados una vez
+  // const [curentPerson, setCurentPerson] = useState(null);
+  console.log("Data", data);
   const getMemberData = async () => {
     const docRef = doc(firestore, "persoane", id);
     const docSnap = await getDoc(docRef);
@@ -43,6 +78,10 @@ function Persoana() {
     if (docSnap.exists()) {
       tmpArray.push(docSnap.data(), id);
       setData(tmpArray);
+      setCurrentData(tmpArray);
+      initialDataRef.current = tmpArray; // Guarda los datos originales al cargar
+      hasLoadedData.current = true; // Marca como que los datos fueron cargados
+      setIsInitialLoad(false); // Marcar la carga inicial como completada
     } else {
       console.log("No such document!");
     }
@@ -50,62 +89,44 @@ function Persoana() {
 
   useEffect(() => {
     getMemberData();
-    if (data) {
-      setCurentPerson(data[0]);
-    }
+    // if (data) {
+    //   setCurentPerson(data[0]);
+    // }
   }, []);
-  console.log("persons", persons);
+
+  // Muestra advertencia si hay cambios no guardados
+  useBeforeUnload(isModified);
 
   const modifyMember = (newData) => {
     const docRef = doc(firestore, "persoane", id);
     updateDoc(docRef, newData);
   };
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setCurrentData(data);
-  //     console.log("current", currentData);
-  //   }
-  // }, [data]);
-
-  // useEffect(() => {
-  //   if (result.isSuccess) {
-  //     navigate("/persoane");
-  //   }
-  // }, [result]);
-
   const saveData = () => {
-    if (currentData.firstName != "" && currentData.lastName != "") {
+    if (data[0].firstName != "" && data[0].lastName != "") {
       modifyMember(currentData);
+      setIsModified(false); // Reseteamos el estado de modificación al guardar
+      navigate("/persoane");
     } else {
       alert("Nu stergeti numele sau prenumele !");
     }
-    navigate("/persoane");
-
-    // if (spouse && children.length > 0) {
-    //   console.log("update spouse");
-    //   modifyMember({
-    //     id: spouse.person,
-    //     relations: children,
-    //   });
-    // } else {
-    //   console.log("no spuse and children", spouse, children);
-    // }
-    // addRelation({
-    //   owner: currentData.id,
-    //   person: currentData.partner,
-    //   type: currentData.sex ? 'wife' : 'husband',
-    // });
   };
 
+  // Función para verificar si los datos han cambiado comparado con `initialDataRef`
+  const hasDataChanged = (updatedData) => {
+    return (
+      JSON.stringify(initialDataRef.current) !== JSON.stringify(updatedData)
+    );
+  };
+
+  // Función que actualiza los datos y verifica si han cambiado
   const dataUpdated = (updatedData) => {
-    setCurrentData((prevState) => {
-      return {
-        ...prevState,
-        id,
-        ...updatedData,
-      };
-    });
+    setCurrentData(updatedData);
+
+    // Solo marca `isModified` si hay diferencias y la carga inicial ha terminado
+    if (!isInitialLoad.current && hasDataChanged(updatedData)) {
+      setIsModified(true);
+    }
   };
 
   return (
@@ -135,7 +156,7 @@ function Persoana() {
               FISA PERSONALA:
               {currentData && (
                 <Card.Title style={{ marginLeft: "20px" }}>
-                  {currentData.firstName} {currentData.lastName}
+                  {data[0].firstName} {data[0].lastName}
                 </Card.Title>
               )}
             </Card.Body>
@@ -149,6 +170,7 @@ function Persoana() {
             <Tab eventKey="general" title="GENERAL">
               {data && (
                 <General
+                  isModified={isModified}
                   data={data}
                   dataUpdated={dataUpdated}
                   persoane={persons}
@@ -194,16 +216,6 @@ function Persoana() {
                 >
                   Salveaza
                 </Button>
-
-                {/* <DownloadLink
-                  label="Descarca link Persoana"
-                  filename={`/persoane/${id}`}
-                  exportFile={() => `/persoane/${id}`}
-                /> */}
-                {/* <Link to={`/persoane/${id}`} target="_blank" download>
-                  Download
-                </Link> */}
-                {/* <a href="https://google.com" download>Download link</a> */}
               </Form>
             </Card.Body>
           </Card>

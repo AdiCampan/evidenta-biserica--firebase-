@@ -21,19 +21,6 @@ const Home = ({ persoane }) => {
   const [nrMembrii, setNrMembrii] = useState([]);
   const navigate = useNavigate();
 
-  // const q = query(collection(firestore, "persoane"));
-  // useEffect(() => {
-  //   onSnapshot(q, (querySnapshot) => {
-  //     const tmpArray = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const childKey = doc.id;
-  //       const childData = doc.data();
-  //       tmpArray.push({ id: childKey, ...childData });
-  //       setPersoane(tmpArray);
-  //     });
-  //   });
-  // }, []);
-
   const date = new Date();
 
   // useEffect(() => {
@@ -118,7 +105,7 @@ const Home = ({ persoane }) => {
           <br />
           <p>Tel./Fax: 964 37 24 00</p>
           <br />
-          <Button onClick={handleShowForm}>FORMULAR MEMBRU</Button>
+          <Button onClick={handleShowForm}>FORMULAR ACTUALIZARE MEMBRU</Button>
 
           <p>biserica_ebenezer@yahoo.es</p>
         </div>

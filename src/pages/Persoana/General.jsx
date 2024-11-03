@@ -25,11 +25,9 @@ import { firestore } from "../../firebase-config";
 import { query } from "firebase/database";
 import { collection, getDocs } from "firebase/firestore";
 
-const General = ({ dataUpdated, data, persoane }) => {
+const General = ({ dataUpdated, data, persoane, isModified }) => {
   const { id } = useParams();
-  // const [modifyMember, result] = useModifyMemberMutation();
   const [showTransferModal, setShowTransferModal] = useState(false);
-  // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
@@ -45,49 +43,61 @@ const General = ({ dataUpdated, data, persoane }) => {
   // const [mother, setMother] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [enterBirthDate, setEnterBirthDate] = useState(null);
-  // const [member, setMember] = useState(false);
   const [membruData, setMembruData] = useState(null);
   const [detalii, setDetalii] = useState("");
-  // const [persoane, setPersoane] = useState();
-  // const [initialFather, setInitialFather] = useState(null);
-  // const [initialMother, setInitialMother] = useState(null);
+  const [previouslyUpdatedData, setPreviouslyUpdatedData] = useState(null);
 
-  // ---------- OBTIN DATELE  PERSOANELOR  (DIN FIRESTORE)  ------------- //
-  // const waitingPersons = async () => {
-  //   const q = query(collection(firestore, "persoane"));
+  const isInitialLoad = useRef(true); // Flag para controlar la carga inicial
+  const [isDataLoaded, setIsDataLoaded] = useState(false); // Nuevo estado para verificar si los datos han sido cargados
 
-  //   const querySnapshot = await getDocs(q);
-  //   const tmpArray = [];
-  //   querySnapshot.forEach((doc) => {
-  //     const childKey = doc.id;
-  //     const childData = doc.data();
-  //     tmpArray.push({ id: childKey, ...childData });
-  //     setPersoane(tmpArray);
-  //   });
-  // };
-  // useEffect(() => {
-  //   waitingPersons();
-  // }, []);
+  // --------- SETEZ PROPRIETATILE DUPA "data" PRIMITE DIN "Persoana" -> din Firestore -----//
+  useEffect(() => {
+    if (data && data[0] && isInitialLoad.current) {
+      setNume(data[0].firstName || "");
+      setPrenume(data[0].lastName || "");
+      setAnterior(data[0].maidenName || "");
+      setAdresa(data[0].address || "");
+      setTelefon(data[0].mobilePhone || "");
+      setEmail(data[0].email || "");
+      setSex(data[0].sex === true ? "M" : data[0].sex === false ? "F" : null);
+      setEnterBirthDate(data[0].birthDate ? data[0].birthDate.toDate() : null);
+      setPlaceOfBirth(data[0].placeOfBirth || "");
+      setMembruData(data[0].memberDate ? data[0].memberDate.toDate() : null);
+      setDetalii(data[0].details || "");
+      setSelectedFile(data[0].profileImage || null);
+      setProfileImage(data[0].profileImage || null);
+      isInitialLoad.current = false; // Marca el fin de la carga inicial
+      setIsDataLoaded(true); // Marca que los datos han sido cargados
+    }
+  }, [data]);
 
   // --------- TRIMIT NOILE SETARI LA "PERSOANA" PT SALVARE IN BAZA DE DATE ------------ //
+
   useEffect(() => {
-    dataUpdated({
-      id: data[1],
-      firstName: nume,
-      lastName: prenume,
-      maidenName: anterior,
-      address: adresa,
-      mobilePhone: telefon,
-      email: email,
-      sex: sex === "M" ? true : sex === "F" ? false : null,
-      fatherID: "",
-      motherID: "",
-      birthDate: enterBirthDate,
-      placeOfBirth: placeOfBirth,
-      memberDate: membruData,
-      details: detalii,
-      profileImage: selectedFile,
-    });
+    if (!isInitialLoad.current && nume && prenume) {
+      const updatedData = {
+        firstName: nume,
+        lastName: prenume,
+        maidenName: anterior,
+        address: adresa,
+        mobilePhone: telefon,
+        email: email,
+        sex: sex === "M" ? true : sex === "F" ? false : null,
+        birthDate: enterBirthDate,
+        placeOfBirth: placeOfBirth,
+        memberDate: membruData,
+        details: detalii,
+        profileImage: selectedFile,
+      };
+
+      // Comprobar si los datos son diferentes antes de actualizar
+      if (
+        JSON.stringify(updatedData) !== JSON.stringify(previouslyUpdatedData)
+      ) {
+        dataUpdated(updatedData);
+        setPreviouslyUpdatedData(updatedData); // Actualiza el estado
+      }
+    }
   }, [
     nume,
     prenume,
@@ -96,36 +106,12 @@ const General = ({ dataUpdated, data, persoane }) => {
     telefon,
     email,
     sex,
-    // father,
-    // mother,
     placeOfBirth,
     enterBirthDate,
     detalii,
     selectedFile,
     membruData,
   ]);
-
-  // --------- SETEZ PROPRIETATILE DUPA "data" PRIMITE DIN "Persoana" -> din Firestore -----//
-  useEffect(() => {
-    if (data) {
-      setNume(data[0].firstName || "");
-      setPrenume(data[0].lastName || "");
-      setAnterior(data[0].maidenName || "");
-      setAdresa(data[0].address || "");
-      setTelefon(data[0].mobilePhone || "");
-      setEmail(data[0].email || "");
-      setSex(data[0].sex === true ? "M" : data[0].sex === false ? "F" : null);
-      // setFather(data[0].fatherID || "");
-      // setMother(data[0].motherID || "");
-      setEnterBirthDate(data[0].birthDate ? data[0].birthDate.toDate() : null);
-      setPlaceOfBirth(data[0].placeOfBirth || "");
-      setMembruData(data[0].memberDate ? data[0].memberDate.toDate() : null);
-      // setMember(!!data[0].memberDate);
-      setDetalii(data[0].details || "");
-      setSelectedFile(data[0].profileImage || null);
-      setProfileImage(data[0].profileImage || null);
-    }
-  }, []);
 
   // ------------------ ADD TRANSFER  --------------- //
 
@@ -268,6 +254,7 @@ const General = ({ dataUpdated, data, persoane }) => {
               <FormControlLabel value="F" label="Feminin" control={<Radio />} />
             </RadioGroup>
           </InputGroup>
+
           <Row>
             <Col>
               {membruData && (

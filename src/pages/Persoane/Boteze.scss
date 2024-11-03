@@ -5,7 +5,8 @@
 
 .boteze {
   background-color: rgba(219, 244, 248, 0.836);
-  width: 35%;
+  width: 75%;
+  margin-left: 30px;
 
   .age-input {
     max-width: 40px;
@@ -27,6 +28,12 @@
 }
 .title {
   text-align: center;
+
   text-decoration: underline;
   font-weight: bold;
+}
+.Modal-title {
+  text-decoration: underline;
+
+  margin-left: 250px;
 }

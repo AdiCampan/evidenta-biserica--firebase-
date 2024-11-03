@@ -82,7 +82,7 @@ function AddCazSpecial({ onAddCaz, persoane }) {
                       persoane?.filter((member) => member.memberDate)) ||
                     []
                   }
-                  placeholder="Alege o persoana..."
+                  placeholder="Alege un membru..."
                   selected={
                     (persoane?.length > 0 &&
                       persoane?.filter((p) => p.id === person?.id)) ||

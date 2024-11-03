@@ -9,6 +9,7 @@ import { push, ref, set } from "firebase/database";
 import { db, firestore } from "../../firebase-config";
 import { doc, setDoc } from "firebase/firestore";
 import { useAddMemberMutation } from "../../services/members";
+import { Alert, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 function AddPerson({ label }) {
   const [show, setShow] = useState(false);
@@ -16,10 +17,10 @@ function AddPerson({ label }) {
 
   const [nume, setNume] = useState("");
   const [prenume, setPrenume] = useState("");
-  // const [adresa, setAdresa] = useState("");
-  // const [telefon, setTelefon] = useState("");
-  // const [email, setEmail] = useState("");
-  const [sex, setSex] = useState(true);
+  const [biserica, setBiserica] = useState(null);
+  const [sex, setSex] = useState(null);
+  const [alert, setAlert] = useState(false);
+  const [otherChurch, setOtherChurch] = useState("");
 
   const [result] = useAddMemberMutation();
 
@@ -30,11 +31,21 @@ function AddPerson({ label }) {
       lastName: newMember.lastName,
       sex: newMember.sex,
       id: newMember.id,
+      churchName: biserica,
     });
     setShow(false);
+    setAlert(false);
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setNume("");
+    setPrenume("");
+    setSex(null);
+    setBiserica(null);
+    setAlert(false);
+
+    setShow(false);
+  };
 
   useEffect(() => {
     if (result.isSuccess) {
@@ -47,22 +58,18 @@ function AddPerson({ label }) {
       firstName: prenume,
       lastName: nume,
       id: crypto.randomUUID(),
-      // address: adresa,
-      // telefon: telefon,
-      // email: email,
-      sex: sex,
+      sex: sex === "M" ? true : sex === "F" ? false : null,
+      biserica: biserica,
     };
 
-    // id: Math.random().toString()
-
-    if (nume != "" && prenume != "") {
+    if (nume != "" && prenume != "" && sex !== null && biserica !== null) {
       setNume("");
       setPrenume("");
-      // setAdresa("");
-      // setTelefon("");
-      // setEmail("");
-      setSex(true);
+      setSex(null);
+      setBiserica(null);
       addMember(newPerson);
+    } else {
+      setAlert(true);
     }
   };
 
@@ -74,50 +81,72 @@ function AddPerson({ label }) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Detalii Persoana</Modal.Title>
+          <Modal.Title style={{ color: "GrayText", marginLeft: "100px" }}>
+            PERSOANA NOUA
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input
+            style={{ paddingLeft: 20, marginBottom: 10, height: 40 }}
             placeholder="Nume"
             value={nume}
             onChange={(event) => setNume(event.target.value)}
           ></input>
           <input
+            style={{ paddingLeft: 20, marginLeft: 20, height: 40 }}
             placeholder="Prenume"
             value={prenume}
             onChange={(event) => setPrenume(event.target.value)}
           ></input>
-          {/* <input 
-          placeholder='Adresa' 
-          value={adresa}
-          onChange={(event) => setAdresa(event.target.value)}
-          ></input>
-          <input
-            placeholder='Telefon'
-            value={telefon} 
-            onChange={(event) => setTelefon(event.target.value)}
-          ></input>
-          <input
-            placeholder='email'
-            value={email} 
-            onChange={(event) => setEmail(event.target.value)}
-          ></input> */}
-          <ButtonGroup aria-label="Basic example">
-            <Button
-              variant="secondary"
-              active={sex == true}
-              onClick={() => setSex(true)}
+          <InputGroup size="sm" className="mb-3">
+            <InputGroup.Text id="inputGroup-sizing-sm">GEN: </InputGroup.Text>
+            <RadioGroup
+              style={{ display: "flex", flexDirection: "row", paddingLeft: 14 }}
+              name="use-radio-group"
+              value={sex}
+              onChange={(e) => {
+                setSex(e.target.value);
+              }}
             >
-              M
-            </Button>
-            <Button
-              variant="secondary"
-              active={sex == false}
-              onClick={() => setSex(false)}
+              <FormControlLabel
+                value="M"
+                label="Masculin"
+                control={<Radio />}
+              />
+              <FormControlLabel value="F" label="Feminin" control={<Radio />} />
+            </RadioGroup>
+          </InputGroup>
+          <InputGroup size="sm" className="mb-3">
+            <InputGroup.Text id="inputGroup-sizing-sm">
+              BISERICA:{" "}
+            </InputGroup.Text>
+            <RadioGroup
+              style={{ display: "flex", flexDirection: "row", paddingLeft: 14 }}
+              name="use-radio-group"
+              value={biserica}
+              onChange={(e) => {
+                setBiserica(e.target.value);
+              }}
             >
-              F
-            </Button>
-          </ButtonGroup>
+              <FormControlLabel
+                value="EBEN - EZER"
+                label="EBEN - EZER"
+                control={<Radio />}
+              />
+              <FormControlLabel
+                style={{ paddingLeft: 25 }}
+                value={otherChurch}
+                // label="Alta Biserica"
+                control={<Radio />}
+              />
+              <input
+                style={{ paddingLeft: 25 }}
+                placeholder="Alta Biserica"
+                value={otherChurch}
+                onChange={(event) => setOtherChurch(event.target.value)}
+              ></input>
+            </RadioGroup>
+          </InputGroup>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -127,6 +156,11 @@ function AddPerson({ label }) {
             Add
           </Button>
         </Modal.Footer>
+        {alert && (
+          <Alert variant="outlined" severity="warning">
+            Toate campurile sunt obligatorii !
+          </Alert>
+        )}
       </Modal>
     </>
   );

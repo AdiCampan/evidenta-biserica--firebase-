@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   Container,
@@ -34,6 +34,8 @@ const Familie = ({ data, persoane }) => {
   const [currentPersonId, setCurrentPersonId] = useState("");
   const [servCivil, setServCivil] = useState(null);
   const [servRel, setServRel] = useState(null);
+
+  const isInitialLoad = useRef(true); // Flag de carga inicial
 
   useEffect(() => {
     if (data && data[1]) {
@@ -86,7 +88,7 @@ const Familie = ({ data, persoane }) => {
   }, [data]);
   // Actualizar relaciones en Firestore al cambiar la pareja
   useEffect(() => {
-    if (pereche) {
+    if (pereche && !isInitialLoad.current) {
       updateSpouseRelations().catch(console.error);
     }
   }, [pereche, servCivil, servRel, biserica]);
@@ -153,51 +155,13 @@ const Familie = ({ data, persoane }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (currentPersonId) {
-  //     loadRelations().catch(console.error);
-  //   }
-  // }, [currentPersonId]);
-
-  // const loadRelations = async () => {
-  //   if (!currentPersonId) return;
-
-  //   // Obtener el documento de la persona actual
-  //   const currentPersonRef = doc(firestore, "persoane", currentPersonId);
-  //   const currentPersonSnapshot = await getDoc(currentPersonRef);
-
-  //   if (currentPersonSnapshot.exists()) {
-  //     const { relations } = currentPersonSnapshot.data();
-
-  //     // Filtrar relaciones de padre y madre
-  //     const fatherRelation = relations?.find((rel) => rel.type === "father");
-  //     const motherRelation = relations?.find((rel) => rel.type === "mother");
-  //     // const fatherId = String(fatherRelation.person); // Convertir a string si es un número
-  //     // const motherId = String(motherRelation.person); // Hacer lo mismo con la madre
-
-  //     // Cargar los datos del padre y la madre usando sus IDs
-  //     setFather(fatherRelation ? await getPersonById(fatherRelation) : null);
-  //     setMother(motherRelation ? await getPersonById(motherRelation) : null);
-
-  //     // Filtrar relaciones de hijos
-  //     const childRelations =
-  //       relations?.filter((rel) => rel.type === "child") || [];
-  //     const childrenData = await Promise.all(
-  //       childRelations.map(async (rel) => await getPersonById(rel.person))
-  //     );
-  //     setChildren(childrenData);
-  //   }
-  // };
-
-  // const getPersonById = async (id) => {
-  //   const personRef = doc(firestore, "persoane", id);
-  //   const personSnapshot = await getDoc(personRef);
-  //   return { id, ...personSnapshot.data() }; // Retornar el objeto con datos de la persona
-  // };
-
   useEffect(() => {
     if (currentPersonId) {
-      loadRelations().catch(console.error);
+      loadRelations()
+        .then(() => {
+          isInitialLoad.current = false;
+        })
+        .catch(console.error);
     }
   }, [currentPersonId]);
 
@@ -236,7 +200,7 @@ const Familie = ({ data, persoane }) => {
   };
 
   useEffect(() => {
-    if (currentPersonId) {
+    if (currentPersonId && !isInitialLoad.current) {
       updateRelations().catch(console.error);
     }
   }, [father, mother]);
@@ -364,6 +328,7 @@ const Familie = ({ data, persoane }) => {
                 <InputGroup size="sm" className="mb-3">
                   <InputGroup.Text>Sot/Sotie</InputGroup.Text>
                   <Typeahead
+                    style={{ width: 300 }}
                     id="pereche"
                     onChange={onPersonChange}
                     labelKey={(option) =>
@@ -437,9 +402,10 @@ const Familie = ({ data, persoane }) => {
           <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
             <Row style={{ padding: "5px" }}>
               <Col>
-                <div style={{ marginLeft: "20px" }}>TATA</div>
                 <InputGroup size="sm" className="mb-3">
+                  <InputGroup.Text>TATA</InputGroup.Text>
                   <Typeahead
+                    style={{ width: 300 }}
                     id="father"
                     onChange={onFatherChange}
                     labelKey={(option) =>
@@ -455,9 +421,11 @@ const Familie = ({ data, persoane }) => {
                 </InputGroup>
               </Col>
               <Col>
-                <div style={{ marginLeft: "20px" }}>MAMA</div>
                 <InputGroup size="sm" className="mb-3">
+                  <InputGroup.Text>MAMA</InputGroup.Text>
+
                   <Typeahead
+                    style={{ width: 300 }}
                     id="mother"
                     onChange={onMotherChange}
                     labelKey={(option) =>

@@ -1,0 +1,14 @@
+.table-resizable {
+  width: 100%;
+  table-layout: auto; /* Permite que el ancho de las columnas cambie dinámicamente */
+  border-collapse: collapse;
+}
+
+.table-resizable th,
+.table-resizable td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  resize: horizontal; /* Permite que el contenido se redimensione */
+  overflow: hidden;
+  min-width: 60px; /* Ancho mínimo de cada columna */
+}

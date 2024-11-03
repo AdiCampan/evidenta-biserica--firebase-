@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import { useGetMembersQuery } from "../../services/members";
 import {
   filterByText,
   formatDate,
@@ -17,35 +16,22 @@ import {
   calculateAge,
 } from "../../utils";
 import "./Membrii.scss";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { firestore } from "../../firebase-config";
 import ScrollButton from "../../ScrollButton";
 
 function Membrii({ persoane }) {
-  // const { data: persoane, error, isLoading, isFetching } = useGetMembersQuery();
   const navigate = useNavigate();
 
-  // const [persoane, setPersoane] = useState();
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
   const [ageFilterGreater, setAgeFilterGreater] = useState("");
   const [ageFilterSmaller, setAgeFilterSmaller] = useState("");
+  const [memberDateFilter, setMemberDateFilter] = useState({
+    field: null,
+    direction: null,
+  });
 
   const [addressFilter, setAddressFilter] = useState("");
   const [telefonFilter, setTelefonFilter] = useState("");
-
-  // const q = query(collection(firestore, "persoane"));
-  // useEffect(() => {
-  //   onSnapshot(q, (querySnapshot) => {
-  //     const tmpArray = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const childKey = doc.id;
-  //       const childData = doc.data();
-  //       tmpArray.push({ id: childKey, ...childData });
-  //       setPersoane(tmpArray);
-  //     });
-  //   });
-  // }, []);
 
   function filterMembers(members) {
     let filteredMembers = members;
@@ -55,6 +41,7 @@ function Membrii({ persoane }) {
       "firstName",
       firstNameFilter
     );
+
     filteredMembers = filterByText(filteredMembers, "lastName", lastNameFilter);
     filteredMembers = filterByText(filteredMembers, "address", addressFilter);
     filteredMembers = filterByText(
@@ -73,11 +60,52 @@ function Membrii({ persoane }) {
       ageFilterSmaller
     );
 
-    return filteredMembers.filter((member) => member.memberDate);
+    return filteredMembers.filter(
+      (member) => member.memberDate && !member.leaveDate
+    );
   }
 
   const goToPerson = (id) => {
     navigate(`/persoane/${id}`, { state: { persons: persoane } });
+  };
+
+  const sortList = (a, b) => {
+    if (!memberDateFilter.field) {
+      return 1;
+    }
+    // ascendent
+    if (memberDateFilter.direction === "asc") {
+      if (a[memberDateFilter.field] > b[memberDateFilter.field]) {
+        return 1;
+      }
+      return -1;
+      // descendent
+    } else {
+      if (a[memberDateFilter.field] < b[memberDateFilter.field]) {
+        return 1;
+      }
+      return -1;
+    }
+  };
+
+  const sorting = (field) => {
+    let newDirection = "asc";
+
+    // 1. nu e setat deloc, deci trebuie pus ascendent
+    if (memberDateFilter.direction === null) {
+      newDirection = "asc";
+      // 2. e setat ascendent, deci trebuie pus descendent
+    } else if (memberDateFilter.direction === "asc") {
+      newDirection = "desc";
+      // 3 e setat descendent, deci trebuie pus ascendent
+    } else {
+      newDirection = "asc";
+    }
+
+    setMemberDateFilter({
+      field: field,
+      direction: newDirection,
+    });
   };
 
   return (
@@ -120,13 +148,18 @@ function Membrii({ persoane }) {
               />
             </td>
 
-            <td>
-              {/* <input
-                                className='search-input'
-                                type="text"
-                                value={addressFilter}
-                                onChange={(e) => setAddressFilter(e.target.value)}
-                            /> */}
+            <td
+              onClick={() => sorting("memberDate")}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <button style={{ borderRadius: "15px", boxShadow: "10px" }}>
+                {" "}
+                ASC/DESC
+              </button>
             </td>
             <td>
               {/* <input
@@ -158,32 +191,34 @@ function Membrii({ persoane }) {
             <td></td>
           </tr>
           {persoane
-            ? filterMembers(persoane).map((p, index) => (
-                <tr
-                  key={p.id}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => goToPerson(p.id)}
-                >
-                  <td>{index + 1}</td>
-                  <td>{p.lastName}</td>
-                  <td>{p["firstName"]}</td>
-                  <td>{formatDate(p.memberDate)}</td>
-                  <td>{formatDate(p.baptiseDate)}</td>
-                  <td>{p.baptisePlace}</td>
-                  <td>{calculateAge(p.birthDate)}</td>
-                  <td>{formatDate(p.birthDate)}</td>
-                  <td>{p.sex ? "M" : "F"}</td>
-                  {/* {console.log(p.sex)} */}
-                  <td>
-                    <Button
-                      variant="primary"
-                      onClick={(event) => showDeleteModal(p.id, event)}
-                    >
-                      Sterge
-                    </Button>
-                  </td>
-                </tr>
-              ))
+            ? filterMembers(persoane)
+                .sort(sortList)
+                .map((p, index) => (
+                  <tr
+                    key={p.id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => goToPerson(p.id)}
+                  >
+                    <td>{index + 1}</td>
+                    <td>{p.lastName}</td>
+                    <td>{p["firstName"]}</td>
+                    <td>{formatDate(p.memberDate)}</td>
+                    <td>{formatDate(p.baptiseDate)}</td>
+                    <td>{p.baptisePlace}</td>
+                    <td>{calculateAge(p.birthDate)}</td>
+                    <td>{formatDate(p.birthDate)}</td>
+                    <td>{p.sex ? "M" : "F"}</td>
+                    {/* {console.log(p.sex)} */}
+                    <td>
+                      <Button
+                        variant="primary"
+                        onClick={(event) => showDeleteModal(p.id, event)}
+                      >
+                        Sterge
+                      </Button>
+                    </td>
+                  </tr>
+                ))
             : null}
         </tbody>
       </Table>

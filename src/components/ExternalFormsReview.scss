@@ -1,0 +1,94 @@
+.custom-modal .modal-header {
+  background-color: #07284b; /* Color de fondo del encabezado */
+  color: white;
+  border-bottom: none;
+  padding: 1rem 1.5rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.form-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 8px 0;
+  background-color: #e5e0f4;
+  border-radius: 6px;
+  transition: box-shadow 0.3s ease;
+}
+
+.form-item:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-content {
+  cursor: pointer;
+}
+
+.form-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.form-address {
+  font-size: 1rem;
+  color: #666;
+  margin: 0.5rem 0 0;
+}
+
+.modal-footer {
+  background-color: #f1f1f1;
+  border-top: none;
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-button {
+  background-color: #004085;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: #0056b3;
+}
+.delete-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.3s;
+  margin-left: 12px;
+}
+
+.delete-btn:hover {
+  color: #c0392b;
+}
+.form-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}

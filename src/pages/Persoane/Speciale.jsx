@@ -215,7 +215,7 @@ const Speciale = ({ persoane }) => {
               <tr
                 key={caz.id}
                 style={{
-                  backgroundColor: caz.endDate ? "#55bb5580" : "#af404038",
+                  backgroundColor: caz.endDate ? "#7ec07e80" : "#af404038",
                 }}
               >
                 <td>{index + 1}</td>

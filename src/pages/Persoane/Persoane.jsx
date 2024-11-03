@@ -81,20 +81,6 @@ function Persoane({ persoane }) {
   const [notMembersOnly, setNotMembersOnly] = useState(false);
   const [persons, setPersons] = useState("");
 
-  // -------------- LISTEN REAL TIME  in FIRESTORE -------------------- //
-  // const q = query(collection(firestore, "persoane"));
-  // useEffect(() => {
-  //   onSnapshot(q, (querySnapshot) => {
-  //     const tmpArray = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const childKey = doc.id;
-  //       const childData = doc.data();
-  //       tmpArray.push({ id: childKey, ...childData });
-  //       setPersoane(tmpArray);
-  //     });
-  //   });
-  // }, []);
-
   useEffect(() => {
     if (persoane) {
       setPersons(persoane);
@@ -191,11 +177,15 @@ function Persoane({ persoane }) {
 
     if (membersOnly !== notMembersOnly) {
       if (membersOnly) {
-        filteredMembers = filteredMembers.filter((member) => member.memberDate);
+        const regex = /\beben\b.*\bezer\b|\bezer\b.*\beben\b/i;
+        filteredMembers = filteredMembers.filter(
+          (member) => member.churchID === 1 || regex.test(member.churchName)
+        );
       }
       if (notMembersOnly) {
         filteredMembers = filteredMembers.filter(
-          (member) => !member.memberDate
+          (member) => member.leaveDate || !member.memberDate
+          // member.leaveDate > member.memberDate
         );
       }
     }
@@ -363,7 +353,7 @@ function Persoane({ persoane }) {
           </thead>
           <tbody>
             <tr className="inputs-list">
-              <td></td>
+              <td> {filterMembers(persoane).length}</td>
               <td>
                 <input
                   className="search-input"

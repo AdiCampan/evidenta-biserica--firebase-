@@ -18,20 +18,6 @@ const Familii = ({ persoane }) => {
 
   const handleClose = () => setShowModal(false);
 
-  // -------------- LISTEN "persons" in REAL TIME  in FIRESTORE -------------------- //
-  // useEffect(() => {
-  //   const q = query(collection(firestore, "persoane"));
-  //   onSnapshot(q, (querySnapshot) => {
-  //     const tmpArray = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const childKey = doc.id;
-  //       const childData = doc.data();
-  //       tmpArray.push({ id: childKey, ...childData });
-  //       setPersoane(tmpArray);
-  //     });
-  //   });
-  // }, []);
-
   function filterMembers(members) {
     if (persoane?.length > 0) {
       let filteredMembers = members;
@@ -172,7 +158,7 @@ const Familii = ({ persoane }) => {
           Copii familiei{" "}
           <Modal.Title style={{ marginLeft: "20px" }}>{familia}</Modal.Title>
         </Modal.Header>
-        <Table striped bordered hover variant="dark">
+        <Table striped bordered hover variant="dark" style={{ width: "700px" }}>
           <thead>
             <tr>
               <th>#</th>
@@ -181,6 +167,7 @@ const Familii = ({ persoane }) => {
               <th>DATA NAST.</th>
               <th>VARSTA</th>
               <th>GEN</th>
+              <th>Locul nasterii</th>
               <th>DETALII</th>
             </tr>
           </thead>
@@ -225,6 +212,12 @@ const Familii = ({ persoane }) => {
                         .find((children) => children.lastName)?.sex
                         ? "M"
                         : "F"}
+                    </td>
+                    <td>
+                      {persoane
+                        .filter((child) => child.id === p)
+                        .find((children) => children.lastName)?.placeOfBirth ||
+                        ""}
                     </td>
                     <td>
                       {persoane

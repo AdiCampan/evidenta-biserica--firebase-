@@ -17,8 +17,26 @@ const Biserica = ({ data, dataUpdated }) => {
   const [dsBotezDate, setDsBotezDate] = useState(null);
   const [dsBotezPlace, setDsBotezPlace] = useState("");
   const [detalii, setDetalii] = useState("");
+  const [churchName, setChurchName] = useState("");
+
+  const isInitialLoad = useRef(true); // Flag de carga inicial
 
   useEffect(() => {
+    setBlessingDate(data[0].blessingDate ? data[0].blessingDate.toDate() : "");
+    setBlessingPLace(data[0].blessingPlace || "");
+    setBaptiseDate(data[0].baptiseDate ? data[0].baptiseDate.toDate() : "");
+    setBaptisePlace(data[0].baptisePlace || "");
+    setDsBotezDate(data[0].hsBaptiseDate ? data[0].hsBaptiseDate.toDate() : "");
+    setBaptisedBy(data[0].baptisedBy || "");
+    setDsBotezPlace(data[0].hsBaptisePlace || "");
+    setDetalii(data[0].details || "");
+    setChurchName(data[0].churchName || "");
+    isInitialLoad.current = false; // Fin de la carga inicial
+  }, [data]);
+
+  useEffect(() => {
+    if (isInitialLoad.current) return; // Evita ejecuciones durante la carga inicial
+
     const updatedInfo = {
       blessingDate: blessingDate,
       blessingPlace: blessingPlace,
@@ -29,6 +47,7 @@ const Biserica = ({ data, dataUpdated }) => {
       hsBaptisePlace: dsBotezPlace,
       details: detalii,
     };
+
     if (
       baptiseDate &&
       (baptisePlace.toLowerCase() === "eben ezer" ||
@@ -47,23 +66,34 @@ const Biserica = ({ data, dataUpdated }) => {
     dsBotezDate,
     dsBotezPlace,
     detalii,
+    churchName,
   ]);
+
   // actualizeaza datele la save, de ex
-  useEffect(() => {
-    setBlessingDate(data[0].blessingDate ? data[0].blessingDate.toDate() : "");
-    setBlessingPLace(data[0].blessingPlace || "");
-    setBaptiseDate(data[0].baptiseDate ? data[0].baptiseDate.toDate() : "");
-    setBaptisePlace(data[0].baptisePlace || "");
-    setDsBotezDate(data[0].hsBaptiseDate ? data[0].hsBaptiseDate.toDate() : "");
-    setBaptisedBy(data[0].baptisedBy || "");
-    setDsBotezPlace(data[0].hsBaptisePlace || "");
-    setDetalii(data[0].details || "");
-  }, [data]);
 
   return (
     <Row style={{ width: "100%" }}>
       <div style={{ marginLeft: "20px" }}>
         <Col>
+          <Row>
+            <Col>
+              <InputGroup
+                size="sm"
+                className="mb-3"
+                style={{ display: "flex", flexWrap: "nowrap" }}
+              >
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Apartine Bisericii:
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Small"
+                  aria-describedby="inputGroup-sizing-sm"
+                  value={churchName}
+                  onChange={(event) => setChurchName(event.target.value)}
+                />
+              </InputGroup>
+            </Col>
+          </Row>
           <Row>
             <Col>
               <InputGroup

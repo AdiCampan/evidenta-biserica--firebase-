@@ -114,11 +114,6 @@ const CSVUploader = ({ persoane }) => {
 
   if (mergedPersons.length > 0) {
     const updateRelations = (transformedPersons, weddings) => {
-      // 0. Transformar el valor del campo `Sex` de 0/1 a `true`/`false`
-      // transformedPersons.forEach((person) => {
-      //   person.Sex = person.Sex === "1" ? true : false;
-      // });
-
       // Crear un diccionario para buscar personas rápidamente usando PersonID
       const personsById = transformedPersons.reduce((acc, person) => {
         acc[person.PersonID] = person; // Usar PersonID
@@ -260,20 +255,19 @@ const CSVUploader = ({ persoane }) => {
       transformedPersonsUpdated
     );
   }
-
   const uploadTransfersToFirestore = async () => {
     if (transfers.length > 0) {
       const modifiedTransfers = transfers.map((row) => ({
-        id: row.TransferID ? row.TransferID.trim() : null,
+        id: row.TransferID ? String(row.TransferID) : null,
         churchTransfer: row.TransferredToChurchName
           ? row.TransferredToChurchName.trim()
           : null,
         date: row.TransferDate
           ? Timestamp.fromDate(new Date(row.TransferDate.trim()))
           : null,
-        docNumber: row.TransferAct ? row.TransferAct.trim() : null,
+        docNumber: row.TransferAct ? row.TransferAct : null,
         details: row.TransferDetails ? row.TransferDetails.trim() : null,
-        owner: row.PersonID ? row.PersonID.trim() : null,
+        owner: row.PersonID ? String(row.PersonID) : null,
         type: "transferTo",
       }));
 
@@ -294,7 +288,6 @@ const CSVUploader = ({ persoane }) => {
       alert("Todos los transfers han sido subidos correctamente.");
     }
   };
-
   const uploadSpecialsCasesToFirestore = async () => {
     if (specialCases.length > 0) {
       const modifiedSpecialCases = specialCases
@@ -304,8 +297,8 @@ const CSVUploader = ({ persoane }) => {
 
           return {
             id:
-              row.SpecialCaseID && row.SpecialCaseID.trim() !== ""
-                ? row.SpecialCaseID.trim()
+              row.SpecialCaseID && row.SpecialCaseID !== ""
+                ? String(row.SpecialCaseID)
                 : null,
             details:
               row.SpecialCaseDetails && row.SpecialCaseDetails.trim() !== ""
@@ -318,7 +311,7 @@ const CSVUploader = ({ persoane }) => {
               ? Timestamp.fromDate(new Date(row.SolvedDate.trim()))
               : null,
             person:
-              row.PersonID && row.PersonID.trim() !== "" ? row.PersonID : null,
+              row.PersonID && row.PersonID !== "" ? String(row.PersonID) : null,
           };
         })
         .filter((caseItem) => caseItem.id);
@@ -363,63 +356,6 @@ const CSVUploader = ({ persoane }) => {
     return null;
   };
 
-  // const uploadPersonsToFirestore = async () => {
-  //   if (shortPersons.length > 0) {
-  //     const modifiedPersons = shortPersons.map((person) => ({
-  //       firstName: normalizeValue(person.FirstName),
-  //       lastName: normalizeValue(person.LastName),
-  //       address: normalizeValue(person.address),
-  //       birthDate: person.BirthDate
-  //         ? convertToTimestamp(person.BirthDate)
-  //         : null,
-  //       maidenName: normalizeValue(person.MaidenName),
-  //       churchID: person.ChurchID,
-  //       churchName: normalizeValue(person.ChurchName),
-  //       deathDate: person.DeathDate
-  //         ? convertToTimestamp(person.DeathDate)
-  //         : null,
-  //       details: normalizeValue(person.Details),
-  //       fatherID: person.FatherID,
-  //       motherID: person.MotherID,
-  //       placeOfBirth: normalizeValue(person.PlaceOfBirth),
-  //       mobilePhone: normalizeValue(person.MobilePhone),
-  //       sex: normalizeValue(person.Sex),
-  //       id: person.PersonID,
-  //       blessingDate: person.blessingDate
-  //         ? convertToTimestamp(person.blessingDate)
-  //         : null,
-  //       blessingPlace: normalizeValue(person.blessingPlace),
-  //       baptisedBy: normalizeValue(person.baptisedBy),
-  //       baptisePlace: normalizeValue(person.baptisePlace),
-  //       baptiseDate: person.baptiseDate
-  //         ? convertToTimestamp(person.baptiseDate)
-  //         : null,
-  //       hsBaptiseDate: person.hsBaptiseDate
-  //         ? convertToTimestamp(person.hsBaptiseDate)
-  //         : null,
-  //       hsBaptisePlace: normalizeValue(person.hsBaptisePlace),
-  //       memberDate: person.memberDate
-  //         ? convertToTimestamp(person.memberDate)
-  //         : null,
-  //       leaveDate: person.leaveDate
-  //         ? convertToTimestamp(person.leaveDate)
-  //         : null,
-  //       observations: normalizeValue(person.observations),
-  //       email: "", // Asegúrate de que el email no sea undefined
-  //       profileImage: normalizeValue(person.Photo) || null, // Aquí nos aseguramos de que no sea undefined
-  //       relations: person.relations || [], // Asegurarse de que 'relations' no sea undefined
-  //     }));
-
-  //     for (const person of modifiedPersons) {
-  //       const docId = String(person.id);
-  //       try {
-  //         await setDoc(doc(firestore, "persoane", docId), person);
-  //       } catch (error) {
-  //         console.error(`Error subiendo persona con ID ${docId}:`, error);
-  //       }
-  //     }
-  //   }
-  // };
   const uploadPersonsToFirestore = async () => {
     if (mergedPersons.length > 0) {
       const modifiedPersons = mergedPersons.map((person) => ({
@@ -477,134 +413,6 @@ const CSVUploader = ({ persoane }) => {
       }
     }
   };
-
-  // const uploadPersonsToFirestore = async () => {
-  //   if (shortPersons.length > 0) {
-  //     const modifiedPersons = shortPersons.map((row) => ({
-  //       firstName: row.FirstName ? row.FirstName.trim() : null,
-  //       lastName: row.LastName ? row.LastName.trim() : null,
-  //       addressID:
-  //         row.AddressID &&
-  //         typeof row.AddressID === "string" &&
-  //         row.AddressID !== "NULL"
-  //           ? row.AddressID.trim()
-  //           : null,
-  //       birthDate:
-  //         row.BirthDate && row.BirthDate !== "NULL"
-  //           ? convertToTimestamp(row.BirthDate)
-  //           : null,
-  //       maidenName:
-  //         row.MaidenName && row.MaidenName !== "NULL"
-  //           ? row.MaidenName.trim()
-  //           : null,
-  //       churchID:
-  //         row.ChurchID &&
-  //         typeof row.ChurchID === "string" &&
-  //         row.ChurchID !== "NULL"
-  //           ? row.ChurchID.trim()
-  //           : null,
-  //       churchName:
-  //         row.ChurchName && row.ChurchName !== "NULL"
-  //           ? row.ChurchName.trim()
-  //           : null,
-  //       deathDate:
-  //         row.DeathDate && row.DeathDate !== "NULL"
-  //           ? convertToTimestamp(row.DeathDate)
-  //           : null,
-  //       details:
-  //         row.Details && row.Details !== "NULL" ? row.Details.trim() : "",
-  //       fatherID:
-  //         row.FatherID &&
-  //         typeof row.FatherID === "string" &&
-  //         row.FatherID !== "NULL"
-  //           ? row.FatherID.trim()
-  //           : null,
-  //       motherID:
-  //         row.MotherID &&
-  //         typeof row.MotherID === "string" &&
-  //         row.MotherID !== "NULL"
-  //           ? row.MotherID.trim()
-  //           : null,
-  //       placeOfBirth:
-  //         row.PlaceOfBirth && row.PlaceOfBirth !== "NULL"
-  //           ? row.PlaceOfBirth.trim()
-  //           : null,
-  //       mobilePhone:
-  //         row.MobilePhone &&
-  //         typeof row.MobilePhone === "string" &&
-  //         row.MobilePhone !== "NULL"
-  //           ? row.MobilePhone.trim()
-  //           : null,
-  //       sex:
-  //         row.Sex && typeof row.Sex === "string" && row.Sex !== "NULL"
-  //           ? row.Sex.trim() === "1"
-  //           : null,
-  //       id: row.PersonID ? row.PersonID : null,
-  //       address: (row.address && row.address !== "NULL") || null,
-  //       blessingDate:
-  //         row.blessingDate && row.blessingDate !== "NULL"
-  //           ? convertToTimestamp(row.blessingDate)
-  //           : null, // Manejo de null
-  //       blessingPlace:
-  //         row.blessingPlace && row.blessingPlace !== "NULL"
-  //           ? row.blessingPlace
-  //           : null,
-  //       baptisedBy:
-  //         row.baptisedBy && row.baptisedBy !== "NULL" ? row.baptisedBy : null,
-  //       baptisePlace:
-  //         row.baptisePlace && row.baptisePlace !== "NULL"
-  //           ? row.baptisePlace
-  //           : null,
-  //       baptiseDate:
-  //         row.baptiseDate && row.baptiseDate !== "NULL"
-  //           ? convertToTimestamp(row.baptiseDate)
-  //           : null, // Manejo de null
-  //       hsBaptiseDate:
-  //         row.hsBaptiseDate && row.hsBaptiseDate !== "NULL"
-  //           ? convertToTimestamp(row.hsBaptiseDate)
-  //           : null, // Manejo de null
-  //       hsBaptisePlace:
-  //         row.hsBaptisePlace && row.hsBaptisePlace !== "NULL"
-  //           ? row.hsBaptisePlace
-  //           : null,
-  //       memberDate:
-  //         row.memberDate && row.memberDate !== "NULL"
-  //           ? convertToTimestamp(row.memberDate)
-  //           : null, // Manejo de null
-  //       leaveDate:
-  //         row.leaveDate && row.leaveDate !== "NULL"
-  //           ? convertToTimestamp(row.leaveDate)
-  //           : null, // Manejo de null
-  //       observations:
-  //         row.observations && row.observations !== "NULL"
-  //           ? row.observations.trim()
-  //           : "",
-  //       email: "",
-  //       profileImage:
-  //         row.Photo && row.Photo !== "NULL" ? row.Photo.trim() : null,
-  //     }));
-
-  //     console.log("modifiedPersons", modifiedPersons);
-
-  //     for (const person of modifiedPersons) {
-  //       const docId =
-  //         person.id !== null && person.id !== undefined
-  //           ? String(person.id)
-  //           : null;
-
-  //       if (docId) {
-  //         console.log("Subiendo documento con ID:", docId); // Para depuración
-  //         try {
-  //           await setDoc(doc(firestore, "persoane", docId), person);
-  //         } catch (error) {
-  //           console.error(`Error subiendo documento para ${docId}:`, error);
-  //         }
-  //       } else {
-  //         console.error("ID inválido para persona:", person);
-  //       }
-  //     }
-  //   }
-  // };
 
   const uploadBackups = () => {
     setShow(true);

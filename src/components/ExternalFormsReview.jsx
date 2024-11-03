@@ -12,6 +12,8 @@ import { Badge, Button, Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker"; // Importar DatePicker
 import "react-datepicker/dist/react-datepicker.css"; // Importar los estilos de DatePicker
 import ImageUploader from "../components/ImageUploader/ImageUploader";
+import "./ExternalFormsReview.scss";
+import { FaTrash } from "react-icons/fa";
 
 const ExternalFormsReview = ({ persoane }) => {
   const [show, setShow] = useState(false);
@@ -30,6 +32,13 @@ const ExternalFormsReview = ({ persoane }) => {
     profileImage: selectedFile,
     observations: "",
   });
+
+  const [selectedForm, setSelectedForm] = useState(null);
+
+  const handleFormClick = (form) => {
+    setForm(form);
+    setSelectedForm(form); // Establece el formulario seleccionado
+  };
 
   // Convertir un timestamp de Firestore a un objeto Date
   const timestampToDate = (timestamp) => {
@@ -61,6 +70,7 @@ const ExternalFormsReview = ({ persoane }) => {
     }
   }, [form]);
   const handleSubmit = async (e) => {
+    setSelectedForm(null);
     e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
     if (persoane) {
@@ -111,7 +121,7 @@ const ExternalFormsReview = ({ persoane }) => {
             await updateDoc(personRef, updatedFields);
 
             // Eliminar el formulario de la colección temporal
-            await deleteDoc(doc(firestore, "externalForms", form.id));
+            await deleteDoc(doc(firestore, "externalForms", form?.id));
 
             alert("FISA ACTUALIZATA CORECT !!! ");
             setExternalForms(externalForms.filter((f) => f.id !== form.id)); // Eliminar formulario sincronizado de la lista
@@ -145,6 +155,11 @@ const ExternalFormsReview = ({ persoane }) => {
 
     fetchExternalForms();
   }, []);
+  const deleteForm = async (formId) => {
+    await deleteDoc(doc(firestore, "externalForms", formId));
+    setExternalForms(externalForms.filter((f) => f.id !== formId)); // Eliminar formulario sincronizado de la lista
+    setForm(null); // Limpiar el formulario actual
+  };
 
   const showForm = (form) => {
     setForm(form); // Cargar los datos del formulario seleccionado
@@ -173,25 +188,18 @@ const ExternalFormsReview = ({ persoane }) => {
         )}
       </Button>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>FORMULARE PRIMITE</Modal.Title>
+      <Modal show={show} onHide={handleClose} className="custom-modal">
+        <Modal.Header closeButton className="modal-header">
+          <Modal.Title className="modal-title">
+            {selectedForm
+              ? `${selectedForm.firstName} ${selectedForm.lastName}`
+              : "FORMULARE PRIMITE"}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {externalForms.length === 0 ? (
-            <p>Nu sunt formulare primite</p>
-          ) : (
-            <ul>
-              {externalForms.map((form) => (
-                <li key={form.id} onClick={() => showForm(form)}>
-                  {form.firstName} {form.lastName} - {form.address}
-                </li>
-              ))}
-            </ul>
-          )}
-          {form && (
+          {selectedForm ? (
             <div className="form-container">
-              <h1 className="form-title">{form.lastName}</h1>
+              <h1 className="form-title">{selectedForm.lastName}</h1>
               <form className="form-group" onSubmit={handleSubmit}>
                 <div className="colums">
                   <div className="colum-form">
@@ -275,7 +283,7 @@ const ExternalFormsReview = ({ persoane }) => {
                     <ImageUploader
                       onFileSelectSuccess={(file) => setSelectedFile(file)}
                       onFileSelectError={({ error }) => alert(error)}
-                      initialImage={form.profileImage}
+                      initialImage={form?.profileImage}
                     />
 
                     <label className="label">
@@ -331,16 +339,57 @@ const ExternalFormsReview = ({ persoane }) => {
                 <button
                   className="cancel-btn"
                   type="button"
-                  onClick={handleClose}
+                  onClick={() => setSelectedForm(null)} // Regresar a la lista
                 >
-                  Cancelar
+                  Volver a la lista
                 </button>
               </form>
             </div>
+          ) : (
+            <ul className="form-list">
+              {externalForms.map((form) => (
+                <li
+                  key={form.id}
+                  onClick={() => handleFormClick(form)}
+                  className="form-item"
+                >
+                  <div className="form-content">
+                    <h3 className="form-name">
+                      {form.lastName} {form.firstName}
+                    </h3>
+                    <p className="form-address">{form.address}</p>
+                  </div>
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Evita activar el evento onClick del formulario
+                      if (
+                        window.confirm(
+                          "¿Estás seguro de que quieres eliminar este formulario?"
+                        )
+                      ) {
+                        deleteForm(form.id); // Función para eliminar el formulario
+                      }
+                    }}
+                  >
+                    <FaTrash />
+                  </button>
+
+                  {/* <FaTrash
+                    style={{ cursor: "pointer", marginLeft: "30px" }}
+                    onClick={(event) => showDeleteModal(form.id)}
+                  /> */}
+                </li>
+              ))}
+            </ul>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+        <Modal.Footer className="modal-footer">
+          <Button
+            variant="secondary"
+            onClick={handleClose}
+            className="close-button"
+          >
             Cerrar
           </Button>
         </Modal.Footer>

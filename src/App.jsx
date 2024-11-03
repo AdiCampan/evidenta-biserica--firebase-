@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Persoana from "./pages/Persoana/Persoana";
-
+import "./App.scss";
 import Persoane from "./pages/Persoane/Persoane";
 import Membrii from "./pages/Persoane/Membrii";
 import Boteze from "./pages/Persoane/Boteze";
@@ -37,6 +37,7 @@ import {
   ArcElement,
   BarElement,
 } from "chart.js";
+import { FaUserCircle, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 
 // Registro de elementos del gráfico
 ChartJS.register(
@@ -183,18 +184,24 @@ function MainApp() {
             </>
           )}
         </div>
-        <div>{logedUser}</div>
-        <div>
+
+        <div className="userBox-container">
           {!logedUser ? (
-            <Link to="/login">
-              <Button variant="primary">Log In</Button>
+            <Link to="/login" className="login-button">
+              <FaSignInAlt className="icon" />
+              <span>Log In</span>
             </Link>
           ) : (
-            <Link to="/login">
-              <Button variant="primary" onClick={logOut}>
-                Log out
-              </Button>
-            </Link>
+            <div className="logged-user">
+              <div className="user-info">
+                <FaUserCircle className="user-icon" />
+                <span className="user-name">{logedUser}</span>
+              </div>
+              <Link to="/login" className="logout-button" onClick={logOut}>
+                <FaSignOutAlt className="icon" />
+                {/* <span>Log Out</span> */}
+              </Link>
+            </div>
           )}
         </div>
       </nav>
