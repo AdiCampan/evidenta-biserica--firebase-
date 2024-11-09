@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { calculateAge, formatDate, filterByText } from "../utils";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Table } from "react-bootstrap";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import Chart from "chart.js/auto";
+
+Chart.register(ChartDataLabels);
 
 function Grafice({ persoane }) {
   const [sortOrder, setSortOrder] = useState("asc");
@@ -16,15 +20,21 @@ function Grafice({ persoane }) {
   );
   const [endDate, setEndDate] = useState(new Date());
 
+  const regex = /\beben\b.*\bezer\b|\bezer\b.*\beben\b/i;
+
   const totalMembrii =
-    persoane?.length > 0 && persoane?.filter((p) => p.memberDate).length;
+    persoane?.length > 0 &&
+    persoane?.filter((p) => regex.test(p.churchName)).length;
+
   const date = new Date();
+
+  const membriiBotezati =
+    persoane?.length > 0 &&
+    persoane?.filter((p) => regex.test(p.churchName) && p.baptiseDate).length;
 
   // const totalFamilii = persoane ? filterFamilys(persoane).length : null;
   // const familii = persoane ? filterFamilys(persoane) : null;
   // const familii1 = familii?.map((p) => p.relation === "child");
-
-  const regex = /\beben\b.*\bezer\b|\bezer\b.*\beben\b/i;
 
   const nrBarbati =
     persoane?.length > 0 &&
@@ -42,8 +52,10 @@ function Grafice({ persoane }) {
     persoane?.length > 0 &&
     persoane?.filter(
       (p) =>
-        // calculateAge(p.birthDate) < 18 &&
-        regex.test(p.churchName) && !p.memberDate && !p.baptiseDate
+        calculateAge(p.birthDate) < 18 &&
+        regex.test(p.churchName) &&
+        !p.memberDate &&
+        !p.baptiseDate
       // ((relation) => relation.type === "child")
     ).length;
 
@@ -52,14 +64,19 @@ function Grafice({ persoane }) {
     persoane?.filter(
       (p) =>
         calculateAge(p.birthDate) >= 18 &&
-        ((relation) => relation.type === "child") &&
-        p.memberDate === null
+        regex.test(p.churchName) &&
+        !p.memberDate &&
+        !p.baptiseDate
+      // ((relation) => relation.type === "child") &&
+      // p.memberDate === null
     ).length;
 
   const nrMembriiFilter =
     persoane?.length > 0 &&
     persoane?.filter(
-      (p) => calculateAge(p.birthDate) > parseInt(ageFilter) && p.memberDate
+      (p) =>
+        calculateAge(p.birthDate) > parseInt(ageFilter) &&
+        regex.test(p.churchName)
     ).length;
 
   // function filterFamilys(members) {
@@ -171,9 +188,18 @@ function Grafice({ persoane }) {
                 },
               ],
             }}
-            // width={300}
-            // height={300}
-            options={{ maintainAspectRatio: false }}
+            options={{
+              maintainAspectRatio: false,
+              plugins: {
+                datalabels: {
+                  color: "#fff", // Color de la etiqueta
+                  font: {
+                    weight: "bold",
+                  },
+                  formatter: (value) => value, // Muestra el valor directamente
+                },
+              },
+            }}
           />
         </div>
         <div className="chart">
@@ -242,6 +268,11 @@ function Grafice({ persoane }) {
                   data: [nrFemei],
                   backgroundColor: "rgba(255, 99, 132, 0.7)",
                 },
+                {
+                  label: "Copii",
+                  data: [nrCopii],
+                  backgroundColor: "rgba(145, 63, 184, 0.7)",
+                },
               ],
             }}
           />
@@ -265,12 +296,19 @@ function Grafice({ persoane }) {
                 className="age-input"
                 type="number"
                 value={ageFilter}
+                min={0}
                 onChange={(e) => setAgeFilter(e.target.value)}
               />
               ani:
             </p>
             <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
               {nrMembriiFilter}
+            </p>
+          </div>
+          <div className="total-text">
+            <p>MEMBRII BOTEZATI: </p>
+            <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
+              {membriiBotezati}
             </p>
           </div>
         </div>
@@ -293,8 +331,18 @@ function Grafice({ persoane }) {
         </div>
         <div className="chart">
           <p>RAPORT COPII</p>
-          <p>Copii minori care nu sunt membrii {nrCopii}</p>
-          <p>Copii majori care nu sunt membrii {nrCopiiMajoriNebotezati}</p>
+          <div className="total-text">
+            <p>Copii minori care nu sunt membrii :</p>
+            <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
+              {nrCopii}
+            </p>
+          </div>
+          <div className="total-text">
+            <p>Copii majori care nu sunt membrii: </p>
+            <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
+              {nrCopiiMajoriNebotezati}
+            </p>
+          </div>
         </div>
         <div className="chart">
           <p>TOTAL FAMILII: {totalFamilii}</p>

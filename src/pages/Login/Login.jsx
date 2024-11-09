@@ -36,7 +36,7 @@ const Login = () => {
     <main className="login">
       <section>
         <div className="main-container">
-          <p>Introduceti e-mailul si parola</p>
+          <p>LOG IN</p>
 
           <form onSubmit={handleSubmit(onLogin)}>
             <div>
