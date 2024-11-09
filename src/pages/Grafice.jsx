@@ -148,7 +148,10 @@ function Grafice({ persoane }) {
   const filterFamilys = (persons) => {
     return Array.isArray(persons)
       ? persons.filter((person) =>
-          person.relations?.some((relation) => relation.type === "wife")
+          person.relations?.some(
+            (relation) =>
+              relation.type === "wife" && regex.test(person.churchName)
+          )
         )
       : [];
   };

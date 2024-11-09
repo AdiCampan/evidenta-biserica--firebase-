@@ -97,7 +97,7 @@ const Home = ({ persoane }) => {
       </div>
       <div className="charts">
         <div className="info-bar">
-          <h3>Biserica Eben-Ezer Castellon</h3>
+          <h3>CONTACT</h3>
           <p>
             Adresa: Camí de la Donació, 89, 12004 Castellón de la Plana,
             Castellón
@@ -111,50 +111,22 @@ const Home = ({ persoane }) => {
         </div>
 
         <div className="chart-container">
-          {/* {persoane && (
-            <Pie
-              data={{
-                labels: ["Barbați", "Femei", "Copii"],
-                datasets: [
-                  {
-                    data: [nrBarbati, nrFemei, nrCopii],
-                    backgroundColor: [
-                      "rgba(50, 162, 235, 0.7)",
-                      "rgba(255, 99, 132, 0.7)",
-                      "rgba(145, 63, 184, 0.7)",
-                    ],
-                  },
-                ],
-              }}
-              width={150}
-              height={150}
-              options={{ maintainAspectRatio: true }}
-            />
-          )}
-        </div>
-        <div className="chart-conatiner">
-          <div className="total-text">
-            <h5>
-              Total Membrii la{" "}
-              {`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
-              :
-            </h5>{" "}
-            <h3>{totalMembri}</h3>
+          <div className="info-cards">
+            <h6 style={{ marginTop: "10px" }}>TOTAL MEMBRII</h6>
+            <h4 style={{ fontWeight: "bolder" }}>1043</h4>
           </div>
-          <Line
-            datasetIdKey="id345"
-            data={{
-              labels: getMemberHistoryYears(),
-              datasets: [
-                {
-                  id: 1,
-                  label: "Nr.de membri",
-                  data: getMemberHistory(),
-                  backgroundColor: ["rgba(54, 162, 235, 1.9)"],
-                },
-              ],
-            }}
-          /> */}
+          <div className="info-cards">
+            <h6 style={{ marginTop: "10px" }}>COPII</h6>
+            <h4 style={{ fontWeight: "bolder" }}>320</h4>
+          </div>
+          <div className="info-cards">
+            <h6 style={{ marginTop: "10px" }}>BOTEZATI</h6>
+            <h4 style={{ fontWeight: "bolder" }}>650</h4>
+          </div>
+          <div className="info-cards">
+            <h6 style={{ marginTop: "10px" }}>TOTAL FAMILII</h6>
+            <h4 style={{ fontWeight: "bolder" }}>255</h4>
+          </div>
         </div>
         {showUploader && <CSVUploader />}
       </div>
@@ -166,16 +138,10 @@ const Home = ({ persoane }) => {
         show={showForm}
         onHide={handleCloseForm}
       >
-        {/* <Modal.Header
-          onHide={handleCloseForm}
-          // closeButton
-          style={{ display: "flex", width: "100%" }}
-          // style={{ display: "flex", justifyContent: "center" }}
-        ></Modal.Header> */}
         <ExternalForm onCloseModal={handleCloseForm} show={showForm} />
       </Modal>
 
-      <footer className="footer">copyright © Media EBEN-EZER 2022 </footer>
+      <footer className="footer">copyright © Media EBEN-EZER 2024 </footer>
     </>
   );
 };

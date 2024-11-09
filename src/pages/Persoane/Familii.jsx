@@ -16,6 +16,8 @@ const Familii = ({ persoane }) => {
   const [showModal, setShowModal] = useState(false);
   const [familia, setFamilia] = useState();
 
+  const regex = /\beben\b.*\bezer\b|\bezer\b.*\beben\b/i;
+
   const handleClose = () => setShowModal(false);
 
   function filterMembers(members) {
@@ -28,7 +30,9 @@ const Familii = ({ persoane }) => {
         lastNameFilter
       );
 
-      filteredMembers = filteredMembers.filter((person) => person.sex === true);
+      filteredMembers = filteredMembers.filter(
+        (person) => person.sex === true && regex.test(person.churchName)
+      );
 
       filteredMembers = filteredMembers.filter((member) =>
         member.relations?.find((relation) => relation?.type === "wife")

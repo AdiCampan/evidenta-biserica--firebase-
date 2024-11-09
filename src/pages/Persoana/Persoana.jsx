@@ -205,14 +205,14 @@ function Persoana() {
               )}
             </Tab>
           </Tabs>
-          <Card>
+          <Card style={{ backgroundColor: "dimgray" }}>
             <Card.Body>
               <Form style={{ marginLeft: "25px" }}>
                 <Button
                   variant="primary"
                   type="button"
                   onClick={saveData}
-                  // disabled={result.isLoading}
+                  // disabled={res: ult.isLoading}
                 >
                   Salveaza
                 </Button>
