@@ -30,7 +30,7 @@ function Grafice({ persoane }) {
 
   const membriiBotezati =
     persoane?.length > 0 &&
-    persoane?.filter((p) => regex.test(p.churchName) && p.baptiseDate).length;
+    persoane?.filter((p) => regex.test(p.churchName) && p.memberDate).length;
 
   // const totalFamilii = persoane ? filterFamilys(persoane).length : null;
   // const familii = persoane ? filterFamilys(persoane) : null;
@@ -52,11 +52,20 @@ function Grafice({ persoane }) {
     persoane?.length > 0 &&
     persoane?.filter(
       (p) =>
+        // calculateAge(p.birthDate) < 18 &&
+        regex.test(p.churchName) && !p.memberDate && !p.baptiseDate
+    ).length;
+
+  const nrCopiiMinoriNebotezati =
+    persoane?.length > 0 &&
+    persoane?.filter(
+      (p) =>
         calculateAge(p.birthDate) < 18 &&
         regex.test(p.churchName) &&
         !p.memberDate &&
         !p.baptiseDate
-      // ((relation) => relation.type === "child")
+      // ((relation) => relation.type === "child") &&
+      // p.memberDate === null
     ).length;
 
   const nrCopiiMajoriNebotezati =
@@ -75,7 +84,7 @@ function Grafice({ persoane }) {
     persoane?.length > 0 &&
     persoane?.filter(
       (p) =>
-        calculateAge(p.birthDate) > parseInt(ageFilter) &&
+        calculateAge(p.birthDate) >= parseInt(ageFilter) &&
         regex.test(p.churchName)
     ).length;
 
@@ -115,7 +124,11 @@ function Grafice({ persoane }) {
       const personsByYear =
         persoane?.length > 0 &&
         persoane?.filter((p) => {
-          if (p.memberDate && p.memberDate.toDate().getFullYear() <= years[i]) {
+          if (
+            regex.test(p.churchName) &&
+            p.memberDate &&
+            p.memberDate.toDate().getFullYear() <= years[i]
+          ) {
             return true;
           }
           return false;
@@ -133,7 +146,9 @@ function Grafice({ persoane }) {
         persoane?.length > 0 &&
         persoane?.filter((p) => {
           if (
-            calculateAge(p.birthDate) <= 18 &&
+            !p.memberDate &&
+            // calculateAge(p.birthDate) < 18 &&
+            regex.test(p.churchName) &&
             p.birthDate?.toDate().getFullYear() <= years[i]
           ) {
             return true;
@@ -207,7 +222,7 @@ function Grafice({ persoane }) {
         </div>
         <div className="chart">
           <div>
-            <p style={{ textAlign: "center" }}>EVOLUTIA MEMBRILOR</p>
+            <strong style={{ textAlign: "center" }}>EVOLUTIA MEMBRILOR</strong>
             <Line
               datasetIdKey="id345"
               data={{
@@ -281,7 +296,13 @@ function Grafice({ persoane }) {
           />
         </div>
         <div className="chart">
-          <p>RAPORT PE VÂRSTĂ</p>
+          <p>
+            {""}
+            <strong>RAPORT PE VÂRSTĂ</strong>
+          </p>
+          <p>{""}</p>
+
+          <p> </p>
           <div className="total-text">
             <p>
               Total Membrii la{" "}
@@ -316,7 +337,10 @@ function Grafice({ persoane }) {
           </div>
         </div>
         <div className="chart">
-          <p>EVOLUTIA COPIILOR</p>
+          <strong>EVOLUTIA COPIILOR</strong>
+          <p>{""}</p>
+          <p>{""}</p>
+
           <Line
             datasetIdKey="id345"
             data={{
@@ -333,15 +357,30 @@ function Grafice({ persoane }) {
           />
         </div>
         <div className="chart">
-          <p>RAPORT COPII</p>
+          <p>
+            {" "}
+            <strong>RAPORT COPII</strong>
+            <p>{""}</p>
+          </p>
           <div className="total-text">
-            <p>Copii minori care nu sunt membrii :</p>
+            <p>TOTAL COPII :</p>
             <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
               {nrCopii}
             </p>
           </div>
           <div className="total-text">
-            <p>Copii majori care nu sunt membrii: </p>
+            <p>
+              Copii <strong>MINORI</strong> care nu sunt botezati:
+            </p>
+
+            <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
+              {nrCopiiMinoriNebotezati}
+            </p>
+          </div>
+          <div className="total-text">
+            <p>
+              Copii <strong>MAJORI</strong> care nu sunt botezati:{" "}
+            </p>
             <p style={{ fontWeight: "bolder", marginLeft: "10px" }}>
               {nrCopiiMajoriNebotezati}
             </p>

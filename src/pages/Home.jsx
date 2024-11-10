@@ -117,11 +117,11 @@ const Home = ({ persoane }) => {
           </div>
           <div className="info-cards">
             <h6 style={{ marginTop: "10px" }}>COPII</h6>
-            <h4 style={{ fontWeight: "bolder" }}>320</h4>
+            <h4 style={{ fontWeight: "bolder" }}>387</h4>
           </div>
           <div className="info-cards">
             <h6 style={{ marginTop: "10px" }}>BOTEZATI</h6>
-            <h4 style={{ fontWeight: "bolder" }}>650</h4>
+            <h4 style={{ fontWeight: "bolder" }}>656</h4>
           </div>
           <div className="info-cards">
             <h6 style={{ marginTop: "10px" }}>TOTAL FAMILII</h6>
