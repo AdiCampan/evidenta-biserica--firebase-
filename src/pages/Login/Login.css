@@ -19,11 +19,12 @@
 }
 .input-container {
   height: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   width: 300px;
   border-radius: 10px;
 }
 .button-container {
+  margin-top: 40px;
   width: 100%;
 }
 .button {
@@ -45,4 +46,9 @@
 
 .error {
   color: red;
+}
+.forgot-password {
+  margin: 20px;
+  cursor: pointer;
+  color: blueviolet;
 }
