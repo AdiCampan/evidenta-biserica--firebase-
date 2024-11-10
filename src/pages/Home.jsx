@@ -9,6 +9,9 @@ import { firestore } from "../firebase-config";
 import CSVUploader from "../components/CSVUploader";
 import { useNavigate } from "react-router-dom";
 import ExternalForm from "../components/ExternalForm";
+import { ImWhatsapp } from "react-icons/im";
+import { BsTelephoneInbound } from "react-icons/bs";
+import { HiOutlineMail } from "react-icons/hi";
 
 const Home = ({ persoane }) => {
   // const [persoane, setPersoane] = useState("");
@@ -97,17 +100,36 @@ const Home = ({ persoane }) => {
       </div>
       <div className="charts">
         <div className="info-bar">
-          <h3>CONTACT</h3>
+          <h3 style={{ marginTop: "15px" }}>
+            <strong>CONTACT</strong>
+          </h3>
           <p>
             Adresa: Camí de la Donació, 89, 12004 Castellón de la Plana,
             Castellón
           </p>
-          <br />
+          <ImWhatsapp />
+          <p>
+            Trimite cauza ta de rugaciune aici:
+            <br /> WhatsApp +34 624 227 214
+          </p>
+          <BsTelephoneInbound />
           <p>Tel./Fax: 964 37 24 00</p>
-          <br />
-          <Button onClick={handleShowForm}>FORMULAR ACTUALIZARE MEMBRU</Button>
-
+          <HiOutlineMail />
           <p>biserica_ebenezer@yahoo.es</p>
+        </div>
+        <div className="update-bar">
+          <h5 style={{ marginTop: "15px" }}>
+            {" "}
+            <strong>ACTUALIZEAZA-TI FISA MEMBRALA</strong>
+          </h5>
+          <p>
+            Completeaza formularul cu datele care le stii, urca o poza actuala,
+            si accepta tratatrea datelor personale Conforme a la Ley Orgánica
+            3/2018, de 5 de diciembre, de Protección de Datos Personales y
+            garantía de los derechos digitales. Ulterior Datetele vor fii
+            verificate ,inainte de a actualiza fisa membrala.
+          </p>
+          <Button onClick={handleShowForm}>FORMULAR ACTUALIZARE MEMBRU</Button>
         </div>
 
         <div className="chart-container">

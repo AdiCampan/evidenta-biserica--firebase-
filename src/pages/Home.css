@@ -6,11 +6,13 @@
     flex-direction: column; */
 }
 .secretariat_text {
+  font-weight: bolder;
   font-size: 50px;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 .biserica_text {
+  font-weight: bolder;
   font-size: xx-large;
   margin-top: 70px;
   margin-bottom: 30px;
@@ -24,6 +26,22 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+  height: 400px;
+  width: 360px;
+  background-color: rgba(203, 220, 252, 0.553);
+  border-radius: 10px;
+  border-color: rgba(88, 81, 94, 0.473);
+  border-style: solid;
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+  font-family: fangsong;
+}
+.update-bar {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
   align-items: center;
   height: 400px;
   width: 360px;
@@ -83,12 +101,12 @@
   width: fit-content; /* Ajusta el ancho del contenido del modal */
 }
 .info-cards {
-  margin: 20px;
+  margin: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 10px;
   width: 100%;
   height: 80px;
-  background-color: rgba(202, 215, 229, 0.785);
+  background-color: rgba(218, 226, 234, 0.785);
 }

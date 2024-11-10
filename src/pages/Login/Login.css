@@ -45,6 +45,7 @@
 }
 
 .error {
+  margin: 15px;
   color: red;
 }
 .forgot-password {
