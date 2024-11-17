@@ -17,6 +17,21 @@ export const formatDate = (dateToFormat) => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
 
+export const formatDateLong = (dateToFormat) => {
+  if (!dateToFormat) {
+    return "";
+  }
+
+  const date = dateToFormat.toDate();
+
+  // Formatear la fecha con toLocaleDateString en español
+  return date.toLocaleDateString("ro-RO", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 export const searchField = (field, searchText) => {
   if (searchText === "") {
     return false;

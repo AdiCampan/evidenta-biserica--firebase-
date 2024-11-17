@@ -2,11 +2,6 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import React, { useState, useEffect, useRef } from "react";
-import {
-  useGetMemberQuery,
-  useModifyMemberMutation,
-  useAddRelationMutation,
-} from "../../services/members";
 import { Card } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
@@ -15,12 +10,11 @@ import General from "./General";
 import Biserica from "./Biserica";
 import Familie from "./Familie";
 import Observatii from "./Observatii";
-import DownloadLink from "react-download-link";
-import { BrowserRouter, Routes, Route, NavLink, Link } from "react-router-dom";
-import { get, onValue, ref } from "firebase/database";
 import { db, firestore } from "../../firebase-config";
 import { memo } from "react";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import PrintableDocument from "./PrintableDocument";
+import { formatDateLong } from "../../utils";
 
 /// Hook para manejar la advertencia de salida
 const useBeforeUnload = (isModified) => {
@@ -69,8 +63,7 @@ function Persoana() {
   const [isInitialLoad, setIsInitialLoad] = useState(true); // Estado para controlar la carga inicial
   const initialDataRef = useRef(null); // Para almacenar los datos iniciales
   const hasLoadedData = useRef(false); // Controla si los datos ya han sido cargados una vez
-  // const [curentPerson, setCurentPerson] = useState(null);
-  console.log("Data", data);
+
   const getMemberData = async () => {
     const docRef = doc(firestore, "persoane", id);
     const docSnap = await getDoc(docRef);
@@ -89,9 +82,6 @@ function Persoana() {
 
   useEffect(() => {
     getMemberData();
-    // if (data) {
-    //   setCurentPerson(data[0]);
-    // }
   }, []);
 
   // Muestra advertencia si hay cambios no guardados
@@ -127,6 +117,109 @@ function Persoana() {
     if (!isInitialLoad.current && hasDataChanged(updatedData)) {
       setIsModified(true);
     }
+  };
+
+  const printForm = () => {
+    const printContent = document.getElementById("printable-content").innerHTML;
+
+    // Crear un iframe oculto
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+
+    // Ocultar el iframe para que no interfiera con la interfaz
+    iframe.style.position = "absolute";
+    iframe.style.width = "0px";
+    iframe.style.height = "0px";
+    iframe.style.border = "none";
+
+    // Escribir el contenido y los estilos en el iframe
+    const iframeDoc = iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(`
+      <html>
+      <head>
+          <title>Impresión de Documento</title>
+          <style>
+          @media print {
+                        .printable-content {
+                              margin: 20px;
+                              background-color: aquamarine;
+                            }
+                            .image-preview {
+                              margin: 35px 50px 35px 180px;
+                              width: 150px;
+                              height: 200px;
+                              object-fit: cover;
+                              border-radius: 5px;
+                            }
+                            .box {
+                              width: -webkit-fill-available;
+                              padding: 20px;
+                              display: flex;
+                              margin-top: 10px;
+                              border-radius: 15px;
+                              border: 3px solid;
+                            }
+                            .vertical-text-box {
+                              writing-mode: vertical-lr;
+                              display: flex;
+                              justify-content: center;
+                            }
+                            .vertical-text {
+                              display: flex;
+                              text-orientation: mixed;
+                            }
+
+                            .general-box {
+                              display: flex;
+                            }
+                            .general-data {
+                              margin: 20px;
+                            }
+                            .info-box {
+                              align-content: center;
+                              margin-left: 3%;
+                              max-width: 50%;
+                            }
+                            .logo-box {
+                              width: 120px;
+                              display: flex;
+                              align-items: center;
+                              padding: 10px;
+                            }
+
+                            .logo-box img {
+                              max-width: 70%;
+                              height: auto;
+                            }
+                            .header-box {
+                              display: flex;
+                              justify-content: space-between;
+                            }
+                            .title-box {
+                              display: flex;
+                              justify-content: center;
+                              margin: 1rem;
+                            }
+
+
+          }
+        </style>
+          
+      </head>
+      <body>${printContent}</body>
+      </html>
+    `);
+    iframeDoc.close();
+
+    // Esperar a que el contenido cargue antes de imprimir
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+
+    // Eliminar el iframe después de la impresión
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 1000);
   };
 
   return (
@@ -205,21 +298,27 @@ function Persoana() {
               )}
             </Tab>
           </Tabs>
-          <Card style={{ backgroundColor: "dimgray" }}>
+          <div className="butoane" style={{ backgroundColor: "#b1cdd2" }}>
             <Card.Body>
               <Form style={{ marginLeft: "25px" }}>
-                <Button
-                  variant="primary"
-                  type="button"
-                  onClick={saveData}
-                  // disabled={res: ult.isLoading}
-                >
+                <Button variant="primary" type="button" onClick={saveData}>
                   Salveaza
+                </Button>
+                <Button
+                  style={{ marginLeft: "20px" }}
+                  variant="secondary"
+                  type="button"
+                  onClick={printForm}
+                >
+                  Imprima
                 </Button>
               </Form>
             </Card.Body>
-          </Card>
+          </div>
         </Card>
+        <div id="printable-content" style={{ display: "block" }}>
+          <PrintableDocument data={data} persons={persons}></PrintableDocument>
+        </div>
       </div>
     </div>
   );

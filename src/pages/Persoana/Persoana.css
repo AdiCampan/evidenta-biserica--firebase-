@@ -5,3 +5,37 @@
   width: 95%;
   height: 200px;
 }
+@media print {
+  .printable-content {
+    margin: 20px;
+    background-color: aquamarine;
+  }
+  .image-preview {
+    margin: 35px 50px 35px 180px;
+    width: 150px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  .box {
+    display: flex;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid;
+  }
+  .general-data {
+    margin: 20px;
+  }
+
+  .familie {
+    border: 2px solid;
+  }
+  .vertical-text {
+    rotate: 270deg;
+  }
+  .general-box {
+    display: flex;
+    align-content: flex-start;
+    flex-direction: row;
+  }
+}

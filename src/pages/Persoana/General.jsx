@@ -112,7 +112,6 @@ const General = ({ dataUpdated, data, persoane, isModified }) => {
     selectedFile,
     membruData,
   ]);
-
   // ------------------ ADD TRANSFER  --------------- //
 
   const addTransfer = (newData) => {

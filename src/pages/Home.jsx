@@ -163,7 +163,9 @@ const Home = ({ persoane }) => {
         <ExternalForm onCloseModal={handleCloseForm} show={showForm} />
       </Modal>
 
-      <footer className="footer">copyright © Media EBEN-EZER 2024 </footer>
+      <footer className="footer">
+        copyright © Media EBEN-EZER 2024 - media.ebenezercastellon@gmail.com
+      </footer>
     </>
   );
 };

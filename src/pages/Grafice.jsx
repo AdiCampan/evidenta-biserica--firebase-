@@ -302,7 +302,6 @@ function Grafice({ persoane }) {
           </p>
           <p>{""}</p>
 
-          <p> </p>
           <div className="total-text">
             <p>
               Total Membrii la{" "}
@@ -360,7 +359,6 @@ function Grafice({ persoane }) {
           <p>
             {" "}
             <strong>RAPORT COPII</strong>
-            <p>{""}</p>
           </p>
           <div className="total-text">
             <p>TOTAL COPII :</p>
