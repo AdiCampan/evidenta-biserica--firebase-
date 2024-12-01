@@ -12,6 +12,7 @@ import ExternalForm from "../components/ExternalForm";
 import { ImWhatsapp } from "react-icons/im";
 import { BsTelephoneInbound } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
+import ExternalRequest from "../components/ExternalRequest";
 
 const Home = ({ persoane }) => {
   // const [persoane, setPersoane] = useState("");
@@ -21,6 +22,8 @@ const Home = ({ persoane }) => {
   const [nrCopii, setNrCopii] = useState();
   const [showUploader, setShowUploader] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showRequest, setShowRequest] = useState(false);
+
   const [nrMembrii, setNrMembrii] = useState([]);
   const navigate = useNavigate();
 
@@ -91,6 +94,12 @@ const Home = ({ persoane }) => {
   const handleCloseForm = () => {
     setShowForm(false);
   };
+  const handleShowRequest = () => {
+    setShowRequest(true);
+  };
+  const handleCloseRequest = () => {
+    setShowRequest(false);
+  };
 
   return (
     <>
@@ -130,6 +139,9 @@ const Home = ({ persoane }) => {
             verificate ,inainte de a actualiza fisa membrala.
           </p>
           <Button onClick={handleShowForm}>FORMULAR ACTUALIZARE MEMBRU</Button>
+          <Button onClick={handleShowRequest} style={{ margin: "5px" }}>
+            FORMULAR CERERE FISA MEMBRU
+          </Button>
         </div>
 
         <div className="chart-container">
@@ -161,6 +173,15 @@ const Home = ({ persoane }) => {
         onHide={handleCloseForm}
       >
         <ExternalForm onCloseModal={handleCloseForm} show={showForm} />
+      </Modal>
+      <Modal
+        className="custom-modal" // Aplica estilos al dialog
+        centered
+        style={{ width: "100%", justifyContent: "center" }}
+        show={showRequest}
+        onHide={handleCloseRequest}
+      >
+        <ExternalRequest show={showRequest} onCloseModal={handleCloseRequest} />
       </Modal>
 
       <footer className="footer">

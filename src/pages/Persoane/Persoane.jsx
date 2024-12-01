@@ -77,7 +77,7 @@ function Persoane({ persoane }) {
   const [notBabtisedOnly, setNotBaptisedOnly] = useState(false);
   const [blessedOnly, setBlessedOnly] = useState(false);
   const [notBlessedOnly, setNotBlessedOnly] = useState(false);
-  const [membersOnly, setMembersOnly] = useState(false);
+  const [membersOnly, setMembersOnly] = useState(true);
   const [notMembersOnly, setNotMembersOnly] = useState(false);
   const [persons, setPersons] = useState("");
 
@@ -300,6 +300,7 @@ function Persoane({ persoane }) {
             onChange={(e) => setNotBlessedOnly(e.target.checked)}
           />
           <Form.Check
+            defaultChecked
             inline
             label="Membrii"
             name="group1"

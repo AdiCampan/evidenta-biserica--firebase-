@@ -64,6 +64,8 @@ function Persoana() {
   const initialDataRef = useRef(null); // Para almacenar los datos iniciales
   const hasLoadedData = useRef(false); // Controla si los datos ya han sido cargados una vez
 
+  console.log("data", data);
+
   const getMemberData = async () => {
     const docRef = doc(firestore, "persoane", id);
     const docSnap = await getDoc(docRef);

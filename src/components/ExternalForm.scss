@@ -14,7 +14,7 @@ $font-family: "Roboto", sans-serif;
 .form-container {
   background: $background-color;
   border-radius: 8px;
-  padding: 20px 40px;
+  padding: 10px 20px;
   width: 900px;
   margin: 20px auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -164,4 +164,10 @@ $font-family: "Roboto", sans-serif;
 
 .checkbox-container a:hover {
   text-decoration: underline;
+}
+.short-input {
+  max-width: 98%;
+}
+.name-box {
+  display: flex;
 }
