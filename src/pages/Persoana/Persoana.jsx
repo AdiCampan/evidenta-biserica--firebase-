@@ -318,7 +318,7 @@ function Persoana() {
             </Card.Body>
           </div>
         </Card>
-        <div id="printable-content" style={{ display: "block" }}>
+        <div id="printable-content" style={{ display: "none" }}>
           <PrintableDocument data={data} persons={persons}></PrintableDocument>
         </div>
       </div>

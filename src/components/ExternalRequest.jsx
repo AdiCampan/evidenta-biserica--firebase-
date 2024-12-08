@@ -34,7 +34,8 @@ const ExternalRequest = ({ onCloseModal }) => {
   const [personData, setPersonData] = useState({
     address: "",
     baptisedBy: "",
-    baptisedPlace: "",
+    baptisePlace: "",
+    birthPlace: "",
     childrens: [],
     details: "",
     dni: "",
@@ -42,7 +43,7 @@ const ExternalRequest = ({ onCloseModal }) => {
     firstName: "",
     father: { firstName: "", lastName: "" },
     familyFaith: "",
-    famyliDetails: "",
+    familyDetails: "",
     hsBaptisePlace: "",
     lastName: "",
     maidenName: "",
@@ -82,6 +83,14 @@ const ExternalRequest = ({ onCloseModal }) => {
       childrens: childrens,
       blessed: blessed === "y" ? true : blessed === "n" ? false : null,
       hsBaptised: hsBaptised === "y" ? true : hsBaptised === "n" ? false : null,
+      maritalStatus:
+        maritalStatus === "y"
+          ? true
+          : maritalStatus === "n"
+          ? false
+          : maritalStatus === "o"
+          ? "other"
+          : null,
       hsBaptiseDate: hsBaptiseDate,
     }));
   }, [
@@ -92,6 +101,7 @@ const ExternalRequest = ({ onCloseModal }) => {
     blessed,
     hsBaptised,
     hsBaptiseDate,
+    maritalStatus,
   ]);
 
   const handleChange = (e) => {
@@ -120,6 +130,12 @@ const ExternalRequest = ({ onCloseModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("Validando selectedFile antes de enviar:", selectedFile);
+    if (!selectedFile || !selectedFile.startsWith("http")) {
+      alert("Por favor, cargue una imagen válida antes de enviar.");
+      return;
+    }
 
     const endTime = Date.now();
     const timeTaken = (endTime - startTime) / 1000; // Tiempo en segundos
@@ -196,98 +212,109 @@ const ExternalRequest = ({ onCloseModal }) => {
             backgroundColor: "#ebebeb",
           }}
         >
-          <div className="colums">
-            <div className="colum-form">
-              <label>
-                <input
-                  type="text"
-                  style={{ display: "none" }}
-                  name="formularVerificare"
-                  value={formularVerificare}
-                  onChange={(e) => setFormularVerificare(e.target.value)}
-                />
-              </label>
-              <label className="label">
-                Nume {`(obligatoriu)`}:
-                <input
-                  required
-                  className="input"
-                  type="text"
-                  name="lastName"
-                  value={personData.lastName}
-                  onChange={handleChange}
-                />
-              </label>
-              <label className="label">
-                Prenume {`(obligatoriu)`}:
-                <input
-                  required
-                  className="input"
-                  type="text"
-                  name="firstName"
-                  value={personData.firstName}
-                  onChange={handleChange}
-                />
-              </label>
+          <Row>
+            <Col xs="6" style={{ maxWidth: "50%" }}>
+              <div className="colum-form">
+                <label>
+                  <input
+                    type="text"
+                    style={{ display: "none" }}
+                    name="formularVerificare"
+                    value={formularVerificare}
+                    onChange={(e) => setFormularVerificare(e.target.value)}
+                  />
+                </label>
+                <label className="label">
+                  Nume {`(obligatoriu)`}:
+                  <input
+                    required
+                    className="input"
+                    type="text"
+                    name="lastName"
+                    value={personData.lastName}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label className="label">
+                  Prenume {`(obligatoriu)`}:
+                  <input
+                    required
+                    className="input"
+                    type="text"
+                    name="firstName"
+                    value={personData.firstName}
+                    onChange={handleChange}
+                  />
+                </label>
 
-              <label className="label">
-                Gen {`(obligatoriu)`}:
-                <select
-                  required
-                  className="select"
-                  name="sex"
-                  value={personData.sex}
-                  onChange={handleChange}
-                >
-                  <option value="">Selectioneaza</option>
-                  <option value="M">Masculin</option>
-                  <option value="F">Femenin</option>
-                </select>
-              </label>
-              <label className="label">
-                Data nasterii {`(obligatoriu)`}:
-                <DatePicker
-                  selected={birthDate}
-                  onChange={(date) => setBirthDate(date)}
-                  peekNextMonth
-                  maxDate={new Date()}
-                  showMonthDropdown
-                  showYearDropdown
-                  dropdownMode="select"
-                  dateFormat="dd/MM/yyyy"
-                  className="input"
+                <label className="label">
+                  Gen {`(obligatoriu)`}:
+                  <select
+                    required
+                    className="select"
+                    name="sex"
+                    value={personData.sex}
+                    onChange={handleChange}
+                  >
+                    <option value="">Selectioneaza</option>
+                    <option value="M">Masculin</option>
+                    <option value="F">Femenin</option>
+                  </select>
+                </label>
+                <label className="label">
+                  Data nasterii {`(obligatoriu)`}:
+                  <DatePicker
+                    selected={birthDate}
+                    onChange={(date) => setBirthDate(date)}
+                    peekNextMonth
+                    maxDate={new Date()}
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    dateFormat="dd/MM/yyyy"
+                    className="input"
+                  />
+                </label>
+                <label className="label">
+                  Adresa {`(obligatoriu)`}:
+                  <input
+                    required
+                    className="input"
+                    type="text"
+                    name="address"
+                    value={personData.address}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label className="label">
+                  Telefon {`(obligatoriu)`}:
+                  <input
+                    required
+                    className="input"
+                    type="text"
+                    name="mobilePhone"
+                    value={personData.mobilePhone}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
+            </Col>
+            <Col xs="6">
+              <div style={{}}>
+                <ImageUploader
+                  onFileSelectSuccess={(url) => {
+                    console.log("Imagen cargada correctamente:", url);
+                    setSelectedFile(url); // Actualiza con la URL de la imagen
+                  }}
+                  onFileSelectError={(error) => {
+                    console.error("Error al cargar imagen:", error);
+                    alert("No se pudo cargar la imagen. Inténtalo nuevamente.");
+                  }}
                 />
-              </label>
-              <label className="label">
-                Adresa {`(obligatoriu)`}:
-                <input
-                  required
-                  className="input"
-                  type="text"
-                  name="address"
-                  value={personData.address}
-                  onChange={handleChange}
-                />
-              </label>
-              <label className="label">
-                Telefon {`(obligatoriu)`}:
-                <input
-                  required
-                  className="input"
-                  type="text"
-                  name="mobilePhone"
-                  value={personData.mobilePhone}
-                  onChange={handleChange}
-                />
-              </label>
-            </div>
-            <div className="column-form">
-              <ImageUploader
-                onFileSelectSuccess={(file) => setSelectedFile(file)}
-                onFileSelectError={({ error }) => alert(error)}
-              />
-            </div>
-          </div>
+              </div>
+            </Col>
+          </Row>
+
           <Row>
             <Col>
               <label className="label">
@@ -382,16 +409,16 @@ const ExternalRequest = ({ onCloseModal }) => {
                     placeholder="nume"
                     className="input"
                     type="text"
-                    name="father.firstName"
-                    value={personData.father.firstName}
+                    name="father.lastName"
+                    value={personData.father.lastName}
                     onChange={handleChange}
                   />
                   <input
                     placeholder="prenume"
                     className="input"
                     type="text"
-                    name="father.lastName"
-                    value={personData.father.lastName}
+                    name="father.firstName"
+                    value={personData.father.firstName}
                     onChange={handleChange}
                   />
                 </div>
@@ -405,16 +432,16 @@ const ExternalRequest = ({ onCloseModal }) => {
                     placeholder="nume"
                     className="input"
                     type="text"
-                    name="mother.firstName"
-                    value={personData.mother.firstName}
+                    name="mother.lastName"
+                    value={personData.mother.lastName}
                     onChange={handleChange}
                   />
                   <input
                     placeholder="prenume"
                     className="input"
                     type="text"
-                    name="mother.lastName"
-                    value={personData.mother.lastName}
+                    name="mother.firstName"
+                    value={personData.mother.firstName}
                     onChange={handleChange}
                   />
                 </div>
@@ -436,7 +463,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      paddingLeft: 14,
+                      paddingLeft: "5px",
                     }}
                     name="maritalStatus"
                     value={maritalStatus}
@@ -460,8 +487,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                   </RadioGroup>
                 </InputGroup>
               </Col>
-              <Col>
-                <div style={{ display: "flex", margin: "10px" }}>
+              <Col style={{ maxWidth: "55%" }}>
+                <div style={{ display: "flex", marginTop: "10px" }}>
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     Alt caz{" "}
                   </InputGroup.Text>
@@ -470,8 +497,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                     placeholder="...specificati cazul"
                     className="input"
                     type="text"
-                    name="famyliDetails"
-                    value={personData.famyliDetails}
+                    name="familyDetails"
+                    value={personData.familyDetails}
                     onChange={handleChange}
                   />
                 </div>
@@ -488,8 +515,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                       placeholder="nume"
                       className="input"
                       type="text"
-                      name="spouse.firstName"
-                      value={personData.spouse.firstName}
+                      name="spouse.lastName"
+                      value={personData.spouse.lastName}
                       onChange={handleChange}
                     />
                     <input
@@ -497,8 +524,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                       placeholder="prenume"
                       className="input"
                       type="text"
-                      name="spouse.lastName"
-                      value={personData.spouse.lastName}
+                      name="spouse.firstName"
+                      value={personData.spouse.firstName}
                       onChange={handleChange}
                     />
                   </div>
@@ -565,27 +592,31 @@ const ExternalRequest = ({ onCloseModal }) => {
                             placeholder="nume"
                             className="input"
                             type="text"
-                            value={child.nume}
+                            value={child.lastName}
                             onChange={(e) =>
-                              handleChildChange(index, "nume", e.target.value)
+                              handleChildChange(
+                                index,
+                                "lastName",
+                                e.target.value
+                              )
                             }
                           />
                           <input
                             placeholder="prenume"
                             className="input"
                             type="text"
-                            value={child.prenume}
+                            value={child.firstName}
                             onChange={(e) =>
                               handleChildChange(
                                 index,
-                                "prenume",
+                                "firstName",
                                 e.target.value
                               )
                             }
                           />
                         </div>
                       </Col>
-                      <Col style={{ maxWidth: "15%" }}>
+                      <Col style={{ maxWidth: "20%" }}>
                         <RadioGroup
                           style={{
                             display: "flex",
@@ -613,9 +644,9 @@ const ExternalRequest = ({ onCloseModal }) => {
                         <label>
                           <DatePicker
                             placeholderText="Data nasterii"
-                            selected={child.dataNasterii}
+                            selected={child.birthDate}
                             onChange={(date) =>
-                              handleChildChange(index, "dataNasterii", date)
+                              handleChildChange(index, "birthDate", date)
                             }
                             peekNextMonth
                             showMonthDropdown
@@ -735,8 +766,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                     placeholder="Biserica și localitatea"
                     className="input"
                     type="text"
-                    name="baptisedPlace"
-                    value={personData.baptisedPlace}
+                    name="baptisePlace"
+                    value={personData.baptisePlace}
                     onChange={handleChange}
                   />
                 </div>
@@ -831,7 +862,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                   />
                 </div>
               </Col>
-              <Col>
+              <Col style={{ maxWidth: "35%" }}>
                 <div style={{ display: "flex", margin: "5px" }}>
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     în perioada:

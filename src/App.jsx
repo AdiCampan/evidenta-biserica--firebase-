@@ -16,6 +16,7 @@ import Boteze from "./pages/Persoane/Boteze";
 import Speciale from "./pages/Persoane/Speciale";
 import Transferuri from "./pages/Persoane/Transferuri";
 import Familii from "./pages/Persoane/Familii";
+import Archive from "./pages/Persoane/Archive";
 import Home from "./pages/Home";
 import Grafice from "./pages/Grafice";
 import LogIn from "./pages/Login/Login";
@@ -180,6 +181,14 @@ function MainApp() {
               >
                 Familii
               </Button>
+              <Button
+                as={NavLink}
+                to="/persoane/archive"
+                className={({ isActive }) => (isActive ? "active" : "")}
+                variant="primary"
+              >
+                Arhiva
+              </Button>
             </>
           )}
         </div>
@@ -263,6 +272,14 @@ function MainApp() {
           element={
             <ProtectedRoute>
               <Familii persoane={persoane} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/persoane/archive"
+          element={
+            <ProtectedRoute>
+              <Archive persoane={persoane} />
             </ProtectedRoute>
           }
         />

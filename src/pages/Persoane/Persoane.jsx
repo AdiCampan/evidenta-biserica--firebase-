@@ -17,6 +17,7 @@ import {
 } from "../../services/members";
 import Confirmation from "../../Confirmation";
 import ExternalFormsReview from "../../components/ExternalFormsReview";
+import ExternalRequestReview from "../../components/ExternalRequestReview";
 import {
   calculateAge,
   formatDate,
@@ -91,7 +92,6 @@ function Persoane({ persoane }) {
   const deleteMember = async (id) => {
     await deleteDoc(doc(firestore, "persoane", id));
   };
-
   function filterMembers(members) {
     let filteredMembers = members;
 
@@ -266,6 +266,7 @@ function Persoane({ persoane }) {
         <div className="barra-buttons">
           <AddPerson />
           <ExternalFormsReview persoane={persoane} />
+          <ExternalRequestReview persoane={persoane} />
           <CSVUploader persoane={persoane} />
           <Form.Check
             inline

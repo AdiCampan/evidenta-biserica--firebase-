@@ -34,14 +34,27 @@ const Familie = ({ data, persoane }) => {
   const [currentPersonId, setCurrentPersonId] = useState("");
   const [servCivil, setServCivil] = useState(null);
   const [servRel, setServRel] = useState(null);
+  const [familyDetails, setFamilyDetails] = useState("");
 
   const isInitialLoad = useRef(true); // Flag de carga inicial
 
   useEffect(() => {
     if (data && data[1]) {
       setCurrentPersonId(data[1]);
+      setFamilyDetails(data[0].familyDetails);
     }
   }, [data]);
+
+  const onDetailChange = async () => {
+    if (familyDetails) {
+      const currentPersonRef = doc(firestore, "persoane", data[1]);
+      await updateDoc(currentPersonRef, { familyDetails });
+    }
+  };
+
+  useEffect(() => {
+    onDetailChange();
+  }, [familyDetails]);
 
   const timestampToDate = (timestamp) => {
     if (timestamp && timestamp.seconds) {
@@ -55,7 +68,6 @@ const Familie = ({ data, persoane }) => {
     if (data.length === 0 || !data[0].relations) return;
 
     const currentRelations = data[0].relations;
-
     // Encontrar la relación de spouse (wife/husband)
     const spouseRelation = currentRelations.find(
       (relation) => relation.type === "wife" || relation.type === "husband"
@@ -346,6 +358,14 @@ const Familie = ({ data, persoane }) => {
                 </InputGroup>
               </Col>
               <Col>
+                <InputGroup size="sm" className="mb-3">
+                  <InputGroup.Text>Alt caz/Observatii</InputGroup.Text>
+                  <Form.Control
+                    value={familyDetails}
+                    onChange={(e) => setFamilyDetails(e.target.value)}
+                    placeholder="Altcaz / Observatii"
+                  />
+                </InputGroup>
                 <InputGroup
                   size="sm"
                   className="mb-3"

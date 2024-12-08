@@ -241,7 +241,6 @@ const General = ({ dataUpdated, data, persoane, isModified }) => {
               name="use-radio-group"
               value={sex}
               onChange={(e) => {
-                console.log("valoare", e);
                 setSex(e.target.value);
               }}
             >

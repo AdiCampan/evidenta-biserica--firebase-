@@ -64,11 +64,20 @@ const FileUploader = ({
         uploadBytes(storageRef, currentFile).then((snapshot) => {
           getDownloadURL(ref(storage, `${id}`))
             .then((url) => {
-              onFileSelectSuccess(url); // Devuelve la URL de descarga a través del callback
-              setImagePreview(url); // Actualiza la vista previa con la URL obtenida de Firebase Storage
+              if (url) {
+                onFileSelectSuccess(url); // Asegúrate de que `url` sea válida antes de llamarla
+                setImagePreview(url); // Actualiza la vista previa
+              } else {
+                setFileError(
+                  "No se pudo obtener una URL válida para la imagen."
+                );
+                onFileSelectError({ error: "No se pudo obtener la URL" });
+              }
             })
             .catch((error) => {
               console.error("Error al obtener la URL de descarga:", error);
+              setFileError("Error al obtener la URL de la imagen.");
+              onFileSelectError({ error });
             });
         });
       }

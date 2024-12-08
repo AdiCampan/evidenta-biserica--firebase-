@@ -6,6 +6,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import DatePicker from "react-datepicker";
 import "./Persoana.css";
+import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const Biserica = ({ data, dataUpdated }) => {
   const { id } = useParams();
@@ -18,6 +19,7 @@ const Biserica = ({ data, dataUpdated }) => {
   const [dsBotezPlace, setDsBotezPlace] = useState("");
   const [detalii, setDetalii] = useState("");
   const [churchName, setChurchName] = useState("");
+  const [blessed, setBlessed] = useState(null);
 
   const isInitialLoad = useRef(true); // Flag de carga inicial
 
@@ -31,6 +33,9 @@ const Biserica = ({ data, dataUpdated }) => {
     setDsBotezPlace(data[0].hsBaptisePlace || "");
     setDetalii(data[0].details || "");
     setChurchName(data[0].churchName || "");
+    setBlessed(
+      data[0].blessed === true ? "Y" : data[0].blessed === false ? "N" : null
+    );
     isInitialLoad.current = false; // Fin de la carga inicial
   }, [data]);
 
@@ -38,6 +43,7 @@ const Biserica = ({ data, dataUpdated }) => {
     if (isInitialLoad.current) return; // Evita ejecuciones durante la carga inicial
 
     const updatedInfo = {
+      blessed: blessed === "Y" ? true : blessed === "N" ? false : null,
       blessingDate: blessingDate,
       blessingPlace: blessingPlace,
       baptiseDate: baptiseDate,
@@ -58,6 +64,7 @@ const Biserica = ({ data, dataUpdated }) => {
 
     dataUpdated(updatedInfo);
   }, [
+    blessed,
     blessingDate,
     blessingPlace,
     baptiseDate,
@@ -96,6 +103,27 @@ const Biserica = ({ data, dataUpdated }) => {
           </Row>
           <Row>
             <Col>
+              <InputGroup size="sm" className="mb-3">
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  DUS LA BINECUVANTARE:{" "}
+                </InputGroup.Text>
+                <RadioGroup
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    paddingLeft: 14,
+                  }}
+                  name="use-radio-group"
+                  value={blessed}
+                  onChange={(e) => {
+                    console.log("valoare", e);
+                    setSex(e.target.value);
+                  }}
+                >
+                  <FormControlLabel value="Y" label="DA" control={<Radio />} />
+                  <FormControlLabel value="N" label="NU" control={<Radio />} />
+                </RadioGroup>
+              </InputGroup>
               <InputGroup
                 size="sm"
                 className="mb-3"

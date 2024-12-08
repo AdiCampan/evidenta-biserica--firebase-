@@ -69,6 +69,7 @@ const ExternalFormsReview = ({ persoane }) => {
       });
     }
   }, [form]);
+
   const handleSubmit = async (e) => {
     setSelectedForm(null);
     e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
@@ -138,7 +139,10 @@ const ExternalFormsReview = ({ persoane }) => {
     }
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setSelectedForm(null);
+  };
 
   // Obtener los formularios de externalForms
   useEffect(() => {
@@ -155,6 +159,7 @@ const ExternalFormsReview = ({ persoane }) => {
 
     fetchExternalForms();
   }, []);
+
   const deleteForm = async (formId) => {
     await deleteDoc(doc(firestore, "externalForms", formId));
     setExternalForms(externalForms.filter((f) => f.id !== formId)); // Eliminar formulario sincronizado de la lista
@@ -374,11 +379,6 @@ const ExternalFormsReview = ({ persoane }) => {
                   >
                     <FaTrash />
                   </button>
-
-                  {/* <FaTrash
-                    style={{ cursor: "pointer", marginLeft: "30px" }}
-                    onClick={(event) => showDeleteModal(form.id)}
-                  /> */}
                 </li>
               ))}
             </ul>

@@ -31,23 +31,23 @@ function PrintableDocument({ data, persons }) {
   useEffect(() => {
     if (data) {
       // Filtra la relación de pareja (husband o wife)
-      const partnerRelation = data[0].relations.find(
+      const partnerRelation = data[0].relations?.find(
         (relation) => relation.type === "husband" || relation.type === "wife"
       );
 
       // Filtra la iglesia de boda (weddingChurch) y las fechas de boda
-      const biserica = data[0].relations.find(
+      const biserica = data[0].relations?.find(
         (relation) => relation.weddingChurch
       )?.weddingChurch;
-      const civil = data[0].relations.find(
+      const civil = data[0].relations?.find(
         (relation) => relation.weddingChurch
       )?.civilWeddingDate;
-      const religios = data[0].relations.find(
+      const religios = data[0].relations?.find(
         (relation) => relation.weddingChurch
       )?.religiousWeddingDate;
       const tata = persons?.find((person) => person.id === data[0].fatherID);
       const mama = persons?.find((person) => person.id === data[0].motherID);
-      const copii = data[0].relations.filter(
+      const copii = data[0].relations?.filter(
         (relation) => relation.type === "child"
       );
 
