@@ -32,7 +32,7 @@ export const formatDateLong = (dateToFormat) => {
   });
 };
 
-export const searchField = (field, searchText) => {
+export const searchAnyText = (field, searchText) => {
   if (searchText === "") {
     return false;
   }
@@ -46,12 +46,33 @@ export const searchField = (field, searchText) => {
       .indexOf(searchText.trim().toLowerCase()) !== -1;
   return result;
 };
+export const searchField = (field, searchText) => {
+  if (!searchText?.trim()) {
+    return false; // Si no hay texto de búsqueda, no hay coincidencias
+  }
+
+  return field
+    ?.toString()
+    .trim()
+    .toLowerCase()
+    .startsWith(searchText.trim().toLowerCase());
+};
 
 export const filterByText = (members, field, searchText) => {
   return members.filter((member) => {
     if (searchText === "") {
       return true;
     } else if (searchField(member[field], searchText)) {
+      return true;
+    }
+    return false;
+  });
+};
+export const filterByAnyText = (members, field, searchText) => {
+  return members.filter((member) => {
+    if (searchText === "") {
+      return true;
+    } else if (searchAnyText(member[field], searchText)) {
       return true;
     }
     return false;

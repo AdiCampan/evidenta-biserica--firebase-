@@ -162,7 +162,7 @@ const Familii = ({ persoane }) => {
           Copii familiei{" "}
           <Modal.Title style={{ marginLeft: "20px" }}>{familia}</Modal.Title>
         </Modal.Header>
-        <Table striped bordered hover variant="dark" style={{ width: "700px" }}>
+        <Table striped bordered hover variant="dark" style={{ width: "100%" }}>
           <thead>
             <tr>
               <th>#</th>

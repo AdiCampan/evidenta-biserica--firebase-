@@ -96,7 +96,7 @@ function PrintableDocument({ data, persons }) {
               123-456-7890
             </div>
             <div className="logo-box">
-              <img src={logo} alt="logo" />
+              <img src="/src/assets/images/logo-round.png" alt="logo" />
             </div>
           </div>
           <div className="title-box">
@@ -228,6 +228,10 @@ function PrintableDocument({ data, persons }) {
             <div className="box">
               <p>{data[0].observations}</p>
             </div>
+          </div>
+          <div className="signature-box">
+            <p> {new Date().toLocaleDateString()}</p>
+            <p> Pastor: ________________ </p>
           </div>
         </div>
       )}

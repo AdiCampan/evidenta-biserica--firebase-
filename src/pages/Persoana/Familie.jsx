@@ -304,7 +304,7 @@ const Familie = ({ data, persoane }) => {
 
   const showDeleteModal = (personId, ev) => {
     setIdToDelete(personId);
-    ev.stopPropagation();
+    ev?.stopPropagation();
   };
 
   const removeChild = async (childId) => {

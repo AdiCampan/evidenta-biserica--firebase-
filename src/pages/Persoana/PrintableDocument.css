@@ -3,7 +3,7 @@
   background-color: aquamarine;
 }
 .image-preview {
-  margin: 35px 50px 35px 180px;
+  margin: 10px 50px 10px 180px;
   width: 150px;
   height: 200px;
   object-fit: cover;
@@ -11,7 +11,7 @@
 }
 .box {
   width: -webkit-fill-available;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   margin-top: 10px;
   border-radius: 15px;
@@ -31,7 +31,7 @@
   display: flex;
 }
 .general-data {
-  margin: 20px;
+  margin: 5px;
 }
 .info-box {
   align-content: center;
@@ -57,4 +57,9 @@
   display: flex;
   justify-content: center;
   margin: 1rem;
+}
+.signature-box {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
 }

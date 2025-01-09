@@ -34,8 +34,15 @@ import {
   RadioGroup,
 } from "@mui/material";
 import { FaTrash } from "react-icons/fa";
+import PersonSelectionModal from "./PersonSelectionModal";
 
 const ExternalRequestReview = ({ persoane }) => {
+  const [modalData, setModalData] = useState({
+    show: false,
+    matches: [],
+    onSelect: () => {},
+  });
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [show, setShow] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -268,154 +275,226 @@ const ExternalRequestReview = ({ persoane }) => {
   };
 
   // MODIFICAR RELATIONS, PARA SUBIR A FIRESTORE//
-  const updateRelationsForPerson = async (personData, persoane) => {
-    const {
-      father,
-      mother,
-      childrens,
-      id: currentPersonId,
-      spouse,
-    } = personData;
+  // const updateRelationsForPerson = async (personData, persoane) => {
+  //   const {
+  //     father,
+  //     mother,
+  //     childrens,
+  //     id: currentPersonId,
+  //     spouse,
+  //   } = personData;
 
-    const findPersonByName = (firstName, lastName) => {
-      if (!firstName || !lastName) return null;
-      return persoane.find(
-        (person) =>
-          person.firstName?.toLowerCase().trim() ===
-            firstName.toLowerCase().trim() &&
-          person.lastName?.toLowerCase().trim() ===
-            lastName.toLowerCase().trim()
-      );
-    };
+  //   const relationExists = (relations, personId, type) =>
+  //     relations.some(
+  //       (relation) => relation.person === personId && relation.type === type
+  //     );
 
-    const createNewPerson = async (firstName, lastName, sex) => {
-      const newPersonData = {
-        firstName,
-        lastName,
-        sex,
-        church: "other",
-        relations: [],
-      };
-      const newPersonDoc = await addDoc(
-        collection(firestore, "persoane"),
-        newPersonData
-      );
-      return { id: newPersonDoc.id, ...newPersonData };
-    };
+  //   const findPersonByName = (firstName, lastName) => {
+  //     if (!firstName || !lastName) return [];
+  //     return persoane.filter(
+  //       (person) =>
+  //         person.firstName?.toLowerCase().trim() ===
+  //           firstName.toLowerCase().trim() &&
+  //         person.lastName?.toLowerCase().trim() ===
+  //           lastName.toLowerCase().trim()
+  //     );
+  //   };
 
-    const updatedRelations = [...(personData.relations || [])]; // Inicializa relaciones locales
+  //   const selectPerson = async (firstName, lastName, sex) => {
+  //     const matches = findPersonByName(firstName, lastName);
+  //     if (matches.length === 1) {
+  //       return matches[0];
+  //     } else if (matches.length > 1) {
+  //       return new Promise((resolve) => {
+  //         setModalData({
+  //           show: true,
+  //           matches,
+  //           onSelect: (selectedPerson) => {
+  //             setModalData({ show: false });
+  //             resolve(selectedPerson || null);
+  //           },
+  //         });
+  //       });
+  //     }
 
-    // Agregar padre
-    if (father) {
-      let fatherPerson = findPersonByName(father.firstName, father.lastName);
-      if (!fatherPerson) {
-        fatherPerson = await createNewPerson(
-          father.firstName,
-          father.lastName,
-          true
-        );
-        persoane.push(fatherPerson);
-      }
-      await updateDoc(doc(firestore, "persoane", fatherPerson.id), {
-        relations: arrayUnion({ person: currentPersonId, type: "child" }),
-      });
-      updatedRelations.push({ person: fatherPerson.id, type: "father" });
-    }
+  //     const newPersonData = {
+  //       firstName,
+  //       lastName,
+  //       sex,
+  //       church: "other",
+  //       relations: [],
+  //     };
+  //     const newPersonDoc = await addDoc(
+  //       collection(firestore, "persoane"),
+  //       newPersonData
+  //     );
+  //     return { id: newPersonDoc.id, ...newPersonData };
+  //   };
 
-    // Agregar madre
-    if (mother) {
-      let motherPerson = findPersonByName(mother.firstName, mother.lastName);
-      if (!motherPerson) {
-        motherPerson = await createNewPerson(
-          mother.firstName,
-          mother.lastName,
-          false
-        );
-        persoane.push(motherPerson);
-      }
-      await updateDoc(doc(firestore, "persoane", motherPerson.id), {
-        relations: arrayUnion({ person: currentPersonId, type: "child" }),
-      });
-      updatedRelations.push({ person: motherPerson.id, type: "mother" });
-    }
+  //   const updatedRelations = [...(personData.relations || [])];
 
-    // Agregar hijos
-    if (childrens?.length) {
-      for (const child of childrens) {
-        let childPerson = findPersonByName(child.firstName, child.lastName);
-        if (!childPerson) {
-          childPerson = await createNewPerson(
-            child.firstName,
-            child.lastName,
-            null
-          );
-          persoane.push(childPerson);
-        }
-        const parentType = personData.sex ? "father" : "mother";
-        await updateDoc(doc(firestore, "persoane", childPerson.id), {
-          relations: arrayUnion({
-            person: currentPersonId,
-            type: parentType,
-          }),
-        });
-        updatedRelations.push({ person: childPerson.id, type: "child" });
-      }
-    }
+  //   // Agregar padre
+  //   if (father) {
+  //     const fatherPerson = await selectPerson(
+  //       father.firstName,
+  //       father.lastName,
+  //       true
+  //     );
+  //     if (!relationExists(updatedRelations, fatherPerson.id, "father")) {
+  //       await updateDoc(doc(firestore, "persoane", fatherPerson.id), {
+  //         relations: arrayUnion({ person: currentPersonId, type: "child" }),
+  //       });
+  //       updatedRelations.push({ person: fatherPerson.id, type: "father" });
+  //     }
+  //   }
+  //   // Agregar madre
+  //   if (mother) {
+  //     const motherPerson = await selectPerson(
+  //       mother.firstName,
+  //       mother.lastName,
+  //       false
+  //     );
+  //     if (!relationExists(updatedRelations, motherPerson.id, "mother")) {
+  //       await updateDoc(doc(firestore, "persoane", motherPerson.id), {
+  //         relations: arrayUnion({ person: currentPersonId, type: "child" }),
+  //       });
+  //       updatedRelations.push({ person: motherPerson.id, type: "mother" });
+  //     }
+  //   }
 
-    // Agregar cónyuge (spouse)
-    if (spouse) {
-      let spousePerson = findPersonByName(spouse.firstName, spouse.lastName);
-      if (!spousePerson) {
-        spousePerson = await createNewPerson(
-          spouse.firstName,
-          spouse.lastName,
-          personData.sex ? false : true // Sexo opuesto al de la persona actual
-        );
-        persoane.push(spousePerson);
-      }
+  //   // Agregar hijos
+  //   if (childrens?.length) {
+  //     for (const child of childrens) {
+  //       const childPerson = await selectPerson(
+  //         child.firstName,
+  //         child.lastName,
+  //         null
+  //       );
+  //       const parentType = personData.sex ? "father" : "mother";
+  //       if (!relationExists(updatedRelations, childPerson.id, "child")) {
+  //         await updateDoc(doc(firestore, "persoane", childPerson.id), {
+  //           relations: arrayUnion({
+  //             person: currentPersonId,
+  //             type: parentType,
+  //           }),
+  //         });
+  //         updatedRelations.push({ person: childPerson.id, type: "child" });
+  //       }
+  //     }
+  //   }
 
-      const spouseType = personData.sex ? "wife" : "husband";
-      const marriageRelation = {
-        person: spousePerson.id,
-        type: spouseType,
-        civilWeddingDate: personData.civilWeddingDate || null,
-        religiousWeddingDate: personData.religiousWeddingDate || null,
-        weddingChurch: personData.weddingChurch || "unknown",
-      };
+  //   // Agregar cónyuge (spouse)
+  //   if (spouse) {
+  //     const spousePerson = await selectPerson(
+  //       spouse.firstName,
+  //       spouse.lastName,
+  //       personData.sex ? false : true // Sexo opuesto al de la persona actual
+  //     );
 
-      // Relación de la persona actual
-      updatedRelations.push(marriageRelation);
+  //     const spouseType = personData.sex ? "wife" : "husband";
 
-      // Relación espejo en el cónyuge
-      const mirroredMarriageRelation = {
-        person: currentPersonId,
-        type: personData.sex ? "husband" : "wife",
-        civilWeddingDate: personData.civilWeddingDate || null,
-        religiousWeddingDate: personData.religiousWeddingDate || null,
-        weddingChurch: personData.weddingChurch || "unknown",
-      };
+  //     if (!relationExists(updatedRelations, spousePerson.id, spouseType)) {
+  //       const marriageRelation = {
+  //         person: spousePerson.id,
+  //         type: spouseType,
+  //         civilWeddingDate: personData.civilWeddingDate || null,
+  //         religiousWeddingDate: personData.religiousWeddingDate || null,
+  //         weddingChurch: personData.weddingChurch || "unknown",
+  //       };
 
-      await updateDoc(doc(firestore, "persoane", spousePerson.id), {
-        relations: arrayUnion(mirroredMarriageRelation),
-      });
-    }
+  //       // Relación de la persona actual
+  //       updatedRelations.push(marriageRelation);
 
-    return updatedRelations; // Devuelve las relaciones actualizadas
-  };
+  //       const mirroredMarriageRelation = {
+  //         person: currentPersonId,
+  //         type: personData.sex ? "husband" : "wife",
+  //         civilWeddingDate: personData.civilWeddingDate || null,
+  //         religiousWeddingDate: personData.religiousWeddingDate || null,
+  //         weddingChurch: personData.weddingChurch || "unknown",
+  //       };
 
-  const initializeRelations = async (personId) => {
-    if (!personId || typeof personId !== "string") {
-      console.error("initializeRelations: ID inválido", personId);
-      throw new Error("El ID proporcionado a initializeRelations no es válido");
-    }
-    const personDoc = doc(firestore, "persoane", personId);
-    const personData = (await getDoc(personDoc)).data();
-    if (!Array.isArray(personData.relations)) {
-      await updateDoc(personDoc, { relations: [] });
-    }
-  };
+  //       // Relación espejo en el cónyuge
+  //       await updateDoc(doc(firestore, "persoane", spousePerson.id), {
+  //         relations: arrayUnion(mirroredMarriageRelation),
+  //       });
+  //     }
+  //   }
+
+  //   return updatedRelations; // Devuelve las relaciones actualizadas
+  // };
+
+  // const initializeRelations = async (personId) => {
+  //   if (!personId || typeof personId !== "string") {
+  //     console.error("initializeRelations: ID inválido", personId);
+  //     throw new Error("El ID proporcionado a initializeRelations no es válido");
+  //   }
+  //   const personDoc = doc(firestore, "persoane", personId);
+  //   const personData = (await getDoc(personDoc)).data();
+  //   if (!Array.isArray(personData.relations)) {
+  //     await updateDoc(personDoc, { relations: [] });
+  //   }
+  // };
 
   //  ACCEPTAR EL USUARIO
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (formularVerificare !== "") {
+  //     alert("Formulario detectado como spam.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const personDataWithDates = {
+  //       ...personData,
+  //       sex:
+  //         personData.sex === "M" ? true : personData.sex === "F" ? false : null,
+  //       churchName: "EBEN - EZER",
+  //       birthDate: birthDate || null,
+  //       baptiseDate: baptiseDate || null,
+  //       hsBaptiseDate: hsBaptiseDate || null,
+  //       civilWeddingDate: civilWeddingDate || null,
+  //       religiousWeddingDate: religiousWeddingDate || null,
+  //     };
+
+  //     // Añadir la nueva persona a Firestore
+  //     const docRef = await addDoc(
+  //       collection(firestore, "persoane"),
+  //       personDataWithDates
+  //     );
+  //     const newPersonId = docRef.id;
+
+  //     if (!newPersonId || typeof newPersonId !== "string") {
+  //       console.error("Error: ID de persona inválido:", newPersonId);
+  //       throw new Error("El ID generado para la persona no es válido");
+  //     }
+
+  //     personDataWithDates.id = newPersonId;
+
+  //     // Inicializar relaciones para la nueva persona
+  //     await initializeRelations(newPersonId);
+
+  //     // Actualizar relaciones
+  //     const updatedRelations = await updateRelationsForPerson(
+  //       personDataWithDates,
+  //       persoane
+  //     );
+
+  //     await updateDoc(doc(firestore, "persoane", newPersonId), {
+  //       relations: updatedRelations || [],
+  //     });
+
+  //     alert("Cererea a fost adaugata la arhiva !");
+  //     await deleteDoc(doc(firestore, "externalRequests", form.id));
+
+  //     setExternalForms(externalForms.filter((f) => f.id !== form.id));
+  //     setForm(null);
+  //     setShow(false);
+  //     setSelectedForm(null);
+  //   } catch (err) {
+  //     console.error("Error al enviar el formulario: ", err);
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -425,6 +504,72 @@ const ExternalRequestReview = ({ persoane }) => {
     }
 
     try {
+      console.log("Buscando coincidencias...");
+      const matches = persoane.filter(
+        (person) =>
+          person.firstName?.toLowerCase().trim() ===
+            personData.firstName.toLowerCase().trim() &&
+          person.lastName?.toLowerCase().trim() ===
+            personData.lastName.toLowerCase().trim()
+      );
+
+      let confirmedPerson = null;
+
+      if (matches.length > 0) {
+        console.log("Mostrando modal para coincidencias...");
+        confirmedPerson = await new Promise((resolve) => {
+          setModalData({
+            show: true,
+            matches,
+            onSelect: (selectedPerson) => {
+              console.log("Persona seleccionada: ", selectedPerson);
+              setModalData({ show: false });
+              resolve(selectedPerson);
+            },
+          });
+        });
+
+        if (confirmedPerson) {
+          const personDataWithDates = {
+            ...personData,
+            sex:
+              personData.sex === "M"
+                ? true
+                : personData.sex === "F"
+                ? false
+                : null,
+            churchName: "EBEN - EZER",
+            birthDate: birthDate || null,
+            baptiseDate: baptiseDate || null,
+            hsBaptiseDate: hsBaptiseDate || null,
+            civilWeddingDate: civilWeddingDate || null,
+            religiousWeddingDate: religiousWeddingDate || null,
+          };
+
+          console.log("Actualizando datos para la persona existente...");
+          await updateDoc(
+            doc(firestore, "persoane", confirmedPerson.id),
+            personDataWithDates
+          );
+          console.log("Datos actualizados correctamente.");
+
+          alert("Datos actualizados para la persona existente.");
+
+          await addDoc(collection(firestore, "Arhiva"), personDataWithDates);
+          alert("Cererea a fost adaugata la arhiva !");
+
+          await deleteDoc(doc(firestore, "externalRequests", form.id));
+          console.log("Solicitud externa eliminada.");
+
+          setExternalForms(externalForms.filter((f) => f.id !== form.id));
+          setForm(null);
+          setShow(false);
+          setSelectedForm(null);
+          return;
+        }
+      }
+
+      console.log("Creando nueva persona...");
       const personDataWithDates = {
         ...personData,
         sex:
@@ -437,34 +582,33 @@ const ExternalRequestReview = ({ persoane }) => {
         religiousWeddingDate: religiousWeddingDate || null,
       };
 
-      // Añadir la nueva persona a Firestore
       const docRef = await addDoc(
         collection(firestore, "persoane"),
         personDataWithDates
       );
-      const newPersonId = docRef.id;
+      console.log("Persona creada con ID: ", docRef.id);
 
-      if (!newPersonId || typeof newPersonId !== "string") {
-        console.error("Error: ID de persona inválido:", newPersonId);
-        throw new Error("El ID generado para la persona no es válido");
+      const newPersonId = docRef.id;
+      if (!newPersonId) {
+        throw new Error("El ID generado para la nueva persona no es válido");
       }
 
       personDataWithDates.id = newPersonId;
 
-      // Inicializar relaciones para la nueva persona
-      await initializeRelations(newPersonId);
+      // await initializeRelations(newPersonId);
+      // console.log("Relaciones inicializadas.");
 
-      // Actualizar relaciones
-      const updatedRelations = await updateRelationsForPerson(
-        personDataWithDates,
-        persoane
-      );
+      // const updatedRelations = await updateRelationsForPerson(
+      //   personDataWithDates,
+      //   persoane
+      // );
+      // console.log("Relaciones actualizadas.");
 
-      await updateDoc(doc(firestore, "persoane", newPersonId), {
-        relations: updatedRelations || [],
-      });
+      // await updateDoc(doc(firestore, "persoane", newPersonId), {
+      //   relations: updatedRelations || [],
+      // });
+      // console.log("Datos guardados correctamente.");
 
-      alert("Cererea a fost adaugata la arhiva !");
       await deleteDoc(doc(firestore, "externalRequests", form.id));
 
       setExternalForms(externalForms.filter((f) => f.id !== form.id));
@@ -473,6 +617,7 @@ const ExternalRequestReview = ({ persoane }) => {
       setSelectedForm(null);
     } catch (err) {
       console.error("Error al enviar el formulario: ", err);
+      alert(`Se produjo un error: ${err.message}`);
     }
   };
 
@@ -540,6 +685,12 @@ const ExternalRequestReview = ({ persoane }) => {
 
   return (
     <div>
+      <PersonSelectionModal
+        show={modalData.show}
+        matches={modalData.matches}
+        onSelect={modalData.onSelect}
+        onHide={() => setModalData({ show: false })}
+      />
       <Button
         style={{ marginInline: "10px" }}
         variant="primary"
@@ -665,6 +816,7 @@ const ExternalRequestReview = ({ persoane }) => {
                     <Col xs="6">
                       <div style={{}}>
                         <ImageUploader
+                          id={`${personData.lastName}_${personData.firstName}`}
                           onFileSelectSuccess={(file) => setSelectedFile(file)}
                           onFileSelectError={({ error }) => alert(error)}
                           initialImage={form?.profileImage}

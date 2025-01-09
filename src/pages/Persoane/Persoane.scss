@@ -16,7 +16,7 @@
   .barra-buttons {
     margin: 5px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .sex-filter {
@@ -39,7 +39,7 @@
   background-color: #b9b4b4;
 }
 .inputs-list {
-  position: sticky;
+  // position: sticky;
   top: 80px;
   background-color: #ccc;
 }
@@ -47,3 +47,15 @@
   display: flex;
   flex-direction: column;
 }
+// @media print {
+//   /* Mostrar únicamente el contenedor deseado */
+//   .printable-table {
+//     display: block !important;
+//     visibility: visible !important;
+//   }
+
+//   /* Evitar que otros elementos del DOM se muestren */
+//   .printable-table ~ * {
+//     display: none !important;
+//   }
+// }

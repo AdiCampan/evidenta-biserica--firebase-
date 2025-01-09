@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button } from "react-bootstrap";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebase-config";
-import { useParams } from "react-router";
 import "./ImageUploader.scss";
 
 const ALLOWED_EXTENSIONS = ["jpeg", "jpg", "png"];
@@ -20,6 +19,7 @@ const hexToBase64 = (hexString) => {
 };
 
 const FileUploader = ({
+  id,
   onFileSelectSuccess,
   onFileSelectError,
   initialImage, // La cadena en hexadecimal de la imagen original
@@ -27,8 +27,6 @@ const FileUploader = ({
   const fileInputRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(EMPTY_IMAGE); // Vista previa de la imagen
   const [fileError, setFileError] = useState(null);
-  const { id } = useParams();
-  const storageRef = ref(storage, `${id}`);
 
   useEffect(() => {
     // Si `initialImage` viene en hexadecimal, conviértelo a base64
@@ -60,9 +58,10 @@ const FileUploader = ({
         setFileError("Se pueden cargar solo imágenes de máximo 10MB");
         onFileSelectError(true);
       } else {
+        const fileRef = ref(storage, id); // Define la referencia del archivo
         // Sube la imagen al almacenamiento de Firebase
-        uploadBytes(storageRef, currentFile).then((snapshot) => {
-          getDownloadURL(ref(storage, `${id}`))
+        uploadBytes(fileRef, currentFile).then((snapshot) => {
+          getDownloadURL(ref(storage, id))
             .then((url) => {
               if (url) {
                 onFileSelectSuccess(url); // Asegúrate de que `url` sea válida antes de llamarla

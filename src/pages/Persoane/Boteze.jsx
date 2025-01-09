@@ -141,6 +141,7 @@ function Boteze({ persoane }) {
           </Table>
         </div>
         <Modal
+          style={{ width: "100%" }}
           centered
           dialogClassName="custom-modal"
           show={showModal}

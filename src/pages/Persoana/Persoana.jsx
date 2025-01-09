@@ -144,66 +144,70 @@ function Persoana() {
           <style>
           @media print {
                         .printable-content {
-                              margin: 20px;
-                              background-color: aquamarine;
-                            }
-                            .image-preview {
-                              margin: 35px 50px 35px 180px;
-                              width: 150px;
-                              height: 200px;
-                              object-fit: cover;
-                              border-radius: 5px;
-                            }
-                            .box {
-                              width: -webkit-fill-available;
-                              padding: 20px;
-                              display: flex;
-                              margin-top: 10px;
-                              border-radius: 15px;
-                              border: 3px solid;
-                            }
-                            .vertical-text-box {
-                              writing-mode: vertical-lr;
-                              display: flex;
-                              justify-content: center;
-                            }
-                            .vertical-text {
-                              display: flex;
-                              text-orientation: mixed;
-                            }
+                        margin: 20px;
+                        background-color: aquamarine;
+                      }
+                      .image-preview {
+                        margin: 10px 50px 10px 180px;
+                        width: 150px;
+                        height: 200px;
+                        object-fit: cover;
+                        border-radius: 5px;
+                      }
+                      .box {
+                        width: -webkit-fill-available;
+                        padding: 10px;
+                        display: flex;
+                        margin-top: 10px;
+                        border-radius: 15px;
+                        border: 3px solid;
+                      }
+                      .vertical-text-box {
+                        writing-mode: vertical-lr;
+                        display: flex;
+                        justify-content: center;
+                      }
+                      .vertical-text {
+                        display: flex;
+                        text-orientation: mixed;
+                      }
 
-                            .general-box {
-                              display: flex;
-                            }
-                            .general-data {
-                              margin: 20px;
-                            }
-                            .info-box {
-                              align-content: center;
-                              margin-left: 3%;
-                              max-width: 50%;
-                            }
-                            .logo-box {
-                              width: 120px;
-                              display: flex;
-                              align-items: center;
-                              padding: 10px;
-                            }
+                      .general-box {
+                        display: flex;
+                      }
+                      .general-data {
+                        margin: 5px;
+                      }
+                      .info-box {
+                        align-content: center;
+                        margin-left: 3%;
+                        max-width: 50%;
+                      }
+                      .logo-box {
+                        width: 110px;
+                        display: flex;
+                        align-items: center;
+                        padding: 10px;
+                      }
 
-                            .logo-box img {
-                              max-width: 70%;
-                              height: auto;
-                            }
-                            .header-box {
-                              display: flex;
-                              justify-content: space-between;
-                            }
-                            .title-box {
-                              display: flex;
-                              justify-content: center;
-                              margin: 1rem;
-                            }
-
+                      .logo-box img {
+                        max-width: 70%;
+                        height: auto;
+                      }
+                      .header-box {
+                        display: flex;
+                        justify-content: space-between;
+                      }
+                      .title-box {
+                        display: flex;
+                        justify-content: center;
+                        margin: 1rem;
+                      }
+                      .signature-box {
+                          margin-top: 20px;
+                        display: flex;
+                        justify-content: space-around;
+                      }
 
           }
         </style>

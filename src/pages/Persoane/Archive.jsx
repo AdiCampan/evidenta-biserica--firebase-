@@ -241,7 +241,11 @@ function Archive() {
 
   return (
     <div>
-      <div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <h3>CERERI PRIMITE</h3>
+      </div>
+
+      <div style={{ marginInline: "20px" }}>
         {archivesList.map((form) => (
           <li
             key={form.id}

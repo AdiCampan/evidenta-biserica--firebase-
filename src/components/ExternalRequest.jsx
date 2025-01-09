@@ -13,6 +13,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
+import { useParams } from "react-router";
 
 const ExternalRequest = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -59,6 +60,7 @@ const ExternalRequest = ({ onCloseModal }) => {
     spouse: { firstName: "", lastName: "" },
     transferNumber: "",
   });
+  console.log("selectedFile", selectedFile);
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -302,14 +304,13 @@ const ExternalRequest = ({ onCloseModal }) => {
             <Col xs="6">
               <div style={{}}>
                 <ImageUploader
-                  onFileSelectSuccess={(url) => {
-                    console.log("Imagen cargada correctamente:", url);
-                    setSelectedFile(url); // Actualiza con la URL de la imagen
-                  }}
+                  // uploadPath={`externalRequests/${personData.lastName}_${personData.firstName}`}
+                  onFileSelectSuccess={(file) => setSelectedFile(file)}
                   onFileSelectError={(error) => {
-                    console.error("Error al cargar imagen:", error);
                     alert("No se pudo cargar la imagen. Inténtalo nuevamente.");
                   }}
+                  id={`${personData.lastName}_${personData.firstName}`}
+                  // initialImage={personData?.profileImage}
                 />
               </div>
             </Col>
@@ -744,6 +745,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     Botezat/ă în apă la data:
                   </InputGroup.Text>
                   <DatePicker
+                    required
                     placeholderText="Data botezului"
                     selected={baptiseDate}
                     onChange={(date) => setBaptiseDate(date)}
@@ -763,6 +765,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     în Biserica:
                   </InputGroup.Text>
                   <input
+                    required
                     placeholder="Biserica și localitatea"
                     className="input"
                     type="text"
@@ -780,6 +783,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     Botezat în apă de Pastorul:
                   </InputGroup.Text>
                   <input
+                    required
                     placeholder=""
                     className="input"
                     type="text"

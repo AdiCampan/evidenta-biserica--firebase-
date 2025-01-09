@@ -75,7 +75,11 @@ function AddPerson({ label }) {
 
   return (
     <>
-      <Button variant="primary" onClick={() => setShow(true)}>
+      <Button
+        style={{ marginLeft: "20px" }}
+        variant="primary"
+        onClick={() => setShow(true)}
+      >
         {label || "Persoana noua"}
       </Button>
 
