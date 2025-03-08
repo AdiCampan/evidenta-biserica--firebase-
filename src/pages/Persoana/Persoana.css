@@ -5,10 +5,18 @@
   width: 95%;
   height: 200px;
 }
-@media print {
+/* @media print {
   .printable-content {
     margin: 20px;
     background-color: aquamarine;
+  }
+  .logo-box {
+    display: block !important;
+    visibility: visible !important;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    padding: 20px;
   }
   .image-preview {
     margin: 35px 50px 35px 180px;
@@ -38,4 +46,4 @@
     align-content: flex-start;
     flex-direction: row;
   }
-}
+} */

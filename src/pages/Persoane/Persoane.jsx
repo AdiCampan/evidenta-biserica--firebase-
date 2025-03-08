@@ -86,16 +86,50 @@ function Persoane({ persoane }) {
   const tableRef = useRef();
 
   const handlePrint = () => {
-    const printContents = tableRef.current.innerHTML;
-    const originalContents = document.body.innerHTML;
+    let printContents = tableRef.current.innerHTML;
 
-    // Cambia temporalmente el contenido de la página para imprimir
+    const currentDate = new Date().toLocaleDateString("ro-RO", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    // Generar el título dinámico basado en los filtros seleccionados
+    let title = "Lista de: ";
+
+    const selectedFilters = [];
+    if (baptisedOnly) selectedFilters.push("Botezati");
+    if (notBabtisedOnly) selectedFilters.push("Nebotezati");
+    if (blessedOnly) selectedFilters.push("Dusi la Binecuvantare");
+    if (notBlessedOnly) selectedFilters.push("Nu dusi la Binecuvantare");
+    if (membersOnly) selectedFilters.push("Membrii");
+    if (notMembersOnly) selectedFilters.push("Nu membri");
+    if (masculin) selectedFilters.push("Masculin");
+    if (feminin) selectedFilters.push("Feminin");
+
+    // Si hay filtros seleccionados, añadirlos al título
+    if (selectedFilters.length > 0) {
+      title += selectedFilters.join(", ");
+    } else {
+      title += "Toți membri"; // Mostrar un mensaje por defecto
+    }
+
+    // Crear un contenedor con el título dinámico
+    const printHeader = ` <div class="print-date">${currentDate}  </div> 
+                          <div class="print-logo"> Biserica Penticostala EBEN-EZER </br> Castellon de la Plana</div>
+                          <h2 class="print-title">${title}</h2> 
+                         
+                          `;
+
+    // Agregar el título antes de la tabla en la impresión
+    printContents = printHeader + printContents;
+
+    // Guardar el contenido original y reemplazarlo con la versión imprimible
+    const originalContents = document.body.innerHTML;
     document.body.innerHTML = printContents;
     window.print();
-
-    // Restaura el contenido original de la página
     document.body.innerHTML = originalContents;
-    window.location.reload(); // Recarga la página para restaurar eventos React
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -379,7 +413,7 @@ function Persoane({ persoane }) {
                 </th>
                 <th style={{ minWidth: 108 }}>Data nasterii</th>
                 <th>Sex</th>
-                <th>Actiuni</th>
+                <th className="no-print">Actiuni</th>
               </tr>
             </thead>
 
@@ -503,7 +537,7 @@ function Persoane({ persoane }) {
                         <td>{calculateAge(p.birthDate)}</td>
                         <td>{formatDate(p.birthDate)}</td>
                         <td>{p.sex ? "M" : "F"}</td>
-                        <td>
+                        <td className="no-print">
                           <Button
                             variant="primary"
                             onClick={(event) => showDeleteModal(p.id, event)}

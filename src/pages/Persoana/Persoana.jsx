@@ -184,16 +184,15 @@ function Persoana() {
                         max-width: 50%;
                       }
                       .logo-box {
-                        width: 110px;
+                        display: block !important;
+                        visibility: visible !important;
+                       
                         display: flex;
                         align-items: center;
-                        padding: 10px;
+                        padding: 20px;
                       }
 
-                      .logo-box img {
-                        max-width: 70%;
-                        height: auto;
-                      }
+
                       .header-box {
                         display: flex;
                         justify-content: space-between;
@@ -213,7 +212,12 @@ function Persoana() {
         </style>
           
       </head>
-      <body>${printContent}</body>
+        <body > 
+          <div class="logo-box">
+            <img src="/images/logo-round.png" alt="logo" />
+          </div>
+          ${printContent}
+        </body>
       </html>
     `);
     iframeDoc.close();

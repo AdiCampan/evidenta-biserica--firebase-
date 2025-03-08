@@ -96,7 +96,7 @@ function PrintableDocument({ data, persons }) {
               123-456-7890
             </div>
             <div className="logo-box">
-              <img src="/src/assets/images/logo-round.png" alt="logo" />
+              <img src="/images/logo-round.png" alt="logo" />
             </div>
           </div>
           <div className="title-box">
