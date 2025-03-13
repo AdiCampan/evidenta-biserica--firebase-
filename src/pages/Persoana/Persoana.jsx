@@ -213,9 +213,7 @@ function Persoana() {
           
       </head>
         <body > 
-          <div class="logo-box">
-            <img src="/images/logo-round.png" alt="logo" />
-          </div>
+          
           ${printContent}
         </body>
       </html>
