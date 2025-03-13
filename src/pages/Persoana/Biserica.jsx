@@ -117,7 +117,7 @@ const Biserica = ({ data, dataUpdated }) => {
                   value={blessed}
                   onChange={(e) => {
                     console.log("valoare", e);
-                    setSex(e.target.value);
+                    setBlessed(e.target.value);
                   }}
                 >
                   <FormControlLabel value="Y" label="DA" control={<Radio />} />
