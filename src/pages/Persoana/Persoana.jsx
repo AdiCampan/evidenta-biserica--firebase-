@@ -181,7 +181,7 @@ function Persoana() {
                       .info-box {
                         align-content: center;
                         margin-left: 3%;
-                        max-width: 50%;
+                        max-width: 55%;
                       }
                       .logo-box {
                         display: block !important;
@@ -213,7 +213,6 @@ function Persoana() {
           
       </head>
         <body > 
-          
           ${printContent}
         </body>
       </html>

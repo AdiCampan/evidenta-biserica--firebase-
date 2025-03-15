@@ -5,7 +5,7 @@ import { storage } from "../../firebase-config";
 import "./ImageUploader.scss";
 
 const ALLOWED_EXTENSIONS = ["jpeg", "jpg", "png"];
-const EMPTY_IMAGE = "/src/assets/images/person-placeholder.jpg";
+const EMPTY_IMAGE = "/images/person-placeholder.jpg";
 
 // Función para convertir de hexadecimal a base64
 const hexToBase64 = (hexString) => {
