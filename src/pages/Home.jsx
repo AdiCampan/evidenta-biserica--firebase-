@@ -132,11 +132,11 @@ const Home = ({ persoane }) => {
             <strong>ACTUALIZEAZA-TI FISA MEMBRALA</strong>
           </h5>
           <p>
-            Completeaza formularul cu datele care le stii, urca o poza actuala,
-            si accepta tratatrea datelor personale Conforme a la Ley Orgánica
+            Completează formularul cu datele care le știi, urcă o poză actuală,
+            și acceptă tratatrea datelor personale Conforme a la Ley Orgánica
             3/2018, de 5 de diciembre, de Protección de Datos Personales y
-            garantía de los derechos digitales. Ulterior Datetele vor fii
-            verificate ,inainte de a actualiza fisa membrala.
+            garantía de los derechos digitales. Ulterior, datele vor fii
+            verificate înainte de a actualiza fișa membrală.
           </p>
           <Button onClick={handleShowForm}>FORMULAR ACTUALIZARE MEMBRU</Button>
           <Button onClick={handleShowRequest} style={{ margin: "5px" }}>
@@ -144,22 +144,24 @@ const Home = ({ persoane }) => {
           </Button>
         </div>
 
-        <div className="chart-container">
-          <div className="info-cards">
-            <h6 style={{ marginTop: "10px" }}>TOTAL MEMBRII</h6>
-            <h4 style={{ fontWeight: "bolder" }}>1043</h4>
-          </div>
-          <div className="info-cards">
-            <h6 style={{ marginTop: "10px" }}>COPII</h6>
-            <h4 style={{ fontWeight: "bolder" }}>387</h4>
-          </div>
-          <div className="info-cards">
-            <h6 style={{ marginTop: "10px" }}>BOTEZATI</h6>
-            <h4 style={{ fontWeight: "bolder" }}>656</h4>
-          </div>
-          <div className="info-cards">
-            <h6 style={{ marginTop: "10px" }}>TOTAL FAMILII</h6>
-            <h4 style={{ fontWeight: "bolder" }}>255</h4>
+        <div className="chart-wrapper">
+          <div className="chart-container">
+            <div className="info-cards">
+              <h6>TOTAL MEMBRII</h6>
+              <h4>1043</h4>
+            </div>
+            <div className="info-cards">
+              <h6>COPII</h6>
+              <h4>387</h4>
+            </div>
+            <div className="info-cards">
+              <h6>BOTEZATI</h6>
+              <h4>656</h4>
+            </div>
+            <div className="info-cards">
+              <h6>TOTAL FAMILII</h6>
+              <h4>255</h4>
+            </div>
           </div>
         </div>
         {showUploader && <CSVUploader />}
