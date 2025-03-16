@@ -64,21 +64,23 @@ function Persoana() {
   const initialDataRef = useRef(null); // Para almacenar los datos iniciales
   const hasLoadedData = useRef(false); // Controla si los datos ya han sido cargados una vez
 
-  console.log("data", data);
+  console.log("data persoanei", data);
 
   const getMemberData = async () => {
-    const docRef = doc(firestore, "persoane", id);
-    const docSnap = await getDoc(docRef);
-    const tmpArray = [];
-    if (docSnap.exists()) {
-      tmpArray.push(docSnap.data(), id);
-      setData(tmpArray);
-      setCurrentData(tmpArray);
-      initialDataRef.current = tmpArray; // Guarda los datos originales al cargar
-      hasLoadedData.current = true; // Marca como que los datos fueron cargados
-      setIsInitialLoad(false); // Marcar la carga inicial como completada
-    } else {
-      console.log("No such document!");
+    if (id) {
+      const docRef = doc(firestore, "persoane", id);
+      const docSnap = await getDoc(docRef);
+      const tmpArray = [];
+      if (docSnap.exists()) {
+        tmpArray.push(docSnap.data(), id);
+        setData(tmpArray);
+        setCurrentData(tmpArray);
+        initialDataRef.current = tmpArray; // Guarda los datos originales al cargar
+        hasLoadedData.current = true; // Marca como que los datos fueron cargados
+        setIsInitialLoad(false); // Marcar la carga inicial como completada
+      } else {
+        console.log("No such document!");
+      }
     }
   };
 

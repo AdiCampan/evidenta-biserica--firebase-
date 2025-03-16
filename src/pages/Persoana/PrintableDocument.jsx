@@ -166,7 +166,7 @@ function PrintableDocument({ data, persons }) {
                   <div>Copii:</div>
                   <ul>
                     {childrens.map((children, index) => {
-                      const child = persons.find(
+                      const child = persons?.find(
                         (person) => person.id === children.person
                       );
                       return (
