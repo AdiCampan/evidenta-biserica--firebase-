@@ -32,7 +32,6 @@ $font-family: "Roboto", sans-serif;
     margin-bottom: 15px;
 
     label {
-      // max-width: 100px;
       display: block;
       font-weight: bold;
       margin-bottom: 5px;
@@ -56,25 +55,24 @@ $font-family: "Roboto", sans-serif;
       }
     }
 
-    // Error message styling
     .error-message {
       color: $error-color;
       font-size: 14px;
       margin-top: 5px;
     }
   }
+
   .colum-form {
-    // margin: 10px;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
   }
+
   .colums {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
   }
 
-  // Submit button styling
   .submit-btn {
     display: inline-block;
     width: 100%;
@@ -96,6 +94,7 @@ $font-family: "Roboto", sans-serif;
       cursor: not-allowed;
     }
   }
+
   .cancel-btn {
     margin-top: 10px;
     display: inline-block;
@@ -119,7 +118,6 @@ $font-family: "Roboto", sans-serif;
     }
   }
 
-  // Success message styling
   .success-message {
     text-align: center;
     color: $success-color;
@@ -127,10 +125,13 @@ $font-family: "Roboto", sans-serif;
     margin-top: 20px;
   }
 }
+
+// Estilos para el modal
 .custom-modal-dialog {
   max-width: none;
   width: 80%;
 }
+
 @media (min-width: 576px) {
   .modal-dialog {
     max-width: none !important;
@@ -147,74 +148,103 @@ $font-family: "Roboto", sans-serif;
 
 @media (min-width: 1200px) {
   .form-container {
-    max-width: 1200px; /* Incrementa el ancho máximo */
+    max-width: 1200px;
   }
 }
 
-// Responsive styling
+// Estilos responsive
 @media (max-width: 768px) {
   .form-container {
-    max-width: 90%;
-    padding: 10px; /* Reduce el padding en pantallas pequeñas */
+    max-width: 100%;
+    padding: 1px;
+    margin: 1px auto;
   }
+  // .form-card {
+  //   display: flex;
+  //   flex-wrap: wrap;
+  //   gap: 10px;
+  // }
 
   .form-title {
-    font-size: 20px; /* Reduce el tamaño de la fuente */
+    font-size: 20px;
   }
 
   input,
   textarea,
   select {
-    font-size: 14px; /* Ajusta el tamaño del texto */
+    font-size: 14px;
+    width: 100%;
   }
 
   .submit-btn,
   .cancel-btn {
-    font-size: 16px; /* Botones más pequeños */
-    padding: 10px;
+    font-size: 16px;
+    padding: 5px;
+    width: 100%;
+  }
+
+  .colums {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .colum-form {
+    max-width: 100%;
+  }
+
+  .checkbox-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .checkbox-container input {
+    transform: scale(1.2);
   }
 }
 
-.custom-modal .modal-dialog {
-  display: flex;
-  justify-content: center; /* Para centrar horizontalmente */
-  align-items: center; /* Para centrar verticalmente si es necesario */
+@media (max-width: 576px) {
+  .custom-modal-dialog {
+    width: 95%;
+  }
+
+  .modal-content {
+    width: auto;
+  }
 }
 
-.custom-modal .modal-content {
-  width: fit-content; /* Ajusta el ancho del contenido del modal */
-}
-
+// Estilos para la casilla de verificación
 .checkbox-container {
   display: flex;
   align-items: center;
   margin-top: 20px;
+
+  input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.5);
+  }
+
+  label {
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
-.checkbox-container input[type="checkbox"] {
-  margin-right: 10px;
-  transform: scale(1.5); /* Aumenta el tamaño del checkbox */
-}
-
-.checkbox-container label {
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  user-select: none; /* Evita la selección accidental del texto */
-}
-
-.checkbox-container a {
-  color: #007bff; /* Color del enlace */
-  text-decoration: none;
-}
-
-.checkbox-container a:hover {
-  text-decoration: underline;
-}
 .short-input {
   width: 100%;
   max-width: 98%;
 }
+
 .name-box {
   display: flex;
 }

@@ -205,119 +205,119 @@ const ExternalRequest = ({ onCloseModal }) => {
 
   return (
     <div className="form-container">
-      <h1 className="form-title">FISA MEMBRU</h1>
-      <form className="form-group" onSubmit={handleSubmit}>
+      <h1 className="form-title">FIȘA CERERE MEMBRU</h1>
+      <Form className="form-group" onSubmit={handleSubmit}>
         <Card
           style={{
-            padding: "10px",
-            margin: "15px",
+            padding: "5px",
+            margin: "5px",
             backgroundColor: "#ebebeb",
           }}
         >
-          <Row>
-            <Col xs="6" style={{ maxWidth: "50%" }}>
-              <div className="colum-form">
-                <label>
-                  <input
-                    type="text"
-                    style={{ display: "none" }}
-                    name="formularVerificare"
-                    value={formularVerificare}
-                    onChange={(e) => setFormularVerificare(e.target.value)}
-                  />
-                </label>
-                <label className="label">
-                  Nume {`(obligatoriu)`}:
-                  <input
-                    required
-                    className="input"
-                    type="text"
-                    name="lastName"
-                    value={personData.lastName}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label className="label">
-                  Prenume {`(obligatoriu)`}:
-                  <input
-                    required
-                    className="input"
-                    type="text"
-                    name="firstName"
-                    value={personData.firstName}
-                    onChange={handleChange}
-                  />
-                </label>
-
-                <label className="label">
-                  Gen {`(obligatoriu)`}:
-                  <select
-                    required
-                    className="select"
-                    name="sex"
-                    value={personData.sex}
-                    onChange={handleChange}
-                  >
-                    <option value="">Selectioneaza</option>
-                    <option value="M">Masculin</option>
-                    <option value="F">Femenin</option>
-                  </select>
-                </label>
-                <label className="label">
-                  Data nasterii {`(obligatoriu)`}:
-                  <DatePicker
-                    selected={birthDate}
-                    onChange={(date) => setBirthDate(date)}
-                    peekNextMonth
-                    maxDate={new Date()}
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                    dateFormat="dd/MM/yyyy"
-                    className="input"
-                  />
-                </label>
-                <label className="label">
-                  Adresa {`(obligatoriu)`}:
-                  <input
-                    required
-                    className="input"
-                    type="text"
-                    name="address"
-                    value={personData.address}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label className="label">
-                  Telefon {`(obligatoriu)`}:
-                  <input
-                    required
-                    className="input"
-                    type="text"
-                    name="mobilePhone"
-                    value={personData.mobilePhone}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
-            </Col>
-            <Col xs="6">
-              <div style={{}}>
-                <ImageUploader
-                  // uploadPath={`externalRequests/${personData.lastName}_${personData.firstName}`}
-                  onFileSelectSuccess={(file) => setSelectedFile(file)}
-                  onFileSelectError={(error) => {
-                    alert("No se pudo cargar la imagen. Inténtalo nuevamente.");
-                  }}
-                  id={`${personData.lastName}_${personData.firstName}`}
-                  // initialImage={personData?.profileImage}
+          <Row className="colums">
+            {/* <Col xs="6" style={{ maxWidth: "50%" }}> */}
+            <div className="colum-form">
+              <label>
+                <input
+                  type="text"
+                  style={{ display: "none" }}
+                  name="formularVerificare"
+                  value={formularVerificare}
+                  onChange={(e) => setFormularVerificare(e.target.value)}
                 />
-              </div>
-            </Col>
-          </Row>
+              </label>
+              <label className="label">
+                Nume {`(obligatoriu)`}:
+                <input
+                  required
+                  className="input"
+                  type="text"
+                  name="lastName"
+                  value={personData.lastName}
+                  onChange={handleChange}
+                />
+              </label>
+              <label className="label">
+                Prenume {`(obligatoriu)`}:
+                <input
+                  required
+                  className="input"
+                  type="text"
+                  name="firstName"
+                  value={personData.firstName}
+                  onChange={handleChange}
+                />
+              </label>
 
-          <Row>
-            <Col>
+              <label className="label">
+                Gen {`(obligatoriu)`}:
+                <select
+                  required
+                  className="select"
+                  name="sex"
+                  value={personData.sex}
+                  onChange={handleChange}
+                >
+                  <option value="">Selectioneaza</option>
+                  <option value="M">Masculin</option>
+                  <option value="F">Femenin</option>
+                </select>
+              </label>
+              <label className="label">
+                Data nasterii {`(obligatoriu)`}:
+                <DatePicker
+                  selected={birthDate}
+                  onChange={(date) => setBirthDate(date)}
+                  peekNextMonth
+                  maxDate={new Date()}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  dateFormat="dd/MM/yyyy"
+                  className="input"
+                />
+              </label>
+              <label className="label">
+                Adresa {`(obligatoriu)`}:
+                <input
+                  required
+                  className="input"
+                  type="text"
+                  name="address"
+                  value={personData.address}
+                  onChange={handleChange}
+                />
+              </label>
+              <label className="label">
+                Telefon {`(obligatoriu)`}:
+                <input
+                  required
+                  className="input"
+                  type="text"
+                  name="mobilePhone"
+                  value={personData.mobilePhone}
+                  onChange={handleChange}
+                />
+              </label>
+            </div>
+            {/* </Col> */}
+            {/* <Col xs="6"> */}
+            <div className="colum-form">
+              <ImageUploader
+                // uploadPath={`externalRequests/${personData.lastName}_${personData.firstName}`}
+                onFileSelectSuccess={(file) => setSelectedFile(file)}
+                onFileSelectError={(error) => {
+                  alert("No se pudo cargar la imagen. Inténtalo nuevamente.");
+                }}
+                id={`${personData.lastName}_${personData.firstName}`}
+                // initialImage={personData?.profileImage}
+              />
+            </div>
+            {/* </Col> */}
+          </Row>
+          <Row className="colums">
+            {/* <Col> */}
+            <div className="colum-form">
               <label className="label">
                 email
                 <input
@@ -348,8 +348,11 @@ const ExternalRequest = ({ onCloseModal }) => {
                   onChange={handleChange}
                 />
               </label>
-            </Col>
-            <Col>
+            </div>
+
+            {/* </Col> */}
+            {/* <Col> */}
+            <div className="colum-form">
               <label className="label">
                 Locul nasterii
                 <input
@@ -380,15 +383,16 @@ const ExternalRequest = ({ onCloseModal }) => {
                   onChange={handleChange}
                 />
               </label>
-            </Col>
+            </div>
+            {/* </Col> */}
           </Row>
         </Card>
 
         <Card
           style={{
-            padding: "10px",
-            margin: "15px",
-            backgroundColor: "#dfdfdf",
+            padding: "5px",
+            margin: "5px",
+            backgroundColor: "#ebebeb",
           }}
         >
           <div style={{ textAlign: "center", margin: "10px" }}>
@@ -401,56 +405,60 @@ const ExternalRequest = ({ onCloseModal }) => {
               DATE FAMILIE
             </h5>
           </div>
-          <Row>
+          <Row className="colums">
             <Col>
-              <label className="label">
-                TATA{"  "}
-                <div className="name-box">
-                  <input
-                    placeholder="nume"
-                    className="input"
-                    type="text"
-                    name="father.lastName"
-                    value={personData.father.lastName}
-                    onChange={handleChange}
-                  />
-                  <input
-                    placeholder="prenume"
-                    className="input"
-                    type="text"
-                    name="father.firstName"
-                    value={personData.father.firstName}
-                    onChange={handleChange}
-                  />
-                </div>
-              </label>
+              <div className="colum-form">
+                <label className="label">
+                  TATA{"  "}
+                  <div className="name-box">
+                    <input
+                      placeholder="nume"
+                      className="input"
+                      type="text"
+                      name="father.lastName"
+                      value={personData.father.lastName}
+                      onChange={handleChange}
+                    />
+                    <input
+                      placeholder="prenume"
+                      className="input"
+                      type="text"
+                      name="father.firstName"
+                      value={personData.father.firstName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </label>
+              </div>
             </Col>
             <Col>
-              <label className="label">
-                MAMA{" "}
-                <div className="name-box">
-                  <input
-                    placeholder="nume"
-                    className="input"
-                    type="text"
-                    name="mother.lastName"
-                    value={personData.mother.lastName}
-                    onChange={handleChange}
-                  />
-                  <input
-                    placeholder="prenume"
-                    className="input"
-                    type="text"
-                    name="mother.firstName"
-                    value={personData.mother.firstName}
-                    onChange={handleChange}
-                  />
-                </div>
-              </label>
+              <div className="colum-form">
+                <label className="label">
+                  MAMA{" "}
+                  <div className="name-box">
+                    <input
+                      placeholder="nume"
+                      className="input"
+                      type="text"
+                      name="mother.lastName"
+                      value={personData.mother.lastName}
+                      onChange={handleChange}
+                    />
+                    <input
+                      placeholder="prenume"
+                      className="input"
+                      type="text"
+                      name="mother.firstName"
+                      value={personData.mother.firstName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </label>
+              </div>
             </Col>
           </Row>
           <Card style={{ marginBottom: "10px", backgroundColor: "#dfdfdf" }}>
-            <Row>
+            <Row className="colums">
               <Col>
                 <InputGroup
                   size="sm"
@@ -488,26 +496,28 @@ const ExternalRequest = ({ onCloseModal }) => {
                   </RadioGroup>
                 </InputGroup>
               </Col>
-              <Col style={{ maxWidth: "55%" }}>
-                <div style={{ display: "flex", marginTop: "10px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Alt caz{" "}
-                  </InputGroup.Text>
-                  <input
-                    disabled={maritalStatus !== "o"}
-                    placeholder="...specificati cazul"
-                    className="input"
-                    type="text"
-                    name="familyDetails"
-                    value={personData.familyDetails}
-                    onChange={handleChange}
-                  />
+              <Col style={{ marginBottom: "20px" }}>
+                <div className="colum-form">
+                  <div style={{ display: "flex", marginTop: "10px" }}>
+                    <InputGroup.Text id="inputGroup-sizing-sm">
+                      Alt caz{" "}
+                    </InputGroup.Text>
+                    <input
+                      disabled={maritalStatus !== "o"}
+                      placeholder="...specificati cazul"
+                      className="input"
+                      type="text"
+                      name="familyDetails"
+                      value={personData.familyDetails}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
               </Col>
             </Row>
 
-            <Row>
-              <Col>
+            <Row className="colums">
+              <div className="colum-form">
                 <label className="label">
                   SOT/SOTIE{" "}
                   <div className="name-box">
@@ -531,43 +541,41 @@ const ExternalRequest = ({ onCloseModal }) => {
                     />
                   </div>
                 </label>
-              </Col>
-              <div style={{ display: "flex", width: "50%" }}>
-                <Col>
-                  <label>
-                    Data casatoriei civile:
-                    <DatePicker
-                      disabled={maritalStatus !== "y"}
-                      selected={civilWeddingDate}
-                      onChange={(date) => setCivilWeddingDate(date)}
-                      peekNextMonth
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      dateFormat="dd/MM/yyyy"
-                      className="short-input"
-                    />
-                  </label>
-                </Col>
-                <Col>
-                  <label>
-                    Data serv. Religios:
-                    <DatePicker
-                      disabled={maritalStatus !== "y"}
-                      selected={religiousWeddingDate}
-                      onChange={(date) => setReligiousWeddingDate(date)}
-                      peekNextMonth
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      dateFormat="dd/MM/yyyy"
-                      className="short-input"
-                    />
-                  </label>
-                </Col>
+              </div>
+
+              <div className="colum-form">
+                <label>
+                  Data casatoriei civile:
+                  <DatePicker
+                    disabled={maritalStatus !== "y"}
+                    selected={civilWeddingDate}
+                    onChange={(date) => setCivilWeddingDate(date)}
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    dateFormat="dd/MM/yyyy"
+                    className="short-input"
+                  />
+                </label>
+
+                <label>
+                  Data serv. Religios:
+                  <DatePicker
+                    disabled={maritalStatus !== "y"}
+                    selected={religiousWeddingDate}
+                    onChange={(date) => setReligiousWeddingDate(date)}
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    dateFormat="dd/MM/yyyy"
+                    className="short-input"
+                  />
+                </label>
               </div>
             </Row>
-            <Row>
+            <Row className="colums">
               <Col>
                 <div>
                   <label>
@@ -580,14 +588,15 @@ const ExternalRequest = ({ onCloseModal }) => {
                   </Button>
                   {childrens.map((child, index) => (
                     <Row
+                      className="colums"
                       key={index}
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        marginTop: "10px",
-                      }}
+                      // style={{
+                      //   display: "flex",
+                      //   flexWrap: "wrap",
+                      //   marginTop: "10px",
+                      // }}
                     >
-                      <Col style={{ minWidth: "50%" }}>
+                      <Col className="colum-form" style={{ minWidth: "50%" }}>
                         <div className="name-box">
                           <input
                             placeholder="nume"
@@ -617,46 +626,54 @@ const ExternalRequest = ({ onCloseModal }) => {
                           />
                         </div>
                       </Col>
-                      <Col style={{ maxWidth: "20%" }}>
-                        <RadioGroup
+                      <Col>
+                        <div
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            minWidth: "140px",
+                            // minWidth: "140px",
                           }}
-                          value={child.sex}
-                          onChange={(e) =>
-                            handleChildChange(index, "sex", e.target.value)
-                          }
                         >
-                          <FormControlLabel
-                            value="M"
-                            label="M"
-                            control={<Radio />}
-                          />
-                          <FormControlLabel
-                            value="F"
-                            label="F"
-                            control={<Radio />}
-                          />
-                        </RadioGroup>
-                      </Col>
-                      <Col style={{ maxWidth: "25%" }}>
-                        <label>
-                          <DatePicker
-                            placeholderText="Data nasterii"
-                            selected={child.birthDate}
-                            onChange={(date) =>
-                              handleChildChange(index, "birthDate", date)
-                            }
-                            peekNextMonth
-                            showMonthDropdown
-                            showYearDropdown
-                            dropdownMode="select"
-                            dateFormat="dd/MM/yyyy"
-                            className="short-input"
-                          />
-                        </label>
+                          <label>
+                            <RadioGroup
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                // minWidth: "140px",
+                              }}
+                              value={child.sex}
+                              onChange={(e) =>
+                                handleChildChange(index, "sex", e.target.value)
+                              }
+                            >
+                              <FormControlLabel
+                                value="M"
+                                label="M"
+                                control={<Radio />}
+                              />
+                              <FormControlLabel
+                                value="F"
+                                label="F"
+                                control={<Radio />}
+                              />
+                            </RadioGroup>
+                          </label>
+                          <div>
+                            <DatePicker
+                              placeholderText="Data nasterii"
+                              selected={child.birthDate}
+                              onChange={(date) =>
+                                handleChildChange(index, "birthDate", date)
+                              }
+                              peekNextMonth
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              dateFormat="dd/MM/yyyy"
+                              className="short-input"
+                            />
+                          </div>
+                        </div>
                       </Col>
                     </Row>
                   ))}
@@ -669,11 +686,12 @@ const ExternalRequest = ({ onCloseModal }) => {
         <label>
           <Card
             style={{
-              margin: "15px",
-              backgroundColor: "#dfdfdf",
+              padding: "5px",
+              margin: "5px",
+              backgroundColor: "#ebebeb",
             }}
           >
-            <div style={{ textAlign: "center", margin: "10px" }}>
+            <div style={{ textAlign: "center", margin: "20px" }}>
               <h5
                 style={{
                   textTransform: "uppercase",
@@ -683,13 +701,20 @@ const ExternalRequest = ({ onCloseModal }) => {
                 Experiența creștină anterioară
               </h5>
             </div>
-
-            <Row>
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
+            <Card
+              style={{
+                padding: "5px",
+                marginBottom: "25px",
+                backgroundColor: "#dfdfdf",
+              }}
+            >
+              <Row className="colums">
+                <div className="colum-form">
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     Născut/ă intr-o famile de credință:
                   </InputGroup.Text>
+                </div>
+                <div className="colum-form">
                   <input
                     placeholder="...penticostală, baptistă, ortodoxă, etc."
                     className="input"
@@ -699,47 +724,51 @@ const ExternalRequest = ({ onCloseModal }) => {
                     onChange={handleChange}
                   />
                 </div>
-              </Col>
+              </Row>
+            </Card>
+
+            <Row className="colums">
+              <div className="colum-form" style={{ display: "flex" }}>
+                <InputGroup.Text id="inputGroup-sizing-sm">
+                  Dus la Binecuvantare:
+                </InputGroup.Text>
+                <RadioGroup
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "nowrap",
+                    paddingLeft: 12,
+                  }}
+                  name="use-radio-group"
+                  value={blessed}
+                  onChange={(e) => {
+                    setBlessed(e.target.value);
+                  }}
+                >
+                  <FormControlLabel
+                    style={{ display: "flex" }}
+                    value="y"
+                    label="DA"
+                    control={<Radio />}
+                  />
+                  <FormControlLabel
+                    style={{ display: "flex", marginLeft: "5px" }}
+                    value="n"
+                    label="Nu"
+                    control={<Radio />}
+                  />
+                </RadioGroup>
+              </div>
             </Row>
-            <Row>
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Dus la Binecuvantare:
-                  </InputGroup.Text>
-                  <RadioGroup
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      flexWrap: "nowrap",
-                      paddingLeft: 14,
-                    }}
-                    name="use-radio-group"
-                    value={blessed}
-                    onChange={(e) => {
-                      setBlessed(e.target.value);
-                    }}
-                  >
-                    <FormControlLabel
-                      style={{ display: "flex" }}
-                      value="y"
-                      label="DA"
-                      control={<Radio />}
-                    />
-                    <FormControlLabel
-                      style={{ display: "flex", marginLeft: "10px" }}
-                      value="n"
-                      label="Nu"
-                      control={<Radio />}
-                    />
-                  </RadioGroup>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
+            <Row className="colums" style={{ marginBlock: "10px" }}>
+              <Col className="colum">
                 <div
-                  style={{ display: "flex", margin: "5px", maxWidth: "400px" }}
+                  className="colum-form"
+                  style={{
+                    display: "flex",
+
+                    maxWidth: "400px",
+                  }}
                 >
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     Botezat/ă în apă la data:
@@ -758,9 +787,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                   />
                 </div>
               </Col>
-
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
+              <Col className="colum">
+                <div className="colum-form" style={{ display: "flex" }}>
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     în Biserica:
                   </InputGroup.Text>
@@ -776,9 +804,9 @@ const ExternalRequest = ({ onCloseModal }) => {
                 </div>
               </Col>
             </Row>
-            <Row>
+            <Row className="colums">
               <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
+                <div style={{ display: "flex", marginBlock: "5px" }}>
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     Botezat în apă de Pastorul:
                   </InputGroup.Text>
@@ -794,34 +822,53 @@ const ExternalRequest = ({ onCloseModal }) => {
                 </div>
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Botezat cu Duhul Sfânt:
-                  </InputGroup.Text>
-                  <RadioGroup
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      flexWrap: "nowrap",
-                      paddingLeft: 14,
-                    }}
-                    name="use-radio-group"
-                    value={hsBaptised}
-                    onChange={(e) => {
-                      setHsBaptised(e.target.value);
-                    }}
-                  >
-                    <FormControlLabel
-                      style={{ display: "flex" }}
-                      value="y"
-                      label="DA"
-                      control={<Radio />}
-                    />
+            <Card
+              style={{
+                padding: "5px",
+                marginBlock: "10px",
+                backgroundColor: "#dfdfdf",
+              }}
+            >
+              <Row className="colums">
+                <Col className="colum-form">
+                  <div style={{ display: "flex", marginBlock: "5px" }}>
+                    <InputGroup.Text id="inputGroup-sizing-sm">
+                      Botezat cu Duhul Sfânt:
+                    </InputGroup.Text>
+                    <RadioGroup
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        flexWrap: "nowrap",
+                        paddingLeft: 4,
+                      }}
+                      name="use-radio-group"
+                      value={hsBaptised}
+                      onChange={(e) => {
+                        setHsBaptised(e.target.value);
+                      }}
+                    >
+                      <FormControlLabel
+                        style={{ display: "flex" }}
+                        value="y"
+                        label="DA"
+                        control={<Radio />}
+                      />
+
+                      <FormControlLabel
+                        style={{ display: "flex" }}
+                        value="n"
+                        label="Nu"
+                        control={<Radio />}
+                      />
+                    </RadioGroup>
+                  </div>
+                </Col>
+                <Col className="colum-form">
+                  <div>
                     <DatePicker
                       disabled={hsBaptised != "y"}
-                      placeholderText="data Botezului"
+                      placeholderText="data Botezului cu Duh Sfant"
                       selected={hsBaptiseDate}
                       onChange={(date) => setHsBaptisedDate(date)}
                       peekNextMonth
@@ -833,29 +880,34 @@ const ExternalRequest = ({ onCloseModal }) => {
                     />
                     <input
                       disabled={hsBaptised != "y"}
-                      placeholder="Locul botezului "
+                      placeholder="Locul botezului cu Duh Sfant"
                       className="input"
                       type="text"
                       name="hsBaptisePlace"
                       value={personData.hsBaptisePlace}
                       onChange={handleChange}
                     />
-                    <FormControlLabel
-                      style={{ display: "flex", marginLeft: "10px" }}
-                      value="n"
-                      label="Nu"
-                      control={<Radio />}
-                    />
-                  </RadioGroup>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Am fost membru/ă în Biserica:
-                  </InputGroup.Text>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+
+            <Card
+              style={{
+                padding: "5px",
+                marginBlock: "10px",
+                backgroundColor: "#dfdfdf",
+              }}
+            >
+              <Row className="colums">
+                <Col>
+                  <div style={{ display: "flex", marginTop: "5px" }}>
+                    <InputGroup.Text id="inputGroup-sizing-sm">
+                      Am fost membru/ă în Biserica:
+                    </InputGroup.Text>
+                  </div>
+                </Col>
+                <Col>
                   <input
                     placeholder=" Biserica și localitatea"
                     className="input"
@@ -864,65 +916,76 @@ const ExternalRequest = ({ onCloseModal }) => {
                     value={personData.originChurch}
                     onChange={handleChange}
                   />
-                </div>
-              </Col>
-              <Col style={{ maxWidth: "35%" }}>
-                <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    în perioada:
-                  </InputGroup.Text>
-                  <input
-                    placeholder=""
-                    className="input"
-                    type="text"
-                    name="originChurchPeriod"
-                    value={personData.originChurchPeriod}
-                    onChange={handleChange}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row>
+                </Col>
+
+                <Col>
+                  <div style={{ display: "flex", margin: "5px" }}>
+                    <InputGroup.Text id="inputGroup-sizing-sm">
+                      în perioada:
+                    </InputGroup.Text>
+                    <input
+                      placeholder=""
+                      className="input"
+                      type="text"
+                      name="originChurchPeriod"
+                      value={personData.originChurchPeriod}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+
+            <Row className="colums">
               <Col>
                 <div style={{ display: "flex", margin: "5px" }}>
                   <InputGroup.Text id="inputGroup-sizing-sm">
                     Am slujit în Biserica ca și:
                   </InputGroup.Text>
-                  <input
-                    placeholder=""
-                    className="input"
-                    type="text"
-                    name="details"
-                    value={personData.details}
-                    onChange={handleChange}
-                  />
                 </div>
               </Col>
+              <Col>
+                <input
+                  placeholder=""
+                  className="input"
+                  type="text"
+                  name="details"
+                  value={personData.details}
+                  onChange={handleChange}
+                />
+              </Col>
             </Row>
-            <Row>
+            <Row className="colums">
               <Col>
                 <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
+                  <InputGroup.Text
+                    id="inputGroup-sizing-sm"
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      // textAlign: "center",
+                      maxWidth: "100%",
+                    }}
+                  >
                     Anexez scrisoarea de recomandare{" "}
                     {`(adeverință,nota de transfer)`}
                   </InputGroup.Text>
-                  <input
-                    placeholder=""
-                    className="input"
-                    type="text"
-                    name="transferNumber"
-                    value={personData.transferNumber}
-                    onChange={handleChange}
-                  />
                 </div>
+              </Col>
+              <Col>
+                <input
+                  placeholder=""
+                  className="input"
+                  type="text"
+                  name="transferNumber"
+                  value={personData.transferNumber}
+                  onChange={handleChange}
+                />
               </Col>
             </Row>
           </Card>
         </label>
 
-        <Card>
-          <Row></Row>
-        </Card>
         <textarea
           id="comments"
           name="observations" // Asegúrate de usar el nombre correcto
@@ -982,7 +1045,7 @@ const ExternalRequest = ({ onCloseModal }) => {
         <button className="cancel-btn" onClick={() => onCloseModal()}>
           Cancel
         </button>
-      </form>
+      </Form>
     </div>
   );
 };

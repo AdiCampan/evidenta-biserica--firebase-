@@ -109,6 +109,21 @@ const Login = () => {
               </button>
             </div>
           </form>
+          <div
+            style={{ width: "95%", alignItems: "center", marginTop: "20px" }}
+          >
+            <button
+              onClick={() => navigate("/")}
+              className="cancel-button"
+              style={{
+                color: "red",
+                backgroundColor: "lightgray",
+              }}
+            >
+              CANCEL
+            </button>
+          </div>
+
           {loginError && (
             <p className="forgot-password" onClick={handlePasswordReset}>
               Ai uitat parola?

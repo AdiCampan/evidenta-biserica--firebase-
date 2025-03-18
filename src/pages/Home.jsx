@@ -138,8 +138,10 @@ const Home = ({ persoane }) => {
             garantía de los derechos digitales. Ulterior, datele vor fii
             verificate înainte de a actualiza fișa membrală.
           </p>
-          <Button onClick={handleShowForm}>FORMULAR ACTUALIZARE MEMBRU</Button>
-          <Button onClick={handleShowRequest} style={{ margin: "5px" }}>
+          <Button onClick={handleShowForm} style={{ margin: "5px" }}>
+            FORMULAR ACTUALIZARE MEMBRU
+          </Button>
+          <Button onClick={handleShowRequest} style={{ marginTop: "20px" }}>
             FORMULAR CERERE FISA MEMBRU
           </Button>
         </div>

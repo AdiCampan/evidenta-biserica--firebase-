@@ -35,6 +35,14 @@
   font-size: larger;
   font-weight: bold;
 }
+.cancel-button {
+  width: 100%;
+  border-radius: 50px;
+  background-color: #ff0000;
+  color: white;
+  font-size: larger;
+  font-weight: bold;
+}
 
 .bottom-text {
   margin-top: 10px;
