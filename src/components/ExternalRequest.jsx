@@ -826,7 +826,7 @@ const ExternalRequest = ({ onCloseModal }) => {
               style={{
                 padding: "5px",
                 marginBlock: "10px",
-                backgroundColor: "#dfdfdf",
+                backgroundColor: "#c7c4c4",
               }}
             >
               <Row className="colums">
@@ -879,6 +879,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                       // className="short-input"
                     />
                     <input
+                      style={{ marginTop: "5px" }}
                       disabled={hsBaptised != "y"}
                       placeholder="Locul botezului cu Duh Sfant"
                       className="input"
@@ -896,7 +897,7 @@ const ExternalRequest = ({ onCloseModal }) => {
               style={{
                 padding: "5px",
                 marginBlock: "10px",
-                backgroundColor: "#dfdfdf",
+                backgroundColor: "#c7c4c4",
               }}
             >
               <Row className="colums">
@@ -936,53 +937,70 @@ const ExternalRequest = ({ onCloseModal }) => {
               </Row>
             </Card>
 
-            <Row className="colums">
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Am slujit în Biserica ca și:
-                  </InputGroup.Text>
-                </div>
-              </Col>
-              <Col>
-                <input
-                  placeholder=""
-                  className="input"
-                  type="text"
-                  name="details"
-                  value={personData.details}
-                  onChange={handleChange}
-                />
-              </Col>
-            </Row>
-            <Row className="colums">
-              <Col>
-                <div style={{ display: "flex", margin: "5px" }}>
-                  <InputGroup.Text
-                    id="inputGroup-sizing-sm"
-                    style={{
-                      whiteSpace: "normal",
-                      wordBreak: "break-word",
-                      // textAlign: "center",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    Anexez scrisoarea de recomandare{" "}
-                    {`(adeverință,nota de transfer)`}
-                  </InputGroup.Text>
-                </div>
-              </Col>
-              <Col>
-                <input
-                  placeholder=""
-                  className="input"
-                  type="text"
-                  name="transferNumber"
-                  value={personData.transferNumber}
-                  onChange={handleChange}
-                />
-              </Col>
-            </Row>
+            <Card
+              style={{
+                padding: "5px",
+                marginBlock: "10px",
+                backgroundColor: "#c7c4c4",
+              }}
+            >
+              <Row className="colums">
+                <Col>
+                  <div style={{ display: "flex", margin: "5px" }}>
+                    <InputGroup.Text id="inputGroup-sizing-sm">
+                      Am slujit în Biserica ca și:
+                    </InputGroup.Text>
+                  </div>
+                </Col>
+                <Col>
+                  <input
+                    placeholder=""
+                    className="input"
+                    type="text"
+                    name="details"
+                    value={personData.details}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
+            </Card>
+
+            <Card
+              style={{
+                padding: "2px",
+                marginBlock: "10px",
+                backgroundColor: "#c7c4c4",
+              }}
+            >
+              <Row className="colums">
+                <Col>
+                  <div style={{ display: "flex", margin: "5px" }}>
+                    <InputGroup.Text
+                      id="inputGroup-sizing-sm"
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        // textAlign: "center",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      Anexez scrisoarea de recomandare{" "}
+                      {`(adeverință,nota de transfer)`}
+                    </InputGroup.Text>
+                  </div>
+                </Col>
+                <Col>
+                  <input
+                    placeholder=""
+                    className="input"
+                    type="text"
+                    name="transferNumber"
+                    value={personData.transferNumber}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
+            </Card>
           </Card>
         </label>
 
