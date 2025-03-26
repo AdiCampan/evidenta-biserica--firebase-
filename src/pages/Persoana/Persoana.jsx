@@ -162,7 +162,7 @@ function Persoana() {
                         display: flex;
                         margin-top: 10px;
                         border-radius: 15px;
-                        border: 3px solid;
+                        border: 1px solid;
                       }
                       .vertical-text-box {
                         writing-mode: vertical-lr;

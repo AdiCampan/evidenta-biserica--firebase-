@@ -108,8 +108,9 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Nume {`(obligatoriu)`}:
+              Nume {`(Apellidos)`}:
               <input
+                placeholder="obligatoriu"
                 required
                 className="input"
                 type="text"
@@ -119,8 +120,9 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Prenume {`(obligatoriu)`}:
+              Prenume {`(Nombre)`}:
               <input
+                placeholder="obligatoriu"
                 required
                 className="input"
                 type="text"
@@ -130,8 +132,9 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Adresa {`(obligatoriu)`}:
+              Adresa {`(Direccion)`}:
               <input
+                placeholder="obligatoriu"
                 required
                 className="input"
                 type="text"
@@ -141,8 +144,9 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Telefon {`(obligatoriu)`}:
+              Telefon {`(Telefono)`}:
               <input
+                placeholder="obligatoriu"
                 required
                 className="input"
                 type="text"
@@ -152,8 +156,9 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Data nasterii {`(obligatoriu)`}:
+              Data nașterii {`(Fecha de nacimiento)`}:
               <DatePicker
+                placeholderText="Obligatoriu"
                 selected={birthDate}
                 onChange={(date) => setBirthDate(date)}
                 peekNextMonth
@@ -166,15 +171,16 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Gen {`(obligatoriu)`}:
+              Gen {`(Genero)`}:
               <select
+                placeholder="obligatoriu"
                 required
                 className="select"
                 name="sex"
                 value={personData.sex}
                 onChange={handleChange}
               >
-                <option value="">Selectioneaza</option>
+                <option value="">Obligatoriu</option>
                 <option value="M">Masculin</option>
                 <option value="F">Femenin</option>
               </select>
@@ -188,7 +194,7 @@ const ExternalForm = ({ onCloseModal }) => {
             />
 
             <label className="label">
-              Data Binecuvantarii:
+              Data Binecuvantarii {`(Fecha de bendición)`}:
               <DatePicker
                 selected={blessingDate}
                 onChange={(date) => setBlessingDate(date)}
@@ -201,7 +207,7 @@ const ExternalForm = ({ onCloseModal }) => {
               />
             </label>
             <label className="label">
-              Data Botezului:
+              Data Botezului {`(Fecha de bautismo)`}:
               <DatePicker
                 selected={baptiseDate}
                 onChange={(date) => setBaptiseDate(date)}
@@ -216,7 +222,7 @@ const ExternalForm = ({ onCloseModal }) => {
           </div>
         </div>
 
-        <label>Comentarios:</label>
+        <label>Comentarii {`(Comentarios)`}:</label>
         <textarea
           id="comments"
           name="details" // Asegúrate de usar el nombre correcto
@@ -230,6 +236,19 @@ const ExternalForm = ({ onCloseModal }) => {
 
         {/* Texto sobre la Ley Orgánica 3/2018 */}
         <div className="data-protection-info">
+          <p>
+            În conformitate cu <strong>Legea organică 3/2018</strong> , din 5
+            decembrie, privind protecția datelor cu caracter personal și
+            garanția drepturilor digitale, datele dumneavoastră vor fi
+            prelucrate în conformitate cu reglementările în vigoare.{" "}
+            <a
+              href="https://www.boe.es/eli/es/lo/2018/12/05/3/con"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Leer más...
+            </a>
+          </p>
           <p>
             Conforme a la <strong>Ley Orgánica 3/2018</strong>, de 5 de
             diciembre, de Protección de Datos Personales y garantía de los
@@ -271,10 +290,10 @@ const ExternalForm = ({ onCloseModal }) => {
         </div>
 
         <button className="submit-btn" type="submit" disabled={!isAgreed}>
-          Enviar
+          Enviar / Trimite
         </button>
         <button className="cancel-btn" onClick={() => onCloseModal()}>
-          Cancel
+          Cancel / Anulează
         </button>
       </form>
     </div>

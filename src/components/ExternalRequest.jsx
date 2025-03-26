@@ -227,7 +227,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Nume {`(obligatoriu)`}:
+                Nume / Apellidos {`(obligatoriu)`}:
                 <input
                   required
                   className="input"
@@ -238,7 +238,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Prenume {`(obligatoriu)`}:
+                Prenume / Nombre {`(obligatoriu)`}:
                 <input
                   required
                   className="input"
@@ -250,7 +250,7 @@ const ExternalRequest = ({ onCloseModal }) => {
               </label>
 
               <label className="label">
-                Gen {`(obligatoriu)`}:
+                Gen / Género {`(obligatoriu)`}:
                 <select
                   required
                   className="select"
@@ -258,13 +258,13 @@ const ExternalRequest = ({ onCloseModal }) => {
                   value={personData.sex}
                   onChange={handleChange}
                 >
-                  <option value="">Selectioneaza</option>
+                  <option value="">Selecționeaza</option>
                   <option value="M">Masculin</option>
                   <option value="F">Femenin</option>
                 </select>
               </label>
               <label className="label">
-                Data nasterii {`(obligatoriu)`}:
+                Data nașterii / Fecha de nacimiento {`(obligatoriu)`}:
                 <DatePicker
                   selected={birthDate}
                   onChange={(date) => setBirthDate(date)}
@@ -278,7 +278,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Adresa {`(obligatoriu)`}:
+                Adresa / Direccion {`(obligatoriu)`}:
                 <input
                   required
                   className="input"
@@ -289,7 +289,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Telefon {`(obligatoriu)`}:
+                Telefon / Telefono{`(obligatoriu)`}:
                 <input
                   required
                   className="input"
@@ -339,7 +339,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Nune anterior :
+                Nune anterior / Apellidos anteriores:
                 <input
                   className="input"
                   type="text"
@@ -354,7 +354,7 @@ const ExternalRequest = ({ onCloseModal }) => {
             {/* <Col> */}
             <div className="colum-form">
               <label className="label">
-                Locul nasterii
+                Locul nasterii / Lugar de nacimiento:
                 <input
                   className="input"
                   type="text"
@@ -364,7 +364,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Studii absolvite:
+                Studii absolvite / Estudios realizados:
                 <input
                   className="input"
                   type="text"
@@ -374,7 +374,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 />
               </label>
               <label className="label">
-                Profesia actuala:
+                Profesia actuala / Profesión actual:
                 <input
                   className="input"
                   type="text"
@@ -409,10 +409,10 @@ const ExternalRequest = ({ onCloseModal }) => {
             <Col>
               <div className="colum-form">
                 <label className="label">
-                  TATA{"  "}
+                  TATA / PADRE{"  "}
                   <div className="name-box">
                     <input
-                      placeholder="nume"
+                      placeholder="nume/ apellidos"
                       className="input"
                       type="text"
                       name="father.lastName"
@@ -420,7 +420,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                       onChange={handleChange}
                     />
                     <input
-                      placeholder="prenume"
+                      placeholder="prenume/ nombre"
                       className="input"
                       type="text"
                       name="father.firstName"
@@ -434,10 +434,10 @@ const ExternalRequest = ({ onCloseModal }) => {
             <Col>
               <div className="colum-form">
                 <label className="label">
-                  MAMA{" "}
+                  MAMA / MADRE{" "}
                   <div className="name-box">
                     <input
-                      placeholder="nume"
+                      placeholder="nume / apellidos"
                       className="input"
                       type="text"
                       name="mother.lastName"
@@ -445,7 +445,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                       onChange={handleChange}
                     />
                     <input
-                      placeholder="prenume"
+                      placeholder="prenume / nombre"
                       className="input"
                       type="text"
                       name="mother.firstName"
@@ -466,7 +466,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                   style={{ marginTop: "10px" }}
                 >
                   <InputGroup.Text id="inputGroup-sizing-sm">
-                    CASATORIT/A{" "}
+                    CASATORIT/Ă - CASADO/A{" "}
                   </InputGroup.Text>
                   <RadioGroup
                     style={{
@@ -490,7 +490,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     />
                     <FormControlLabel
                       value="o"
-                      label="Alt Caz"
+                      label="Alt Caz / otro"
                       control={<Radio />}
                     />
                   </RadioGroup>
@@ -504,7 +504,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     </InputGroup.Text>
                     <input
                       disabled={maritalStatus !== "o"}
-                      placeholder="...specificati cazul"
+                      placeholder="...specificati cazul / especifica"
                       className="input"
                       type="text"
                       name="familyDetails"
@@ -519,11 +519,11 @@ const ExternalRequest = ({ onCloseModal }) => {
             <Row className="colums">
               <div className="colum-form">
                 <label className="label">
-                  SOT/SOTIE{" "}
+                  SOT / SOTIE - ESPOSO / ESPOSA{" "}
                   <div className="name-box">
                     <input
                       disabled={maritalStatus !== "y"}
-                      placeholder="nume"
+                      placeholder="nume / apellidos"
                       className="input"
                       type="text"
                       name="spouse.lastName"
@@ -532,7 +532,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     />
                     <input
                       disabled={maritalStatus !== "y"}
-                      placeholder="prenume"
+                      placeholder="prenume / nombre"
                       className="input"
                       type="text"
                       name="spouse.firstName"
@@ -545,7 +545,7 @@ const ExternalRequest = ({ onCloseModal }) => {
 
               <div className="colum-form">
                 <label>
-                  Data casatoriei civile:
+                  Data casatoriei civile / Fecha de matrimonio civil:
                   <DatePicker
                     disabled={maritalStatus !== "y"}
                     selected={civilWeddingDate}
@@ -560,7 +560,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 </label>
 
                 <label>
-                  Data serv. Religios:
+                  Data serv. Religios / Fecha de matrimonio religioso:
                   <DatePicker
                     disabled={maritalStatus !== "y"}
                     selected={religiousWeddingDate}
@@ -579,12 +579,12 @@ const ExternalRequest = ({ onCloseModal }) => {
               <Col>
                 <div>
                   <label>
-                    COPII:{" "}
+                    COPII / NIÑOS:{" "}
                     {`(Copiii botezati, trebuie sa completeze cereri de membru separate de ale parintilor)`}
                   </label>
 
                   <Button onClick={addChild} disabled={childrens.length >= 15}>
-                    Adauga copil
+                    Adauga copil / Añadir niño
                   </Button>
                   {childrens.map((child, index) => (
                     <Row
@@ -599,7 +599,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                       <Col className="colum-form" style={{ minWidth: "50%" }}>
                         <div className="name-box">
                           <input
-                            placeholder="nume"
+                            placeholder="nume / apellidos"
                             className="input"
                             type="text"
                             value={child.lastName}
@@ -612,7 +612,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                             }
                           />
                           <input
-                            placeholder="prenume"
+                            placeholder="prenume / nombre"
                             className="input"
                             type="text"
                             value={child.firstName}
@@ -660,7 +660,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                           </label>
                           <div>
                             <DatePicker
-                              placeholderText="Data nasterii"
+                              placeholderText="Data nașterii/ Fecha de nacimiento"
                               selected={child.birthDate}
                               onChange={(date) =>
                                 handleChildChange(index, "birthDate", date)
@@ -698,7 +698,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                   textDecoration: "underLine",
                 }}
               >
-                Experiența creștină anterioară
+                Experiența creștină anterioară / Experiencia cristiana anterior
               </h5>
             </div>
             <Card
@@ -710,8 +710,17 @@ const ExternalRequest = ({ onCloseModal }) => {
             >
               <Row className="colums">
                 <div className="colum-form">
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Născut/ă intr-o famile de credință:
+                  <InputGroup.Text
+                    id="inputGroup-sizing-sm"
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      // textAlign: "center",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    Născut/ă intr-o famile de credință / Nacido/a en una
+                    familia:
                   </InputGroup.Text>
                 </div>
                 <div className="colum-form">
@@ -729,8 +738,16 @@ const ExternalRequest = ({ onCloseModal }) => {
 
             <Row className="colums">
               <div className="colum-form" style={{ display: "flex" }}>
-                <InputGroup.Text id="inputGroup-sizing-sm">
-                  Dus la Binecuvantare:
+                <InputGroup.Text
+                  style={{
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    // textAlign: "center",
+                    maxWidth: "100%",
+                  }}
+                  id="inputGroup-sizing-sm"
+                >
+                  Dus la Binecuvantare / Bendecido/a:
                 </InputGroup.Text>
                 <RadioGroup
                   style={{
@@ -760,68 +777,95 @@ const ExternalRequest = ({ onCloseModal }) => {
                 </RadioGroup>
               </div>
             </Row>
-            <Row className="colums" style={{ marginBlock: "10px" }}>
-              <Col className="colum">
-                <div
-                  className="colum-form"
-                  style={{
-                    display: "flex",
 
-                    maxWidth: "400px",
-                  }}
-                >
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Botezat/ă în apă la data:
-                  </InputGroup.Text>
-                  <DatePicker
-                    required
-                    placeholderText="Data botezului"
-                    selected={baptiseDate}
-                    onChange={(date) => setBaptiseDate(date)}
-                    peekNextMonth
-                    showMonthDropdown
-                    showYearDropdown
-                    dropdownMode="select"
-                    dateFormat="dd/MM/yyyy"
-                    // className="short-input"
-                  />
-                </div>
-              </Col>
-              <Col className="colum">
-                <div className="colum-form" style={{ display: "flex" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    în Biserica:
-                  </InputGroup.Text>
-                  <input
-                    required
-                    placeholder="Biserica și localitatea"
-                    className="input"
-                    type="text"
-                    name="baptisePlace"
-                    value={personData.baptisePlace}
-                    onChange={handleChange}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row className="colums">
-              <Col>
-                <div style={{ display: "flex", marginBlock: "5px" }}>
-                  <InputGroup.Text id="inputGroup-sizing-sm">
-                    Botezat în apă de Pastorul:
-                  </InputGroup.Text>
-                  <input
-                    required
-                    placeholder=""
-                    className="input"
-                    type="text"
-                    name="baptisedBy"
-                    value={personData.baptisedBy}
-                    onChange={handleChange}
-                  />
-                </div>
-              </Col>
-            </Row>
+            <Card
+              style={{
+                padding: "5px",
+                marginBlock: "20px",
+                backgroundColor: "#c7c4c4",
+              }}
+            >
+              <Row className="colums" style={{ marginBlock: "10px" }}>
+                <Col className="colum">
+                  <div
+                    className="colum-form"
+                    style={{
+                      display: "flex",
+
+                      maxWidth: "400px",
+                    }}
+                  >
+                    <InputGroup.Text
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        // textAlign: "center",
+                        maxWidth: "100%",
+                      }}
+                      id="inputGroup-sizing-sm"
+                    >
+                      Botezat/ă în apă la data / Bautizado/a en agua en la
+                      fecha:
+                    </InputGroup.Text>
+                    <DatePicker
+                      required
+                      placeholderText="Data botezului"
+                      selected={baptiseDate}
+                      onChange={(date) => setBaptiseDate(date)}
+                      peekNextMonth
+                      showMonthDropdown
+                      showYearDropdown
+                      dropdownMode="select"
+                      dateFormat="dd/MM/yyyy"
+                      // className="short-input"
+                    />
+                  </div>
+                </Col>
+                <Col className="colum">
+                  <div className="colum-form" style={{ display: "flex" }}>
+                    <InputGroup.Text id="inputGroup-sizing-sm">
+                      în Biserica / Iglesia:
+                    </InputGroup.Text>
+                    <input
+                      required
+                      placeholder="Biserica și localitatea"
+                      className="input"
+                      type="text"
+                      name="baptisePlace"
+                      value={personData.baptisePlace}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </Col>
+              </Row>
+              <Row className="colums">
+                <Col>
+                  <div style={{ display: "flex", marginBlock: "5px" }}>
+                    <InputGroup.Text
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        // textAlign: "center",
+                        maxWidth: "100%",
+                      }}
+                      id="inputGroup-sizing-sm"
+                    >
+                      Botezat în apă de Pastorul / Bautizado por Pastor:
+                    </InputGroup.Text>
+                    <input
+                      required
+                      placeholder=""
+                      className="input"
+                      type="text"
+                      name="baptisedBy"
+                      value={personData.baptisedBy}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+
             <Card
               style={{
                 padding: "5px",
@@ -832,8 +876,16 @@ const ExternalRequest = ({ onCloseModal }) => {
               <Row className="colums">
                 <Col className="colum-form">
                   <div style={{ display: "flex", marginBlock: "5px" }}>
-                    <InputGroup.Text id="inputGroup-sizing-sm">
-                      Botezat cu Duhul Sfânt:
+                    <InputGroup.Text
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        // textAlign: "center",
+                        maxWidth: "100%",
+                      }}
+                      id="inputGroup-sizing-sm"
+                    >
+                      Botezat cu Duhul Sfânt / Bautizado con el Espíritu Santo:
                     </InputGroup.Text>
                     <RadioGroup
                       style={{
@@ -868,7 +920,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                   <div>
                     <DatePicker
                       disabled={hsBaptised != "y"}
-                      placeholderText="data Botezului cu Duh Sfant"
+                      placeholderText="data Botezului cu Duh Sfant / Fecha"
                       selected={hsBaptiseDate}
                       onChange={(date) => setHsBaptisedDate(date)}
                       peekNextMonth
@@ -881,7 +933,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     <input
                       style={{ marginTop: "5px" }}
                       disabled={hsBaptised != "y"}
-                      placeholder="Locul botezului cu Duh Sfant"
+                      placeholder="Locul botezului cu Duh Sfant / Lugar"
                       className="input"
                       type="text"
                       name="hsBaptisePlace"
@@ -903,14 +955,22 @@ const ExternalRequest = ({ onCloseModal }) => {
               <Row className="colums">
                 <Col>
                   <div style={{ display: "flex", marginTop: "5px" }}>
-                    <InputGroup.Text id="inputGroup-sizing-sm">
-                      Am fost membru/ă în Biserica:
+                    <InputGroup.Text
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        // textAlign: "center",
+                        maxWidth: "100%",
+                      }}
+                      id="inputGroup-sizing-sm"
+                    >
+                      Am fost membru/ă în Biserica / He sido miembro/a de la:
                     </InputGroup.Text>
                   </div>
                 </Col>
                 <Col>
                   <input
-                    placeholder=" Biserica și localitatea"
+                    placeholder=" Biserica și localitatea / Iglesia y localidad"
                     className="input"
                     type="text"
                     name="originChurch"
@@ -922,7 +982,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                 <Col>
                   <div style={{ display: "flex", margin: "5px" }}>
                     <InputGroup.Text id="inputGroup-sizing-sm">
-                      în perioada:
+                      în perioada / periodo:
                     </InputGroup.Text>
                     <input
                       placeholder=""
@@ -940,15 +1000,24 @@ const ExternalRequest = ({ onCloseModal }) => {
             <Card
               style={{
                 padding: "5px",
-                marginBlock: "10px",
+                marginBlock: "20px",
                 backgroundColor: "#c7c4c4",
               }}
             >
               <Row className="colums">
                 <Col>
                   <div style={{ display: "flex", margin: "5px" }}>
-                    <InputGroup.Text id="inputGroup-sizing-sm">
-                      Am slujit în Biserica ca și:
+                    <InputGroup.Text
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        // textAlign: "center",
+                        maxWidth: "100%",
+                      }}
+                      id="inputGroup-sizing-sm"
+                    >
+                      Am slujit în Biserica ca și / He servido en la Iglesia
+                      como:
                     </InputGroup.Text>
                   </div>
                 </Col>
@@ -984,7 +1053,8 @@ const ExternalRequest = ({ onCloseModal }) => {
                         maxWidth: "100%",
                       }}
                     >
-                      Anexez scrisoarea de recomandare{" "}
+                      Anexez scrisoarea de recomandare / Adjunto carta de
+                      recomendación:
                       {`(adeverință,nota de transfer)`}
                     </InputGroup.Text>
                   </div>
@@ -1008,7 +1078,7 @@ const ExternalRequest = ({ onCloseModal }) => {
           id="comments"
           name="observations" // Asegúrate de usar el nombre correcto
           rows="4"
-          placeholder="Escribe tus comentarios aquí..."
+          placeholder="Alte detalii / Otros detalles..."
           value={personData.observations} // Vinculamos el valor al estado
           onChange={(e) =>
             setPersonData({ ...personData, observations: e.target.value })
@@ -1017,6 +1087,19 @@ const ExternalRequest = ({ onCloseModal }) => {
 
         {/* Texto sobre la Ley Orgánica 3/2018 */}
         <div className="data-protection-info">
+          <p>
+            În conformitate cu <strong>Legea organică 3/2018</strong> , din 5
+            decembrie, privind protecția datelor cu caracter personal și
+            garanția drepturilor digitale, datele dumneavoastră vor fi
+            prelucrate în conformitate cu reglementările în vigoare.{" "}
+            <a
+              href="https://www.boe.es/eli/es/lo/2018/12/05/3/con"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Leer más...
+            </a>
+          </p>
           <p>
             Conforme a la <strong>Ley Orgánica 3/2018</strong>, de 5 de
             diciembre, de Protección de Datos Personales y garantía de los

@@ -1,0 +1,21 @@
+#printable-content {
+  background: rgba(255, 255, 255, 0.5);
+  z-index: 999;
+}
+
+@media print {
+  body {
+    background: rgb(210, 22, 22) !important;
+  }
+
+  #printable-content {
+    /* background-color: #e83f3f !important; */
+    width: 100% !important;
+    padding: 10px !important;
+  }
+
+  .print-button,
+  .close-button {
+    display: none !important;
+  }
+}

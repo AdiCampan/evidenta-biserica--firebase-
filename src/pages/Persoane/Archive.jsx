@@ -1,5 +1,5 @@
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { firestore } from "../../firebase-config";
 import { FaTrash } from "react-icons/fa";
 import {
@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import DatePicker from "react-datepicker"; // Importamos el DatePicker
 import ImageUploader from "../../components/ImageUploader/ImageUploader";
+import "./Archive.css";
 
 function Archive() {
   const [archivesList, setArchivesList] = useState([]);
@@ -66,6 +67,45 @@ function Archive() {
     spouse: { firstName: "", lastName: "" },
     transferNumber: "",
   });
+
+  const handlePrint = () => {
+    const printContents =
+      document.getElementById("printable-content")?.innerHTML;
+    if (!printContents) {
+      console.error("No hay contenido para imprimir.");
+      return;
+    }
+
+    // Obtener todas las hojas de estilo de la página
+    const styles = Array.from(document.styleSheets)
+      .map((sheet) => {
+        try {
+          return Array.from(sheet.cssRules)
+            .map((rule) => rule.cssText)
+            .join("\n");
+        } catch (e) {
+          return ""; // Evita errores con hojas de estilo externas (CORS)
+        }
+      })
+      .join("\n");
+
+    // Crear una nueva ventana para la impresión
+    const newWindow = window.open("", "_blank");
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Imprimir</title>
+          <style>${styles}</style> <!-- Aplica los estilos de la página -->
+        </head>
+        <body>
+          <div id="printable-content">${printContents}</div>
+        </body>
+      </html>
+    `);
+    newWindow.document.close();
+    newWindow.print();
+    newWindow.close();
+  };
 
   // Convertir un timestamp de Firestore a un objeto Date
   const timestampToDate = (timestamp) => {
@@ -179,45 +219,6 @@ function Archive() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // const endTime = Date.now();
-    // const timeTaken = (endTime - startTime) / 1000; // Tiempo en segundos
-
-    // if (timeTaken < 10) {
-    //   // Si toma menos de 10 segundos
-    //   alert("Por favor, tómese su tiempo para llenar el formulario.");
-    //   return;
-    // }
-    // // verifica daca este un bot
-    // if (formularVerificare !== "") {
-    //   alert("Formulario detectado como spam.");
-    //   return;
-    // }
-    // try {
-    //   // Crear un objeto con las fechas directamente como Date
-    //   const personDataWithDates = {
-    //     ...personData,
-    //     sex:
-    //       personData.sex === "M" ? true : personData.sex === "F" ? false : null,
-    //     churchName: "EBEN - EZER",
-    //     birthDate: birthDate ? birthDate : null,
-    //     baptiseDate: baptiseDate ? baptiseDate : null,
-    //     hsBaptiseDate: hsBaptiseDate ? hsBaptiseDate : null,
-    //     civilWeddingDate: civilWeddingDate ? civilWeddingDate : null,
-    //     religiousWeddingDate: religiousWeddingDate
-    //       ? religiousWeddingDate
-    //       : null,
-    //     // id: crypto.randomUUID(),
-    //   };
-    //   //Add new person//
-    //   await addDoc(collection(firestore, "persoane"), personDataWithDates);
-
-    //   // Guardar en archiva Firestore
-    //   await addDoc(collection(firestore, "Arhiva"), personDataWithDates);
-    //   alert("Persoana a fost adaugata cu succes !");
-    // } catch (err) {
-    //   console.error("Error al enviar el formulario: ", err);
-    // }
   };
 
   const handleFormClick = (form) => {
@@ -294,7 +295,11 @@ function Archive() {
         </Modal.Header>
         <ModalBody>
           {selectedArchive && (
-            <div className="form-container">
+            <div
+              id="printable-content"
+              // ref={printRef}
+              className="form-container"
+            >
               <h1 className="form-title">CERERE MEMBRU</h1>
               <form className="form-group" onSubmit={handleSubmit}>
                 <Card
@@ -1089,6 +1094,13 @@ function Archive() {
         </ModalBody>
 
         <Modal.Footer className="modal-footer">
+          <Button
+            variant="primary"
+            onClick={handlePrint}
+            className="print-button"
+          >
+            Imprimir
+          </Button>
           <Button
             variant="secondary"
             onClick={handleClose}
