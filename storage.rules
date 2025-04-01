@@ -1,0 +1,41 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Función para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función para verificar si el usuario es administrador
+    function isAdmin() {
+      return request.auth.token.admin == true;
+    }
+    
+    // Reglas para imágenes de perfil
+    match /profileImages/{userId}/{fileName} {
+      // Solo permitir subir imágenes
+      function isImage() {
+        return request.resource.contentType.matches('image/.*');
+      }
+      
+      // Limitar el tamaño de archivo a 5MB
+      function isValidSize() {
+        return request.resource.size <= 5 * 1024 * 1024;
+      }
+      
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && 
+        (request.auth.uid == userId || isAdmin()) && 
+        isImage() && 
+        isValidSize();
+      allow delete: if isAuthenticated() && 
+        (request.auth.uid == userId || isAdmin());
+    }
+    
+    // Reglas para otros archivos
+    match /{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isAdmin();
+    }
+  }
+}

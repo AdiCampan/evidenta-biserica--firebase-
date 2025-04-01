@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Función para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función para verificar si el usuario es propietario del documento
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Función para verificar si el usuario tiene rol de administrador
+    function isAdmin() {
+      return request.auth.token.admin == true;
+    }
+    
+    // Reglas para la colección de personas
+    match /persoane/{document=**} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && 
+        (isAdmin() || request.resource.data.createdBy == request.auth.uid);
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+    
+    // Reglas para la colección de iglesias
+    match /churches/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isAdmin();
+    }
+    
+    // Reglas para otras colecciones
+    match /{document=**} {
+      allow read, write: if isAuthenticated() && isAdmin();
+    }
+  }
+}
