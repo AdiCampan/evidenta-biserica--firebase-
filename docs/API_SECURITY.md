@@ -9,9 +9,10 @@ Este documento proporciona recomendaciones específicas para mejorar la segurida
    - ✅ Se implementó validación de sesión en las solicitudes a endpoints protegidos
    - ✅ La URL del servidor ahora se configura mediante variables de entorno con fallback a la URL de producción
 
-2. **Manejo Inseguro de Credenciales**
-   - Las credenciales de Firebase se gestionan a través de variables de entorno, pero no hay un archivo `.env` en el repositorio
-   - No hay validación para asegurar que las variables de entorno estén configuradas correctamente
+2. **Manejo Inseguro de Credenciales** ✅ RESUELTO
+   - ✅ Se ha incluido `.env` en `.gitignore` para evitar que se suba al repositorio
+   - ✅ Se ha implementado validación de variables de entorno en `main.jsx`
+   - ✅ Se mantiene un archivo `.env.example` como referencia para la configuración
 
 3. **Validación Insuficiente de Datos**
    - No hay validación del lado del servidor para las entradas de usuario
