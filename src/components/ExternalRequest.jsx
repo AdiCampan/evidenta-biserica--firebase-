@@ -7,17 +7,14 @@ import "./ExternalForm.scss";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 import {
-  Checkbox,
   FormControlLabel,
-  Input,
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { useParams } from "react-router";
+import { validateName, validateEmail, validatePhone, validateAddress, validateDate, sanitizeText } from "../utils/validation";
 
 const ExternalRequest = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [show, setShow] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false); // Estado para la casilla de verificación
 
   // Estado para las fechas como objetos Date
@@ -152,6 +149,47 @@ const ExternalRequest = ({ onCloseModal }) => {
       alert("Formulario detectado como spam.");
       return;
     }
+    
+    // Validar los campos del formulario
+    const errors = [];
+    
+    // Sanitizar y validar nombre y apellido
+    const sanitizedFirstName = sanitizeText(personData.firstName);
+    const sanitizedLastName = sanitizeText(personData.lastName);
+    
+    if (!validateName(sanitizedFirstName)) {
+      errors.push("El nombre no es válido");
+    }
+    
+    if (!validateName(sanitizedLastName)) {
+      errors.push("El apellido no es válido");
+    }
+    
+    // Validar email si se proporcionó
+    if (personData.email && !validateEmail(personData.email)) {
+      errors.push("El email no es válido");
+    }
+    
+    // Validar teléfono si se proporcionó
+    if (personData.mobilePhone && !validatePhone(personData.mobilePhone)) {
+      errors.push("El número de teléfono no es válido");
+    }
+    
+    // Validar dirección si se proporcionó
+    if (personData.address && !validateAddress(personData.address)) {
+      errors.push("La dirección no es válida");
+    }
+    
+    // Validar fecha de nacimiento
+    if (birthDate && !validateDate(birthDate)) {
+      errors.push("La fecha de nacimiento no es válida");
+    }
+    
+    // Si hay errores, mostrarlos y detener el envío
+    if (errors.length > 0) {
+      alert("Por favor corrija los siguientes errores:\n" + errors.join("\n"));
+      return;
+    }
 
     // Validar si el usuario ha aceptado los términos
     if (!isAgreed) {
@@ -161,7 +199,6 @@ const ExternalRequest = ({ onCloseModal }) => {
       return;
     }
 
-    setShow(false);
     onCloseModal();
 
     try {
@@ -808,7 +845,6 @@ const ExternalRequest = ({ onCloseModal }) => {
                       fecha:
                     </InputGroup.Text>
                     <DatePicker
-                      required
                       placeholderText="Data botezului"
                       selected={baptiseDate}
                       onChange={(date) => setBaptiseDate(date)}
@@ -827,7 +863,6 @@ const ExternalRequest = ({ onCloseModal }) => {
                       în Biserica / Iglesia:
                     </InputGroup.Text>
                     <input
-                      required
                       placeholder="Biserica și localitatea"
                       className="input"
                       type="text"
@@ -853,7 +888,6 @@ const ExternalRequest = ({ onCloseModal }) => {
                       Botezat în apă de Pastorul / Bautizado por Pastor:
                     </InputGroup.Text>
                     <input
-                      required
                       placeholder=""
                       className="input"
                       type="text"

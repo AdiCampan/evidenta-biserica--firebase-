@@ -1,15 +1,12 @@
-import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import React, { useState, useEffect } from "react";
-// import { useDispatch } from 'react-redux';
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import { push, ref, set } from "firebase/database";
-import { db, firestore } from "../../firebase-config";
+import { firestore } from "../../firebase-config";
 import { doc, setDoc } from "firebase/firestore";
 import { useAddMemberMutation } from "../../services/members";
 import { Alert, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { validateName, sanitizeText } from "../../utils/validation";
 
 function AddPerson({ label }) {
   const [show, setShow] = useState(false);
@@ -54,15 +51,24 @@ function AddPerson({ label }) {
   }, [result]);
 
   const addData = () => {
+    // Sanitizar y validar los datos
+    const sanitizedNume = sanitizeText(nume);
+    const sanitizedPrenume = sanitizeText(prenume);
+    const sanitizedBiserica = biserica === "EBEN - EZER" ? biserica : sanitizeText(otherChurch);
+    
+    // Validar los campos
+    const isNumeValid = validateName(sanitizedNume);
+    const isPrenumeValid = validateName(sanitizedPrenume);
+    
     const newPerson = {
-      firstName: prenume,
-      lastName: nume,
+      firstName: sanitizedPrenume,
+      lastName: sanitizedNume,
       id: crypto.randomUUID(),
       sex: sex === "M" ? true : sex === "F" ? false : null,
-      biserica: biserica,
+      churchName: sanitizedBiserica,
     };
 
-    if (nume != "" && prenume != "" && sex !== null && biserica !== null) {
+    if (isNumeValid && isPrenumeValid && sex !== null && sanitizedBiserica) {
       setNume("");
       setPrenume("");
       setSex(null);

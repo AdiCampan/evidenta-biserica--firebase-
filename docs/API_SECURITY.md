@@ -14,9 +14,10 @@ Este documento proporciona recomendaciones específicas para mejorar la segurida
    - ✅ Se ha implementado validación de variables de entorno en `main.jsx`
    - ✅ Se mantiene un archivo `.env.example` como referencia para la configuración
 
-3. **Validación Insuficiente de Datos**
-   - No hay validación del lado del servidor para las entradas de usuario
-   - Posible vulnerabilidad a ataques de inyección
+3. **Validación Insuficiente de Datos** ✅ RESUELTO
+   - ✅ Se ha implementado validación robusta tanto en cliente como en servidor
+   - ✅ Se ha creado un módulo de utilidades de validación en `src/utils/validation.js`
+   - ✅ Se han implementado funciones de sanitización para prevenir ataques de inyección
 
 ## Implementación Recomendada
 
@@ -74,7 +75,8 @@ function addData() {
     }
     
     // Validar que no contengan caracteres especiales peligrosos
-    const safePattern = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s.,'-]+$/;
+    // Patrón ampliado para incluir caracteres del alfabeto rumano (ă, â, î, ș, ț) y otros caracteres europeos
+    const safePattern = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑăâîșțĂÂÎȘȚèëïüÈËÏÜçÇ\s.,'-]+$/;
     if (!safePattern.test(sanitizedChurch) || !safePattern.test(sanitizedPlace)) {
       setError('Los campos contienen caracteres no permitidos');
       return;

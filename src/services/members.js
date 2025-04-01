@@ -34,18 +34,41 @@ export const membersApi = createApi({
       providesTags: ['member'],
     }),
     addMember: builder.mutation({
-      query: (person) => ({
-        url: 'members/',
-        method: 'POST',
-        body: person,
-      }),
+      query: (person) => {
+        // Importar las funciones de validación
+        const { validateMember } = require('../utils/validation');
+        
+        // Validar usando la función estandarizada
+        const { isValid, errors } = validateMember(person);
+        
+        if (!isValid) {
+          throw new Error(Object.values(errors)[0]);
+        }
+        
+        return {
+          url: 'members/',
+          method: 'POST',
+          body: person,
+        };
+      },
       invalidatesTags: ['members'],
     }),
     modifyMember: builder.mutation({
       query: (person) => {
-        const formData = new FormData();
-
+        // Importar las funciones de validación
+        const { validateMember } = require('../utils/validation');
+        
+        // Extraer datos para validación
         const { profileImage, ...personData } = person;
+        
+        // Validar usando la función estandarizada
+        const { isValid, errors } = validateMember(personData);
+        
+        if (!isValid) {
+          throw new Error(Object.values(errors)[0]);
+        }
+        
+        const formData = new FormData();
         formData.append('profileImage', profileImage);
         // send the rest of the documents as a stringified json
         // without it, it sends all items as strings
