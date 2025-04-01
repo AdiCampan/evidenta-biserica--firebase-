@@ -4,10 +4,10 @@ Este documento proporciona recomendaciones específicas para mejorar la segurida
 
 ## Problemas Identificados
 
-1. **Falta de Autenticación en Solicitudes API**
-   - Las solicitudes a la API no incluyen tokens de autenticación
-   - No hay validación de sesión en las solicitudes a endpoints protegidos
-   - La URL del servidor está hardcodeada como `localhost` en el archivo `constants.js`
+1. **Falta de Autenticación en Solicitudes API** ✅ RESUELTO
+   - ✅ Las solicitudes a la API ahora incluyen tokens JWT de autenticación
+   - ✅ Se implementó validación de sesión en las solicitudes a endpoints protegidos
+   - ✅ La URL del servidor ahora se configura mediante variables de entorno con fallback a la URL de producción
 
 2. **Manejo Inseguro de Credenciales**
    - Las credenciales de Firebase se gestionan a través de variables de entorno, pero no hay un archivo `.env` en el repositorio

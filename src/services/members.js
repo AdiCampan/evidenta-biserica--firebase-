@@ -1,9 +1,28 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SERVER_URL } from '../constants';
+import { auth } from '../firebase-config';
+
+// Función para obtener el token actual
+const getAuthToken = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    return user.getIdToken();
+  }
+  return null;
+};
 
 export const membersApi = createApi({
   reducerPath: 'membersApi',
-  baseQuery: fetchBaseQuery({ baseUrl: SERVER_URL }),
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: SERVER_URL,
+    prepareHeaders: async (headers) => {
+      const token = await getAuthToken();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   tagTypes: ['members', 'member'],
   endpoints: (builder) => ({
     getMembers: builder.query({
