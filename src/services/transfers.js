@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SERVER_URL } from '../constants';
 import { auth } from '../firebase-config';
+import { encryptField, decryptField } from '../utils/encryption';
 
 // Función para obtener el token actual
 const getAuthToken = async () => {
@@ -28,14 +29,32 @@ export const transfersApi = createApi({
       getTransfers: builder.query({
         query: () => `transfers/`,
         providesTags: ['transfers'],
+        transformResponse: (response) => {
+          // Descifrar datos sensibles al recibir
+          if (Array.isArray(response)) {
+            return response.map(transfer => {
+              // Descifrar campos sensibles
+              let decryptedTransfer = decryptField(transfer, 'details');
+              decryptedTransfer = decryptField(decryptedTransfer, 'docNumber');
+              return decryptedTransfer;
+            });
+          }
+          return response;
+        },
       }),
       addTransfer: builder.mutation({
-        query: (transfer) => ({
+        query: (transfer) => {
+          // Cifrar campos sensibles antes de enviar
+          let encryptedTransfer = encryptField(transfer, 'details');
+          encryptedTransfer = encryptField(encryptedTransfer, 'docNumber');
+          
+          return {
             url: 'transfers/',
             method: 'POST',
-            body: transfer,
-          }),
-          invalidatesTags: ['transfers'], 
+            body: encryptedTransfer,
+          };
+        },
+        invalidatesTags: ['transfers'], 
       }),
       delTransfer: builder.mutation({
         query: (id) => ({

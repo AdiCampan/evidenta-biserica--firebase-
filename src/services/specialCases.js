@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SERVER_URL } from '../constants';
 import { auth } from '../firebase-config';
+import { encryptField, decryptField } from '../utils/encryption';
 
 // Función para obtener el token actual
 const getAuthToken = async () => {
@@ -28,21 +29,45 @@ export const specialCasesApi = createApi({
       getSpecialCases: builder.query({
         query: () => `special-cases/`,
         providesTags: ['specialCases'],
+        transformResponse: (response) => {
+          // Descifrar datos sensibles al recibir
+          if (Array.isArray(response)) {
+            return response.map(specialCase => {
+              // Descifrar campos sensibles
+              let decryptedCase = decryptField(specialCase, 'details');
+              decryptedCase = decryptField(decryptedCase, 'medicalInfo');
+              return decryptedCase;
+            });
+          }
+          return response;
+        },
       }),
       addSpecialCase: builder.mutation({
-        query: (specialCase) => ({
+        query: (specialCase) => {
+          // Cifrar campos sensibles antes de enviar
+          let encryptedCase = encryptField(specialCase, 'details');
+          encryptedCase = encryptField(encryptedCase, 'medicalInfo');
+          
+          return {
             url: 'special-cases/',
             method: 'POST',
-            body: specialCase,
-          }),
-          invalidatesTags: ['specialCases'], 
+            body: encryptedCase,
+          };
+        },
+        invalidatesTags: ['specialCases'], 
       }),
       modifySpecialCase: builder.mutation({
-        query: (specialCase) => ({
-          url: `special-cases/${specialCase.id}`,
-          method: 'PATCH',
-          body: specialCase,
-        }),
+        query: (specialCase) => {
+          // Cifrar campos sensibles antes de enviar
+          let encryptedCase = encryptField(specialCase, 'details');
+          encryptedCase = encryptField(encryptedCase, 'medicalInfo');
+          
+          return {
+            url: `special-cases/${specialCase.id}`,
+            method: 'PATCH',
+            body: encryptedCase,
+          };
+        },
         invalidatesTags: ['specialCases', 'specialCase'],
       }),
     })

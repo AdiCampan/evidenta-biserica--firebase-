@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -8,12 +8,20 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { CiUser } from "react-icons/ci";
 import { GoKey } from "react-icons/go";
+import { generateCSRFToken, verifyCSRFToken } from "../../utils/csrf";
+import { isBlocked, getRemainingBlockTime } from "../../utils/bruteForceProtection";
 import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
+  
+  useEffect(() => {
+    // Generar token CSRF al cargar el componente
+    setCsrfToken(generateCSRFToken());
+  }, []);
 
   const {
     register,
@@ -23,6 +31,19 @@ const Login = () => {
   } = useForm();
 
   const onLogin = ({ email, password }) => {
+    // Verificar token CSRF
+    if (!verifyCSRFToken(csrfToken)) {
+      setLoginError("Error de seguridad: La sesión ha expirado o es inválida. Por favor, recarga la página.");
+      return;
+    }
+    
+    // Verificar si el usuario está bloqueado por intentos fallidos
+    if (isBlocked(email)) {
+      const remainingTime = getRemainingBlockTime(email);
+      setLoginError(`Cuenta bloqueada temporalmente. Intente nuevamente en ${Math.ceil(remainingTime / 60)} minutos.`);
+      return;
+    }
+    
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -67,6 +88,7 @@ const Login = () => {
           <p>LOG IN</p>
 
           <form onSubmit={handleSubmit(onLogin)}>
+            <input type="hidden" name="csrf_token" value={csrfToken} />
             <div>
               <CiUser size={30} />
               <input

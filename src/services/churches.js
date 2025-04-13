@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { auth } from '../firebase-config';
 import { SERVER_URL } from '../constants';
+import { encryptField, decryptField } from '../utils/encryption';
 
 // Función para obtener el token actual
 const getAuthToken = async () => {
@@ -28,6 +29,18 @@ export const churchesApi = createApi({
     getChurches: builder.query({
       query: () => `churches/`,
       providesTags: ['churches'],
+      // Descifrar datos sensibles al recibir
+      transformResponse: (response) => {
+        if (Array.isArray(response)) {
+          return response.map(church => {
+            // Descifrar campos sensibles
+            let decryptedChurch = decryptField(church, 'address');
+            decryptedChurch = decryptField(decryptedChurch, 'contactInfo');
+            return decryptedChurch;
+          });
+        }
+        return response;
+      },
       // Manejo de errores mejorado
       transformErrorResponse: (response, meta, arg) => {
         console.error('Error en la solicitud API:', response);
@@ -49,10 +62,14 @@ export const churchesApi = createApi({
           throw new Error(Object.values(errors)[0]);
         }
         
+        // Cifrar campos sensibles antes de enviar
+        let encryptedBody = encryptField(body, 'address');
+        encryptedBody = encryptField(encryptedBody, 'contactInfo');
+        
         return {
           url: 'churches/',
           method: 'POST',
-          body: body,
+          body: encryptedBody,
         };
       },
       invalidatesTags: ['churches'],

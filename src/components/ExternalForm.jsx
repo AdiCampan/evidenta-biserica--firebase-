@@ -6,10 +6,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./ExternalForm.scss";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 import { validateName, validatePhone, validateAddress, validateDate, sanitizeText } from "../utils/validation";
+import { generateCSRFToken, verifyCSRFToken } from "../utils/csrf";
 
 const ExternalForm = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isAgreed, setIsAgreed] = useState(false); // Estado para la casilla de verificación
+  const [csrfToken, setCsrfToken] = useState(""); // Token CSRF
 
   // Estado para las fechas como objetos Date
   const [honeypot, setHoneypot] = useState(""); //proteccion antiBot
@@ -30,6 +32,8 @@ const ExternalForm = ({ onCloseModal }) => {
 
   useEffect(() => {
     setStartTime(Date.now());
+    // Generar token CSRF al cargar el componente
+    setCsrfToken(generateCSRFToken());
   }, []);
 
   useEffect(() => {
@@ -61,6 +65,12 @@ const ExternalForm = ({ onCloseModal }) => {
 
     if (honeypot !== "") {
       alert("Formulario detectado como spam.");
+      return;
+    }
+    
+    // Verificar token CSRF
+    if (!verifyCSRFToken(csrfToken)) {
+      alert("Error de seguridad: La sesión ha expirado o es inválida. Por favor, recarga la página.");
       return;
     }
 

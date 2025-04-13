@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SERVER_URL } from '../constants';
 import { auth } from '../firebase-config';
+import { encryptField, decryptField } from '../utils/encryption';
 
 // Función para obtener el token actual
 const getAuthToken = async () => {
@@ -28,10 +29,36 @@ export const membersApi = createApi({
     getMembers: builder.query({
       query: () => `members/`,
       providesTags: ['members'],
+      transformResponse: (response) => {
+        // Descifrar datos sensibles al recibir
+        if (Array.isArray(response)) {
+          return response.map(member => {
+            let decryptedMember = decryptField(member, 'personalData');
+            if (decryptedMember.contactInfo) {
+              decryptedMember.contactInfo = decryptField(decryptedMember.contactInfo, 'email');
+              decryptedMember.contactInfo = decryptField(decryptedMember.contactInfo, 'phone');
+            }
+            return decryptedMember;
+          });
+        }
+        return response;
+      },
     }),
     getMember: builder.query({
       query: (id) => `members/${id}`,
       providesTags: ['member'],
+      transformResponse: (response) => {
+        // Descifrar datos sensibles al recibir
+        if (response) {
+          let decryptedMember = decryptField(response, 'personalData');
+          if (decryptedMember.contactInfo) {
+            decryptedMember.contactInfo = decryptField(decryptedMember.contactInfo, 'email');
+            decryptedMember.contactInfo = decryptField(decryptedMember.contactInfo, 'phone');
+          }
+          return decryptedMember;
+        }
+        return response;
+      },
     }),
     addMember: builder.mutation({
       query: (person) => {
@@ -45,10 +72,17 @@ export const membersApi = createApi({
           throw new Error(Object.values(errors)[0]);
         }
         
+        // Cifrar campos sensibles antes de enviar
+        const encryptedPerson = encryptField(person, 'personalData');
+        if (encryptedPerson.contactInfo) {
+          encryptedPerson.contactInfo = encryptField(encryptedPerson.contactInfo, 'email');
+          encryptedPerson.contactInfo = encryptField(encryptedPerson.contactInfo, 'phone');
+        }
+        
         return {
           url: 'members/',
           method: 'POST',
-          body: person,
+          body: encryptedPerson,
         };
       },
       invalidatesTags: ['members'],
@@ -68,11 +102,18 @@ export const membersApi = createApi({
           throw new Error(Object.values(errors)[0]);
         }
         
+        // Cifrar campos sensibles antes de enviar
+        let encryptedPersonData = encryptField(personData, 'personalData');
+        if (encryptedPersonData.contactInfo) {
+          encryptedPersonData.contactInfo = encryptField(encryptedPersonData.contactInfo, 'email');
+          encryptedPersonData.contactInfo = encryptField(encryptedPersonData.contactInfo, 'phone');
+        }
+        
         const formData = new FormData();
         formData.append('profileImage', profileImage);
         // send the rest of the documents as a stringified json
         // without it, it sends all items as strings
-        formData.append('doc', JSON.stringify(personData));
+        formData.append('doc', JSON.stringify(encryptedPersonData));
 
         return {
           url: `members/${person.id}`,
