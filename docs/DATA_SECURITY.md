@@ -9,15 +9,15 @@ Este documento proporciona recomendaciones específicas para mejorar la segurida
    - ✅ No se sanitizan adecuadamente las entradas de usuario
    - ✅ Posible vulnerabilidad a ataques de inyección y XSS
 
-2. **Manejo Inseguro de Datos Sensibles**
-   - La aplicación maneja datos de iglesias y personas que podrían contener información sensible
-   - No hay medidas para proteger estos datos en tránsito o en reposo
-   - No hay políticas de acceso basadas en roles para restringir el acceso a datos sensibles
+2. **Manejo Inseguro de Datos Sensibles** ✅
+   - ✅ La aplicación maneja datos de iglesias y personas que podrían contener información sensible
+   - ✅ No hay medidas para proteger estos datos en tránsito o en reposo
+   - ✅ No hay políticas de acceso basadas en roles para restringir el acceso a datos sensibles
 
-3. **Falta de Protección contra Ataques Comunes**
-   - No hay protección contra ataques CSRF
-   - No hay protección contra ataques de fuerza bruta
-   - No hay límites en las solicitudes a la API
+3. **Falta de Protección contra Ataques Comunes** ✅
+   - ✅ No hay protección contra ataques CSRF
+   - ✅ No hay protección contra ataques de fuerza bruta
+   - ✅ No hay límites en las solicitudes a la API
 
 ## Implementación Recomendada
 
