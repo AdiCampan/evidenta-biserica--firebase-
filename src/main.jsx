@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { store } from "./store";
 import { Provider } from "react-redux";
@@ -6,6 +6,7 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./index.css";
+import "./i18n"; // Importación crítica para i18n
 
 // Validar variables de entorno críticas al inicio
 const requiredEnvVars = [
@@ -28,7 +29,9 @@ if (missingEnvVars.length > 0) {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Suspense fallback={<div>Cargando...</div>}>
+        <App />
+      </Suspense>
     </Provider>
   </React.StrictMode>
 );

@@ -1,0 +1,77 @@
+{
+  "login": {
+    "title": "INICIAR SESIÓN",
+    "email": {
+      "placeholder": "Introduce tu email",
+      "error": {
+        "required": "Email es obligatorio!",
+        "invalid": "Email inválido!"
+      }
+    },
+    "password": {
+      "placeholder": "Contraseña",
+      "error": {
+        "required": "Contraseña es obligatoria!",
+        "minLength": "La contraseña debe tener al menos 6 caracteres!"
+      }
+    },
+    "button": "INICIAR SESIÓN",
+    "loading": "Iniciando sesión...",
+    "cancel": "CANCELAR",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resendVerification": "Reenviar correo de verificación",
+    "errors": {
+      "security": "Error de seguridad: La sesión ha expirado o es inválida. Por favor, recarga la página.",
+      "blocked": "Cuenta bloqueada temporalmente. Intente nuevamente en {{minutes}} minutos.",
+      "unverified": "Por favor, verifica tu correo electrónico antes de iniciar sesión. ¿No recibiste el correo?",
+      "invalidCredentials": "Usuario o contraseña incorrectos",
+      "verificationSent": "Se ha reenviado el correo de verificación. Por favor, revisa tu bandeja de entrada.",
+      "resetSent": "Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico."
+    }
+  },
+  "signup": {
+    "title": "REGISTRARSE",
+    "email": {
+      "placeholder": "Introduce tu email",
+      "error": {
+        "required": "Email es obligatorio!",
+        "invalid": "Email inválido!"
+      }
+    },
+    "password": {
+      "placeholder": "Contraseña",
+      "error": {
+        "required": "Contraseña es obligatoria!",
+        "minLength": "La contraseña debe tener al menos 6 caracteres!"
+      }
+    },
+    "passwordConfirm": {
+      "placeholder": "Repite la contraseña",
+      "error": {
+        "required": "Debes confirmar la contraseña!",
+        "mismatch": "Las contraseñas deben coincidir!"
+      }
+    },
+    "button": "REGISTRARSE",
+    "loading": "Registrando...",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "errors": {
+      "generic": "Error al registrarse",
+      "emailInUse": "Este email ya está registrado"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "charts": "Gráficos",
+    "people": "Personas",
+    "members": "Miembros",
+    "baptisms": "Bautismos",
+    "specialCases": "Casos Especiales",
+    "transfers": "Transferencias",
+    "families": "Familias",
+    "archive": "Archivo",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión"
+  }
+}

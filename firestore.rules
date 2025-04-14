@@ -13,7 +13,7 @@ service cloud.firestore {
     
     // Función para verificar si el usuario tiene rol de administrador
     function isAdmin() {
-      return request.auth.token.admin == true;
+      return request.auth.token.admin == true || exists(/databases/$(database)/documents/userRoles/$(request.auth.uid)) && get(/databases/$(database)/documents/userRoles/$(request.auth.uid)).data.role == 'admin';
     }
     
     // Reglas para la colección de personas

@@ -3,11 +3,9 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  NavLink,
-  Link,
   useLocation,
 } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import Navbar from "./components/Navbar/Navbar";
 import Persoana from "./pages/Persoana/Persoana";
 import "./App.scss";
 import Persoane from "./pages/Persoane/Persoane";
@@ -21,10 +19,12 @@ import Home from "./pages/Home";
 import Grafice from "./pages/Grafice";
 import LogIn from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
+import CreateAdmin from "./pages/Admin/CreateAdmin";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, firestore } from "./firebase-config";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 import { AuthProvider, useAuth } from "./Context";
 import {
   Chart as ChartJS,
@@ -38,7 +38,7 @@ import {
   ArcElement,
   BarElement,
 } from "chart.js";
-import { FaUserCircle, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+
 
 // Registro de elementos del gráfico
 ChartJS.register(
@@ -113,106 +113,7 @@ function MainApp() {
 
   return (
     <div>
-      <nav className="nav-bar">
-        <div>
-          <Button
-            as={NavLink}
-            to="/"
-            className={({ isActive }) => (isActive ? "active" : "")}
-            variant="primary"
-          >
-            Home
-          </Button>
-          {logedUser && (
-            <>
-              <Button
-                as={NavLink}
-                to="/grafice"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Grafice
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Persoane
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane/membrii"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Membrii
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane/boteze"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Boteze
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane/speciale"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Cazuri Speciale
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane/transferuri"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Transferuri
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane/familii"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Familii
-              </Button>
-              <Button
-                as={NavLink}
-                to="/persoane/archive"
-                className={({ isActive }) => (isActive ? "active" : "")}
-                variant="primary"
-              >
-                Arhiva
-              </Button>
-            </>
-          )}
-        </div>
-
-        <div className="userBox-container">
-          {!logedUser ? (
-            <Link to="/login" className="login-button">
-              <FaSignInAlt className="icon" />
-              <span>Log In</span>
-            </Link>
-          ) : (
-            <div className="logged-user">
-              <div className="user-info">
-                <FaUserCircle className="user-icon" />
-                <span className="user-name">{logedUser}</span>
-              </div>
-              <Link to="/login" className="logout-button" onClick={logOut}>
-                <FaSignOutAlt className="icon" />
-                {/* <span>Log Out</span> */}
-              </Link>
-            </div>
-          )}
-        </div>
-      </nav>
+      <Navbar />
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -227,6 +128,14 @@ function MainApp() {
         />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route
+          path="/admin/create"
+          element={
+            <AdminRoute>
+              <CreateAdmin />
+            </AdminRoute>
+          }
+        />
         <Route
           path="/persoane"
           element={

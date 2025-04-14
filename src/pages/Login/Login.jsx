@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
+  signOut,
 } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -10,9 +12,11 @@ import { CiUser } from "react-icons/ci";
 import { GoKey } from "react-icons/go";
 import { generateCSRFToken, verifyCSRFToken } from "../../utils/csrf";
 import { isBlocked, getRemainingBlockTime } from "../../utils/bruteForceProtection";
+import { useTranslation } from "react-i18next";
 import "./Login.css";
 
 const Login = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,28 +37,58 @@ const Login = () => {
   const onLogin = ({ email, password }) => {
     // Verificar token CSRF
     if (!verifyCSRFToken(csrfToken)) {
-      setLoginError("Error de seguridad: La sesión ha expirado o es inválida. Por favor, recarga la página.");
+      setLoginError(t('login.errors.security'));
       return;
     }
     
     // Verificar si el usuario está bloqueado por intentos fallidos
     if (isBlocked(email)) {
       const remainingTime = getRemainingBlockTime(email);
-      setLoginError(`Cuenta bloqueada temporalmente. Intente nuevamente en ${Math.ceil(remainingTime / 60)} minutos.`);
+      setLoginError(t('login.errors.blocked', { minutes: Math.ceil(remainingTime / 60) }));
       return;
     }
     
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        setLoginError("");
         const user = userCredential.user;
+        
+        // Verificar si el correo está verificado
+        if (!user.emailVerified) {
+          setLoginError(t('login.errors.unverified'));
+          signOut(auth); // Cerrar sesión si el correo no está verificado
+          return;
+        }
+        
+        setLoginError("");
         navigate("/persoane");
-        console.log(user);
       })
       .catch((error) => {
-        setLoginError("Utilizator sau parola incorecta");
+        setLoginError(t('login.errors.invalidCredentials'));
         console.log(error.code, error.message);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleResendVerification = (email) => {
+    if (!email) {
+      setLoginError(t('login.email.error.required'));
+      return;
+    }
+
+    setLoading(true);
+    signInWithEmailAndPassword(auth, email, getValues("password"))
+      .then((userCredential) => {
+        sendEmailVerification(userCredential.user)
+          .then(() => {
+            setLoginError(t('login.errors.verificationSent'));
+          })
+          .catch((error) => {
+            setLoginError("Error al reenviar el correo: " + error.message);
+          });
+      })
+      .catch((error) => {
+        setLoginError(t('login.errors.invalidCredentials'));
       })
       .finally(() => setLoading(false));
   };
@@ -62,7 +96,7 @@ const Login = () => {
   const handlePasswordReset = () => {
     const email = getValues("email");
     if (!email) {
-      setLoginError("Por favor, introduce tu correo electrónico.");
+      setLoginError(t('login.email.error.required'));
       return;
     }
 
@@ -83,75 +117,95 @@ const Login = () => {
 
   return (
     <main className="login">
-      <section>
-        <div className="main-container">
-          <p>LOG IN</p>
-
-          <form onSubmit={handleSubmit(onLogin)}>
+      <section className="login-section">
+        <div className="glass-container">
+          <h2 className="title">{t('login.title')}</h2>
+          
+          <form onSubmit={handleSubmit(onLogin)} className="modern-form">
             <input type="hidden" name="csrf_token" value={csrfToken} />
-            <div>
-              <CiUser size={30} />
-              <input
-                {...register("email", {
-                  required: "Email este obligatoriu!",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "email invalid!",
-                  },
-                })}
-                className="input-container"
-                type="email"
-                placeholder="Introdu email"
-              />
-              {errors.email && <p className="error">{errors.email.message}</p>}
+            
+            <div className="input-group">
+              <div className="input-icon">
+                <CiUser size={24} />
+              </div>
+              <div className="input-wrapper">
+                <input
+                  {...register("email", {
+                    required: t('login.email.error.required'),
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: t('login.email.error.invalid'),
+                    },
+                  })}
+                  className="modern-input"
+                  type="email"
+                  placeholder={t('login.email.placeholder')}
+                />
+                {errors.email && <p className="error-message">{errors.email.message}</p>}
+              </div>
             </div>
 
-            <div>
-              <GoKey size={20} style={{ margin: "5px" }} />
-              <input
-                {...register("password", {
-                  required: "Parola e obligatorie!",
-                  minLength: {
-                    value: 6,
-                    message: "Parola trebuia sa aiba cel putin 6 caractere !",
-                  },
-                })}
-                className="input-container"
-                type="password"
-                placeholder="Parola"
-              />
-              {errors.password && (
-                <p className="error">{errors.password.message}</p>
-              )}
+            <div className="input-group">
+              <div className="input-icon">
+                <GoKey size={24} />
+              </div>
+              <div className="input-wrapper">
+                <input
+                  {...register("password", {
+                    required: t('login.password.error.required'),
+                    minLength: {
+                      value: 6,
+                      message: t('login.password.error.minLength'),
+                    },
+                  })}
+                  className="modern-input"
+                  type="password"
+                  placeholder={t('login.password.placeholder')}
+                />
+                {errors.password && (
+                  <p className="error-message">{errors.password.message}</p>
+                )}
+              </div>
             </div>
 
-            <div className="button-container">
-              <button className="button" disabled={loading}>
-                {loading ? "Iniciando sesión..." : "LOGIN"}
+            <div className="button-group">
+              <button 
+                className={`primary-button ${loading ? 'loading' : ''}`}
+                type="submit" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="spinner"></span>
+                ) : t('login.button')}
               </button>
             </div>
           </form>
-          <div
-            style={{ width: "95%", alignItems: "center", marginTop: "20px" }}
-          >
+          <div className="button-group" style={{ marginTop: "20px" }}>
             <button
               onClick={() => navigate("/")}
               className="cancel-button"
-              style={{
-                color: "red",
-                backgroundColor: "lightgray",
-              }}
             >
-              CANCEL
+              {t('login.cancel')}
             </button>
           </div>
 
           {loginError && (
-            <p className="forgot-password" onClick={handlePasswordReset}>
-              Ai uitat parola?
-            </p>
+            <>
+              <p className="forgot-password" onClick={handlePasswordReset}>
+                {t('login.forgotPassword')}
+              </p>
+              {loginError.includes("verifica tu correo") && (
+                <p 
+                  className="forgot-password" 
+                  onClick={() => handleResendVerification(getValues("email"))}
+                  style={{marginTop: '10px'}}
+                >
+                  {t('login.resendVerification')}
+                </p>
+              )}
+            </>
           )}
-          {loginError && <p className="error">{loginError}</p>}
+          {loginError && <p className="error-message">{loginError}</p>}
         </div>
       </section>
     </main>

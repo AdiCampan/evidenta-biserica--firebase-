@@ -9,14 +9,14 @@ Este documento proporciona recomendaciones específicas para mejorar la segurida
    - ~~Las claves de API se gestionan a través de variables de entorno, pero no hay un archivo `.env` en el repositorio~~ → Creado archivo `.env.example`
    - ~~No hay validación para asegurar que las variables de entorno estén configuradas correctamente~~ → Implementada validación
 
-2. **Autenticación Básica**
-   - La aplicación utiliza autenticación por correo/contraseña, pero no implementa características de seguridad adicionales
-   - No hay verificación de correo electrónico obligatoria
-   - No hay límites de intentos de inicio de sesión
+2. **Autenticación Básica** ✅
+   - ~~La aplicación utiliza autenticación por correo/contraseña, pero no implementa características de seguridad adicionales~~ → Implementadas características adicionales
+   - ~~No hay verificación de correo electrónico obligatoria~~ → Implementada en `SignUp.jsx` y `Login.jsx`
+   - ~~No hay límites de intentos de inicio de sesión~~ → Implementados en `bruteForceProtection.js`
 
-3. **Acceso No Controlado a Datos**
-   - No hay reglas de seguridad para limitar el acceso a datos en Firestore
-   - No hay implementación de control de acceso basado en roles (RBAC)
+3. **Acceso No Controlado a Datos** ✅
+   - ~~No hay reglas de seguridad para limitar el acceso a datos en Firestore~~ → Implementadas en `firestore.rules`
+   - ~~No hay implementación de control de acceso basado en roles (RBAC)~~ → Implementado en `firestore.rules` y sistema de roles
 
 ## Implementación Recomendada
 

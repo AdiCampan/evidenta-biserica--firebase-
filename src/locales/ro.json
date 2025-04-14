@@ -1,0 +1,77 @@
+{
+  "login": {
+    "title": "AUTENTIFICARE",
+    "email": {
+      "placeholder": "Introdu email",
+      "error": {
+        "required": "Email este obligatoriu!",
+        "invalid": "Email invalid!"
+      }
+    },
+    "password": {
+      "placeholder": "Parola",
+      "error": {
+        "required": "Parola e obligatorie!",
+        "minLength": "Parola trebuie să aibă cel puțin 6 caractere!"
+      }
+    },
+    "button": "AUTENTIFICARE",
+    "loading": "Se autentifică...",
+    "cancel": "ANULARE",
+    "forgotPassword": "Ai uitat parola?",
+    "resendVerification": "Retrimite email de verificare",
+    "errors": {
+      "security": "Eroare de securitate: Sesiunea a expirat sau este invalidă. Te rugăm să reîncarci pagina.",
+      "blocked": "Cont blocat temporar. Încearcă din nou în {{minutes}} minute.",
+      "unverified": "Te rugăm să verifici emailul înainte de a te autentifica. Nu ai primit emailul?",
+      "invalidCredentials": "Utilizator sau parolă incorectă",
+      "verificationSent": "Emailul de verificare a fost retrimis. Te rugăm să verifici inboxul.",
+      "resetSent": "Un link de resetare a parolei a fost trimis pe email."
+    }
+  },
+  "signup": {
+    "title": "ÎNREGISTRARE",
+    "email": {
+      "placeholder": "Introdu email",
+      "error": {
+        "required": "Email este obligatoriu!",
+        "invalid": "Email invalid!"
+      }
+    },
+    "password": {
+      "placeholder": "Parola",
+      "error": {
+        "required": "Parola este obligatorie!",
+        "minLength": "Parola trebuie să aibă cel puțin 6 caractere!"
+      }
+    },
+    "passwordConfirm": {
+      "placeholder": "Repetă parola",
+      "error": {
+        "required": "Trebuie să confirmi parola!",
+        "mismatch": "Parolele trebuie să coincidă!"
+      }
+    },
+    "button": "ÎNREGISTRARE",
+    "loading": "Se înregistrează...",
+    "haveAccount": "Ai deja un cont înregistrat?",
+    "signIn": "Autentificare",
+    "errors": {
+      "generic": "Eroare la înregistrare",
+      "emailInUse": "Acest email este deja înregistrat"
+    }
+  },
+  "nav": {
+    "home": "Acasă",
+    "charts": "Grafice",
+    "people": "Persoane",
+    "members": "Membrii",
+    "baptisms": "Boteze",
+    "specialCases": "Cazuri Speciale",
+    "transfers": "Transferuri",
+    "families": "Familii",
+    "archive": "Arhivă",
+    "login": "Autentificare",
+    "logout": "Deconectare"
+  }
+}
