@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { setDoc, doc } from "firebase/firestore";
 import { firestore } from "../firebase-config";
-import "./CSVuploader.scss";
+import "./CSVUploader.scss";
 import { Timestamp } from "../firebase-config";
 import { Modal, ModalBody, Button } from "react-bootstrap";
 
