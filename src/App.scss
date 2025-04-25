@@ -5,10 +5,8 @@ body,
 }
 
 #root {
-  background-image: url(assets/images/desk.png);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-color: rgb(242, 231, 207);
+  /* Se eliminó la imagen de fondo antigua */
+  background-color: transparent;
   background-position: center;
   background-attachment: fixed;
 

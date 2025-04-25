@@ -12,81 +12,15 @@ import ExternalForm from "../components/ExternalForm";
 import { ImWhatsapp } from "react-icons/im";
 import { BsTelephoneInbound } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
+import { FaChurch, FaUsers, FaChild, FaWater, FaHome } from "react-icons/fa";
 import ExternalRequest from "../components/ExternalRequest";
+import { useTranslation } from "react-i18next";
 
 const Home = ({ persoane }) => {
-  // const [persoane, setPersoane] = useState("");
-  const [totalMembri, setTotalMembri] = useState();
-  const [nrBarbati, setNrBarbati] = useState();
-  const [nrFemei, setNrFemei] = useState();
-  const [nrCopii, setNrCopii] = useState();
-  const [showUploader, setShowUploader] = useState(false);
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
-
-  const [nrMembrii, setNrMembrii] = useState([]);
   const navigate = useNavigate();
-
-  const date = new Date();
-
-  // useEffect(() => {
-  //   if (persoane.length > 0) {
-  //     setTotalMembri(persoane?.filter((p) => p.memberDate).length);
-  //     setNrCopii(
-  //       persoane?.filter((p) => calculateAge(p.birthDate) < 18).length
-  //     );
-  //     setNrBarbati(
-  //       persoane?.filter(
-  //         (p) =>
-  //           p.sex === true && p.memberDate && calculateAge(p.birthDate) >= 18
-  //       ).length
-  //     );
-  //     setNrFemei(
-  //       persoane?.filter(
-  //         (p) =>
-  //           p.sex === false && p.memberDate && calculateAge(p.birthDate) >= 18
-  //       ).length
-  //     );
-  //   }
-  // }, [persoane]);
-
-  const getYearsFromInterval = (from, to) => {
-    const listOfYears = [];
-    for (let year = from; year <= to; year++) {
-      listOfYears.push(year);
-    }
-    return listOfYears;
-  };
-
-  const getMemberHistoryYears = () => {
-    const currentYear = new Date().getFullYear();
-    const years = getYearsFromInterval(currentYear - 10, currentYear);
-    return years;
-  };
-
-  const getMemberHistory = () => {
-    if (persoane.length > 0) {
-      const membersByYears = [];
-      const years = getMemberHistoryYears();
-      for (let i = 0; i < years.length; i++) {
-        const personsByYear = persoane?.filter((p) => {
-          if (
-            p.memberDate &&
-            p.memberDate?.toDate().getFullYear() <= years[i]
-          ) {
-            // if (p.leaveDate &&  new Date(p.leaveDate).getFullYear() > years[i]) {
-            // 	return true;
-            // } else if (!p.leaveDate) {
-            return true;
-            // }
-          }
-          return false;
-        }).length;
-        membersByYears.push(personsByYear);
-      }
-      return membersByYears;
-    }
-  };
 
   const handleShowForm = () => {
     setShowForm(true);
@@ -102,75 +36,108 @@ const Home = ({ persoane }) => {
   };
 
   return (
-    <>
-      <div className="home_page">
-        <div className="secretariat_text">SECRETARIAT</div>
-        <div className="biserica_text">BISERICA EBEN-EZER CASTELLON</div>
-      </div>
-      <div className="charts">
-        <div className="info-bar">
-          <h3 style={{ marginTop: "15px" }}>
-            <strong>CONTACT</strong>
-          </h3>
-          <p>
-            Adresa: Camí de la Donació, 89, 12004 Castellón de la Plana,
-            Castellón
-          </p>
-          <ImWhatsapp />
-          <p>
-            Trimite cauza ta de rugaciune aici:
-            <br /> WhatsApp +34 624 227 214
-          </p>
-          <BsTelephoneInbound />
-          <p>Tel./Fax: 964 37 24 00</p>
-          <HiOutlineMail />
-          <p>biserica_ebenezer@yahoo.es</p>
-        </div>
-        <div className="update-bar">
-          <h5 style={{ marginTop: "15px" }}>
-            {" "}
-            <strong>ACTUALIZEAZA-TI FISA MEMBRALA</strong>
-          </h5>
-          <p>
-            Completează formularul cu datele care le știi, urcă o poză actuală,
-            și acceptă tratatrea datelor personale Conforme a la Ley Orgánica
-            3/2018, de 5 de diciembre, de Protección de Datos Personales y
-            garantía de los derechos digitales. Ulterior, datele vor fii
-            verificate înainte de a actualiza fișa membrală.
-          </p>
-          <Button onClick={handleShowForm} style={{ margin: "5px" }}>
-            FORMULAR ACTUALIZARE MEMBRU
-          </Button>
-          <Button onClick={handleShowRequest} style={{ marginTop: "20px" }}>
-            FORMULAR CERERE FISA MEMBRU
-          </Button>
-        </div>
+    <main className="home-container">
+      <div className="home-content">
+        <div className="glass-panel main-panel">
+          <div className="church-header">
+            <FaChurch className="church-icon" />
+            <h1 className="secretariat_text">SECRETARIAT</h1>
+            <h2 className="biserica_text">BISERICA EBEN-EZER CASTELLON</h2>
+          </div>
+          
+          <div className="panels-container">
+            {/* Panel de Contacto */}
+            <div className="glass-panel info-panel">
+              <h3 className="panel-title">
+                <strong>CONTACT</strong>
+              </h3>
+              <div className="contact-info">
+                <div className="contact-item">
+                  <FaHome className="contact-icon" />
+                  <p>Camí de la Donació, 89, 12004 Castellón de la Plana, Castellón</p>
+                </div>
+                <div className="contact-item">
+                  <ImWhatsapp className="contact-icon" />
+                  <p>
+                    Trimite cauza ta de rugaciune aici:
+                    <br /> WhatsApp +34 624 227 214
+                  </p>
+                </div>
+                <div className="contact-item">
+                  <BsTelephoneInbound className="contact-icon" />
+                  <p>Tel./Fax: 964 37 24 00</p>
+                </div>
+                <div className="contact-item">
+                  <HiOutlineMail className="contact-icon" />
+                  <p>biserica_ebenezer@yahoo.es</p>
+                </div>
+              </div>
+            </div>
 
-        <div className="chart-wrapper">
-          <div className="chart-container">
-            <div className="info-cards">
-              <h6>TOTAL MEMBRII</h6>
-              <h4>1043</h4>
+            {/* Panel de Actualización */}
+            <div className="glass-panel info-panel">
+              <h3 className="panel-title">
+                <strong>ACTUALIZEAZA-TI FISA MEMBRALA</strong>
+              </h3>
+              <p className="panel-description">
+                Completează formularul cu datele care le știi, urcă o poză actuală,
+                și acceptă tratatrea datelor personale Conforme a la Ley Orgánica
+                3/2018, de 5 de diciembre, de Protección de Datos Personales y
+                garantía de los derechos digitales. Ulterior, datele vor fii
+                verificate înainte de a actualiza fișa membrală.
+              </p>
+              <div className="button-container">
+                <button className="primary-button" onClick={handleShowForm}>
+                  FORMULAR ACTUALIZARE MEMBRU
+                </button>
+                <button className="secondary-button" onClick={handleShowRequest}>
+                  FORMULAR CERERE FISA MEMBRU
+                </button>
+              </div>
             </div>
-            <div className="info-cards">
-              <h6>COPII</h6>
-              <h4>387</h4>
-            </div>
-            <div className="info-cards">
-              <h6>BOTEZATI</h6>
-              <h4>656</h4>
-            </div>
-            <div className="info-cards">
-              <h6>TOTAL FAMILII</h6>
-              <h4>255</h4>
+
+            {/* Panel de Estadísticas */}
+            <div className="glass-panel info-panel stats-panel">
+              <h3 className="panel-title">
+                <strong>STATISTICI</strong>
+              </h3>
+              <div className="stats-container">
+                <div className="stat-card">
+                  <FaUsers className="stat-icon" />
+                  <div className="stat-info">
+                    <h4>TOTAL MEMBRII</h4>
+                    <p>1043</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <FaChild className="stat-icon" />
+                  <div className="stat-info">
+                    <h4>COPII</h4>
+                    <p>387</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <FaWater className="stat-icon" />
+                  <div className="stat-info">
+                    <h4>BOTEZATI</h4>
+                    <p>656</p>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <FaHome className="stat-icon" />
+                  <div className="stat-info">
+                    <h4>TOTAL FAMILII</h4>
+                    <p>255</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {showUploader && <CSVUploader />}
       </div>
 
       <Modal
-        className="custom-modal" // Aplica estilos al dialog
+        className="custom-modal"
         centered
         style={{ width: "100%", justifyContent: "center" }}
         show={showForm}
@@ -178,8 +145,9 @@ const Home = ({ persoane }) => {
       >
         <ExternalForm onCloseModal={handleCloseForm} show={showForm} />
       </Modal>
+      
       <Modal
-        className="custom-modal" // Aplica estilos al dialog
+        className="custom-modal"
         centered
         style={{ width: "100%", justifyContent: "center" }}
         show={showRequest}
@@ -188,10 +156,10 @@ const Home = ({ persoane }) => {
         <ExternalRequest show={showRequest} onCloseModal={handleCloseRequest} />
       </Modal>
 
-      <footer className="footer">
+      <footer className="home-footer">
         copyright © Media EBEN-EZER 2024 - media.ebenezercastellon@gmail.com
       </footer>
-    </>
+    </main>
   );
 };
 
