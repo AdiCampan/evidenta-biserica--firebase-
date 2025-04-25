@@ -161,7 +161,7 @@ function MainApp() {
           }
         />
         <Route
-          path="/persoane/speciale"
+          path="/persoane/cazuri-speciale"
           element={
             <ProtectedRoute>
               <Speciale persoane={persoane} />
