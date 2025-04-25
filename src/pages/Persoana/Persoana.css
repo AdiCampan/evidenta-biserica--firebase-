@@ -1,5 +1,11 @@
 .react-datepicker-wrapper input[type="text"] {
   width: 120px;
+  display: block !important;
+  visibility: visible !important;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.2rem;
+  padding: 0.25rem 0.5rem;
 }
 .observatii {
   width: 95%;
