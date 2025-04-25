@@ -5,45 +5,17 @@
   width: 95%;
   height: 200px;
 }
-/* @media print {
-  .printable-content {
-    margin: 20px;
-    background-color: aquamarine;
-  }
-  .logo-box {
-    display: block !important;
-    visibility: visible !important;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    padding: 20px;
-  }
-  .image-preview {
-    margin: 35px 50px 35px 180px;
-    width: 150px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 5px;
-  }
-  .box {
-    display: flex;
-    padding: 20px;
-    border-radius: 15px;
-    border: 3px solid;
-  }
-  .general-data {
-    margin: 20px;
-  }
 
-  .familie {
-    border: 2px solid;
-  }
-  .vertical-text {
-    rotate: 270deg;
-  }
-  .general-box {
-    display: flex;
-    align-content: flex-start;
-    flex-direction: row;
-  }
-} */
+.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+  background-color: #b1cdd2;
+  padding: 10px 10px 0 10px;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs > .nav-item > .nav-link.active {
+  background-color: #2c5d63 !important;
+  color: white !important;
+  border-bottom: 3px solid #1a383c !important;
+  font-weight: 500;
+}
