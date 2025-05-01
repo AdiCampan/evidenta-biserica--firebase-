@@ -14,7 +14,13 @@ import "react-datepicker/dist/react-datepicker.css"; // Importar los estilos de 
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 import "./ExternalFormsReview.scss";
 import { FaTrash } from "react-icons/fa";
-import { validateName, validatePhone, validateAddress, validateDate, sanitizeText } from "../utils/validation";
+import {
+  validateName,
+  validatePhone,
+  validateAddress,
+  validateDate,
+  sanitizeText,
+} from "../utils/validation";
 
 // Estilos para los mensajes de error
 const errorStyles = `
@@ -31,7 +37,7 @@ const errorStyles = `
 `;
 
 // Agregar estilos al documento
-const styleElement = document.createElement('style');
+const styleElement = document.createElement("style");
 styleElement.textContent = errorStyles;
 document.head.appendChild(styleElement);
 
@@ -98,53 +104,54 @@ const ExternalFormsReview = ({ persoane }) => {
 
     // Validar los campos del formulario antes de procesar
     const errors = {};
-    
+
     // Sanitizar y validar nombre y apellido
     const sanitizedFirstName = sanitizeText(personData.firstName);
     const sanitizedLastName = sanitizeText(personData.lastName);
-    
+
     if (!validateName(sanitizedFirstName)) {
       errors.firstName = "El nombre no es válido";
     }
-    
+
     if (!validateName(sanitizedLastName)) {
       errors.lastName = "El apellido no es válido";
     }
-    
+
     // Validar teléfono
     if (!validatePhone(personData.mobilePhone)) {
       errors.mobilePhone = "El número de teléfono no es válido";
     }
-    
+
     // Validar dirección
     if (!validateAddress(personData.address)) {
       errors.address = "La dirección no es válida";
     }
-    
+
     // Validar fecha de nacimiento
     if (personData.birthDate && !validateDate(personData.birthDate)) {
       errors.birthDate = "La fecha de nacimiento no es válida";
     }
-    
+
     // Validar género
     if (!personData.sex) {
       errors.sex = "Debe seleccionar un género";
     }
-    
+
     // Validar otras fechas si están presentes
     if (personData.baptiseDate && !validateDate(personData.baptiseDate)) {
       errors.baptiseDate = "La fecha de bautismo no es válida";
     }
-    
+
     if (personData.blessingDate && !validateDate(personData.blessingDate)) {
       errors.blessingDate = "La fecha de bendición no es válida";
     }
-    
+
     // Validar observaciones
     if (personData.observations && personData.observations.length > 500) {
-      errors.observations = "Las observaciones no pueden exceder los 500 caracteres";
+      errors.observations =
+        "Las observaciones no pueden exceder los 500 caracteres";
     }
-    
+
     // Si hay errores, mostrarlos y detener el envío
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -153,7 +160,7 @@ const ExternalFormsReview = ({ persoane }) => {
 
     // Limpiar errores si todo está bien
     setFormErrors({});
-    
+
     // Sanitizar las observaciones para prevenir inyección
     personData.observations = sanitizeText(personData.observations);
 
@@ -255,21 +262,20 @@ const ExternalFormsReview = ({ persoane }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Sanitizar el valor ingresado según el tipo de campo
     let sanitizedValue = value;
-    
+
     // Para campos de texto como nombres, direcciones, etc.
-    if (['firstName', 'lastName', 'address'].includes(name)) {
+    if (["firstName", "lastName", "address"].includes(name)) {
       sanitizedValue = sanitizeText(value);
     }
-    
+
     setPersonData({
       ...personData,
       [name]: sanitizedValue,
     });
   };
-
 
   return (
     <div>
@@ -305,50 +311,74 @@ const ExternalFormsReview = ({ persoane }) => {
                       Nume {`(obligatoriu)`}:
                       <input
                         required
-                        className={`input ${formErrors.lastName ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.lastName ? "is-invalid" : ""
+                        }`}
                         type="text"
                         name="lastName"
                         value={personData.lastName}
                         onChange={handleChange}
                       />
-                      {formErrors.lastName && <div className="error-message">{formErrors.lastName}</div>}
+                      {formErrors.lastName && (
+                        <div className="error-message">
+                          {formErrors.lastName}
+                        </div>
+                      )}
                     </label>
                     <label className="label">
                       Prenume {`(obligatoriu)`}:
                       <input
                         required
-                        className={`input ${formErrors.firstName ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.firstName ? "is-invalid" : ""
+                        }`}
                         type="text"
                         name="firstName"
                         value={personData.firstName}
                         onChange={handleChange}
                       />
-                      {formErrors.firstName && <div className="error-message">{formErrors.firstName}</div>}
+                      {formErrors.firstName && (
+                        <div className="error-message">
+                          {formErrors.firstName}
+                        </div>
+                      )}
                     </label>
 
                     <label className="label">
                       Adresa {`(obligatoriu)`}:
                       <input
                         required
-                        className={`input ${formErrors.address ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.address ? "is-invalid" : ""
+                        }`}
                         type="text"
                         name="address"
                         value={personData.address}
                         onChange={handleChange}
                       />
-                      {formErrors.address && <div className="error-message">{formErrors.address}</div>}
+                      {formErrors.address && (
+                        <div className="error-message">
+                          {formErrors.address}
+                        </div>
+                      )}
                     </label>
                     <label className="label">
                       Telefon {`(obligatoriu)`}:
                       <input
                         required
-                        className={`input ${formErrors.mobilePhone ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.mobilePhone ? "is-invalid" : ""
+                        }`}
                         type="text"
                         name="mobilePhone"
                         value={personData.mobilePhone}
                         onChange={handleChange}
                       />
-                      {formErrors.mobilePhone && <div className="error-message">{formErrors.mobilePhone}</div>}
+                      {formErrors.mobilePhone && (
+                        <div className="error-message">
+                          {formErrors.mobilePhone}
+                        </div>
+                      )}
                     </label>
                     <label className="label">
                       Data nasterii {`(obligatoriu)`}:
@@ -362,16 +392,24 @@ const ExternalFormsReview = ({ persoane }) => {
                         showYearDropdown
                         dropdownMode="select"
                         dateFormat="dd/MM/yyyy"
-                        className={`input ${formErrors.birthDate ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.birthDate ? "is-invalid" : ""
+                        }`}
                       />
-                      {formErrors.birthDate && <div className="error-message">{formErrors.birthDate}</div>}
+                      {formErrors.birthDate && (
+                        <div className="error-message">
+                          {formErrors.birthDate}
+                        </div>
+                      )}
                     </label>
 
                     <label className="label">
                       Gen {`(obligatoriu)`}:
                       <select
                         required
-                        className={`select ${formErrors.sex ? 'is-invalid' : ''}`}
+                        className={`select ${
+                          formErrors.sex ? "is-invalid" : ""
+                        }`}
                         name="sex"
                         value={personData.sex}
                         onChange={handleChange}
@@ -380,7 +418,9 @@ const ExternalFormsReview = ({ persoane }) => {
                         <option value="M">Masculin</option>
                         <option value="F">Femenin</option>
                       </select>
-                      {formErrors.sex && <div className="error-message">{formErrors.sex}</div>}
+                      {formErrors.sex && (
+                        <div className="error-message">{formErrors.sex}</div>
+                      )}
                     </label>
                   </div>
                   <div className="column-form">
@@ -402,9 +442,15 @@ const ExternalFormsReview = ({ persoane }) => {
                         showYearDropdown
                         dropdownMode="select"
                         dateFormat="dd/MM/yyyy"
-                        className={`input ${formErrors.blessingDate ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.blessingDate ? "is-invalid" : ""
+                        }`}
                       />
-                      {formErrors.blessingDate && <div className="error-message">{formErrors.blessingDate}</div>}
+                      {formErrors.blessingDate && (
+                        <div className="error-message">
+                          {formErrors.blessingDate}
+                        </div>
+                      )}
                     </label>
                     <label className="label">
                       Data Botezului:
@@ -418,9 +464,15 @@ const ExternalFormsReview = ({ persoane }) => {
                         showYearDropdown
                         dropdownMode="select"
                         dateFormat="dd/MM/yyyy"
-                        className={`input ${formErrors.blessingDate ? 'is-invalid' : ''}`}
+                        className={`input ${
+                          formErrors.blessingDate ? "is-invalid" : ""
+                        }`}
                       />
-                      {formErrors.blessingDate && <div className="error-message">{formErrors.blessingDate}</div>}
+                      {formErrors.blessingDate && (
+                        <div className="error-message">
+                          {formErrors.blessingDate}
+                        </div>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -432,7 +484,7 @@ const ExternalFormsReview = ({ persoane }) => {
                   rows="4"
                   placeholder="Escribe tus comentarios aquí..."
                   value={personData.observations} // Vinculamos el valor al estado
-                  className={`${formErrors.observations ? 'is-invalid' : ''}`}
+                  className={`${formErrors.observations ? "is-invalid" : ""}`}
                   onChange={(e) =>
                     setPersonData({
                       ...personData,
@@ -440,7 +492,9 @@ const ExternalFormsReview = ({ persoane }) => {
                     })
                   } // Actualizamos el estado cuando el usuario escribe
                 ></textarea>
-                {formErrors.observations && <div className="error-message">{formErrors.observations}</div>}
+                {formErrors.observations && (
+                  <div className="error-message">{formErrors.observations}</div>
+                )}
                 <button className="submit-btn" type="submit">
                   Actualizar
                 </button>
