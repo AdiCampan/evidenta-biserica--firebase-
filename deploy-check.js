@@ -1,4 +1,6 @@
 // Script para verificar variables de entorno antes del despliegue
+require('dotenv').config();
+
 const requiredEnvVars = [
   'VITE_API_KEY',
   'VITE_AUTH_DOMAIN',
@@ -9,6 +11,7 @@ const requiredEnvVars = [
   'VITE_DATABASE_URL'
 ];
 
+console.log('Verificando variables de entorno...');
 let missingVars = [];
 
 for (const varName of requiredEnvVars) {
