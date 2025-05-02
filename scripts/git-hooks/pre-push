@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Hook pre-push para automatizar el build y deploy
+echo "🔍 Ejecutando hook pre-push para build y deploy automático..."
+
+# Verificar si hay cambios sin commit
+if [[ $(git status --porcelain) ]]; then
+  echo "❌ Error: Hay cambios sin commit. Por favor, haz commit de todos los cambios antes de hacer push."
+  exit 1
+fi
+
+# Ejecutar verificación de variables de entorno
+echo "🔍 Verificando variables de entorno..."
+node "$(git rev-parse --show-toplevel)/deploy-check.js"
+
+# Si la verificación falla, el script se detendrá aquí debido al código de salida
+
+# Ejecutar build
+echo "🏗️ Ejecutando build..."
+npm run build
+
+# Si el build es exitoso, ejecutar deploy
+if [ $? -eq 0 ]; then
+  echo "🚀 Ejecutando deploy..."
+  firebase deploy
+  
+  if [ $? -eq 0 ]; then
+    echo "✅ Deploy completado con éxito."
+  else
+    echo "❌ Error durante el deploy."
+    exit 1
+  fi
+else
+  echo "❌ Error durante el build."
+  exit 1
+fi
+
+# Continuar con el push si todo fue exitoso
+exit 0

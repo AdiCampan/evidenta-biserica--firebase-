@@ -7,7 +7,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "node deploy-check.js",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy",
+    "postinstall": "node scripts/install-git-hooks.js",
+    "install-git-hooks": "node scripts/install-git-hooks.js"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",

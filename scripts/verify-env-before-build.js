@@ -1,4 +1,4 @@
-// Script para verificar variables de entorno antes del despliegue
+// Script para verificar variables de entorno antes del build en GitHub Actions
 require('dotenv').config();
 
 const requiredEnvVars = [
@@ -11,7 +11,7 @@ const requiredEnvVars = [
   'VITE_DATABASE_URL'
 ];
 
-console.log('Verificando variables de entorno...');
+console.log('Verificando variables de entorno para GitHub Actions...');
 let missingVars = [];
 let formatErrors = [];
 
@@ -41,5 +41,5 @@ if (missingVars.length > 0) {
 } else {
   console.log('✅ Todas las variables de entorno requeridas están presentes');
   console.log('✅ Todas las variables de entorno tienen el formato correcto');
-  console.log('✅ Procediendo con el despliegue...');
+  console.log('✅ Procediendo con el build...');
 }
