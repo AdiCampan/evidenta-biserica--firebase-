@@ -20,9 +20,11 @@ import Grafice from "./pages/Grafice";
 import LogIn from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
 import CreateAdmin from "./pages/Admin/CreateAdmin";
+import AdminManagement from "./pages/Admin/AdminManagement";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, firestore } from "./firebase-config";
 import { collection, onSnapshot, query } from "firebase/firestore";
+import { initializeAuthorizedAdmins } from "./utils/initializeAdminCollection";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import { AuthProvider, useAuth } from "./Context";
@@ -68,6 +70,11 @@ function MainApp() {
   const [persoane, setPersoane] = useState([]);
   const location = useLocation();
   const { currentUser } = useAuth();
+  
+  // Inicializar la colección de administradores autorizados al cargar la aplicación
+  useEffect(() => {
+    initializeAuthorizedAdmins();
+  }, []);
 
   // Solo cargar los datos si el usuario está logueado
   useEffect(() => {
@@ -133,6 +140,14 @@ function MainApp() {
           element={
             <AdminRoute>
               <CreateAdmin />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/manage"
+          element={
+            <AdminRoute>
+              <AdminManagement />
             </AdminRoute>
           }
         />

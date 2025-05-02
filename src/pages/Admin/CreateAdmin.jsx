@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase-config';
 import { useTranslation } from 'react-i18next';
 import { CiUser } from 'react-icons/ci';
@@ -29,9 +29,48 @@ const CreateAdmin = () => {
     pattern: {
       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
       message: 'Formato de correo electrónico inválido',
-    },
-    validate: (value) => {
-      return value === 'victor.calatayud.espinosa@gmail.com' || 'Solo se permite crear el usuario administrador especificado';
+    }
+  };
+
+  // Estado para almacenar la lista de correos autorizados desde Firestore
+  const [authorizedAdmins, setAuthorizedAdmins] = useState([]);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  
+  // Cargar la lista de correos autorizados desde Firestore
+  useEffect(() => {
+    const fetchAuthorizedEmails = async () => {
+      try {
+        const authorizedCollection = collection(firestore, 'authorizedAdmins');
+        const snapshot = await getDocs(authorizedCollection);
+        const emailsList = snapshot.docs.map(doc => doc.data().email);
+        setAuthorizedAdmins(emailsList);
+      } catch (error) {
+        console.error('Error al cargar la lista de administradores autorizados:', error);
+        // Si hay un error, permitir solo el correo por defecto como fallback
+        setAuthorizedAdmins(['victor.calatayud.espinosa@gmail.com']);
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    fetchAuthorizedEmails();
+  }, []);
+  
+  // Verificar si el correo está en la lista de administradores autorizados
+  const isAuthorizedAdmin = async (email) => {
+    // Verificar primero en la lista cargada en memoria
+    if (authorizedAdmins.includes(email)) return true;
+    
+    // Si no está en la lista en memoria, verificar directamente en Firestore
+    // (esto es útil si otro administrador acaba de añadir un nuevo correo autorizado)
+    try {
+      const authorizedCollection = collection(firestore, 'authorizedAdmins');
+      const q = query(authorizedCollection, where('email', '==', email));
+      const snapshot = await getDocs(q);
+      return !snapshot.empty;
+    } catch (error) {
+      console.error('Error al verificar autorización en Firestore:', error);
+      return false;
     }
   };
 
@@ -54,6 +93,18 @@ const CreateAdmin = () => {
 
     try {
       const { email, password } = data;
+      
+      // Verificar si el correo está autorizado para ser administrador
+      const isAuthorized = await isAuthorizedAdmin(email);
+      if (!isAuthorized) {
+        setSignUpError('Este correo electrónico no está autorizado para crear una cuenta de administrador.');
+        setError('email', { 
+          type: 'manual', 
+          message: 'Correo electrónico no autorizado para ser administrador' 
+        });
+        setLoading(false);
+        return;
+      }
       
       // 1. Crear el usuario en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -83,6 +134,22 @@ const CreateAdmin = () => {
     }
   };
 
+  // Mostrar un indicador de carga mientras se verifica la lista de autorizados
+  if (checkingAuth) {
+    return (
+      <main className="login">
+        <section className="login-section">
+          <div className="glass-container" style={{ textAlign: "center" }}>
+            <div className="spinner"></div>
+            <p style={{ color: "white", marginTop: "20px" }}>
+              Cargando configuración...
+            </p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="login">
       <section className="login-section">
@@ -100,7 +167,7 @@ const CreateAdmin = () => {
                   className="modern-input"
                   type="email"
                   placeholder="Correo electrónico"
-                  defaultValue="victor.calatayud.espinosa@gmail.com"
+                  defaultValue=""
                 />
                 {errors.email && <p className="error-message">{errors.email.message}</p>}
               </div>
@@ -160,6 +227,13 @@ const CreateAdmin = () => {
           </form>
 
           <div className="button-group" style={{ marginTop: "20px" }}>
+            <button
+              onClick={() => navigate('/admin/manage')}
+              className="secondary-button"
+              style={{ marginRight: '10px' }}
+            >
+              Gestionar Administradores
+            </button>
             <button
               onClick={() => navigate('/')}
               className="cancel-button"
