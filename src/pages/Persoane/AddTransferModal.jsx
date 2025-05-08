@@ -104,6 +104,9 @@ function AddTransferModal({
     if (filterType === "1") {
       modifyTransfer({
         // id: person.id,
+
+        churchID: "",
+        churchName: bisericaTransfer,
         leaveDate: dataTransfer,
         memberDate: "",
       });
@@ -111,6 +114,8 @@ function AddTransferModal({
     } else {
       modifyTransfer({
         // id: person.id,
+        churchID: 1,
+        churchName: "EBEN-EZER",
         leaveDate: "",
         memberDate: dataTransfer,
       });
