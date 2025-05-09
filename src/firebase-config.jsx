@@ -10,15 +10,40 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  projectId: "evidenta-bisericii",
-  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_APP_ID,
-  databaseURL: import.meta.env.VITE_DATABASE_URL,
+// Determinar el entorno actual de manera más robusta
+const isProduction = import.meta.env.PROD || import.meta.env.MODE === 'production';
+console.log(`Entorno actual: ${isProduction ? 'PRODUCCIÓN' : 'DESARROLLO'}`);
+console.log(`Valor de import.meta.env.MODE: ${import.meta.env.MODE}`);
+console.log(`Valor de import.meta.env.PROD: ${import.meta.env.PROD}`);
+
+
+// Configuración dinámica según el entorno
+// Asegurarse de que las variables de entorno estén definidas
+const getEnvVar = (key) => {
+  const value = import.meta.env[key];
+  if (!value) {
+    console.error(`Error: La variable de entorno ${key} no está definida`);
+    // Proporcionar un valor por defecto para evitar errores de inicialización
+    return key === 'VITE_PROJECT_ID' ? 'evidenta-bisericii' : '';
+  }
+  return value;
 };
+
+const firebaseConfig = {
+  apiKey: getEnvVar('VITE_API_KEY'),
+  authDomain: getEnvVar('VITE_AUTH_DOMAIN'),
+  projectId: getEnvVar('VITE_PROJECT_ID'),
+  storageBucket: getEnvVar('VITE_STORAGE_BUCKET').replace('gs://', ''),
+  messagingSenderId: getEnvVar('VITE_MESSAGING_SENDER_ID'),
+  appId: getEnvVar('VITE_APP_ID'),
+  databaseURL: getEnvVar('VITE_DATABASE_URL'),
+};
+
+console.log('Configuración de Firebase:', JSON.stringify(firebaseConfig, null, 2));
+
+
+console.log(`Conectando a Firebase: ${firebaseConfig.projectId}`);
+
 
 const app = initializeApp(firebaseConfig);
 
@@ -35,50 +60,3 @@ const analytics = getAnalytics(app);
 
 export { firestore, db, storage, Timestamp, analytics };
 export const auth = getAuth(app);
-
-// import { initializeApp } from "firebase/app";
-// import {
-//   getFirestore,
-//   Timestamp,
-//   enableIndexedDbPersistence,
-// } from "@firebase/firestore";
-// import { getDatabase } from "firebase/database";
-// import { getAuth } from "firebase/auth";
-// import { getStorage } from "firebase/storage";
-// import { getAnalytics } from "firebase/analytics";
-
-// const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_API_KEY,
-//   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-//   projectId: "evidenta-bisericii",
-//   storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-//   messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-//   appId: import.meta.env.VITE_APP_ID,
-//   databaseURL: import.meta.env.VITE_DATABASE_URL,
-// };
-
-// const app = initializeApp(firebaseConfig);
-// const firestore = getFirestore(app);
-// const db = getDatabase(app);
-// const storage = getStorage(app);
-// const analytics = getAnalytics(app);
-
-// // Habilitar la persistencia local en Firestore
-// enableIndexedDbPersistence(firestore)
-//   .then(() => {
-//     console.log("Persistencia de Firestore habilitada");
-//   })
-//   .catch((err) => {
-//     if (err.code === "failed-precondition") {
-//       console.log(
-//         "Persistencia fallida: solo puede estar habilitada en una pestaña a la vez"
-//       );
-//     } else if (err.code === "unimplemented") {
-//       console.log(
-//         "Persistencia no disponible: el navegador no soporta todas las características necesarias"
-//       );
-//     }
-//   });
-
-// export { firestore, db, storage, Timestamp, analytics };
-// export const auth = getAuth(app);
