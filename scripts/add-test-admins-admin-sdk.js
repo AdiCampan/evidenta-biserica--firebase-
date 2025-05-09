@@ -33,43 +33,73 @@ const firestore = admin.firestore();
  * para el entorno de prueba (test)
  */
 async function addTestAdmins() {
-  try {
-    console.log('Añadiendo administradores autorizados para el entorno de prueba...');
-    console.log(`Proyecto Firebase: ${process.env.VITE_PROJECT_ID}`);
-    
-    // Lista de correos a añadir como administradores
-    const adminEmails = [
-      'victor.calatayud.espinosa@gmail.com',
-      'secretariatebenezercastellon@gmail.com',
-      'adicampan1974@gmail.com'
-    ];
-    
-    const authorizedCollection = firestore.collection('authorizedAdmins');
-    
-    // Procesar cada correo
-    for (const email of adminEmails) {
-      // Verificar si el correo ya existe
-      const snapshot = await authorizedCollection.where('email', '==', email).get();
-      
-      if (snapshot.empty) {
-        // Si no existe, añadirlo
-        await authorizedCollection.add({
-          email: email,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          isTestAdmin: true // Marcar como administrador de prueba
-        });
-        console.log(`✅ Administrador autorizado añadido: ${email}`);
-      } else {
-        console.log(`ℹ️ El administrador ${email} ya está autorizado`);
-      }
+    try {
+        console.log('Añadiendo administradores autorizados para el entorno de prueba...');
+        console.log(`Proyecto Firebase: ${process.env.VITE_PROJECT_ID}`);
+        
+        // Lista de correos a añadir como administradores
+        const adminEmails = [
+            'victor.calatayud.espinosa@gmail.com',
+            'secretariatebenezercastellon@gmail.com',
+            'adicampan1974@gmail.com'
+        ];
+        
+        const authorizedCollection = firestore.collection('authorizedAdmins');
+        const usersCollection = firestore.collection('users');
+        const tempPassword = 'Admin2025!'; // Contraseña temporal
+        
+        // Procesar cada correo
+        for (const email of adminEmails) {
+            // 1. Verificar si ya está en authorizedAdmins
+            const adminSnapshot = await authorizedCollection.where('email', '==', email).get();
+            
+            if (adminSnapshot.empty) {
+                // Añadir a authorizedAdmins
+                await authorizedCollection.add({
+                    email: email,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    isTestAdmin: true
+                });
+                console.log(`✅ Administrador autorizado añadido: ${email}`);
+            } else {
+                console.log(`ℹ️ El administrador ${email} ya está autorizado`);
+            }
+            
+            // 2. Verificar si existe como usuario en Authentication
+            try {
+                const userRecord = await admin.auth().getUserByEmail(email);
+                console.log(`ℹ️ Usuario ya existe en Authentication: ${email}`);
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    // Crear usuario en Authentication
+                    await admin.auth().createUser({
+                        email: email,
+                        password: tempPassword,
+                        emailVerified: true
+                    });
+                    console.log(`✅ Usuario creado en Authentication: ${email}`);
+                    
+                    // Opcional: enviar correo de restablecimiento de contraseña
+                    await admin.auth().generatePasswordResetLink(email);
+                    console.log(`✉️ Enlace de restablecimiento enviado a: ${email}`);
+                }
+            }
+            
+            // 3. Añadir o actualizar en colección users
+            await usersCollection.doc(email).set({
+                email: email,
+                roles: ['admin', 'user'],
+                createdAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            console.log(`✅ Información de usuario guardada en Firestore: ${email}`);
+        }
+        
+        console.log('✅ Proceso completo: administradores añadidos y usuarios creados');
+        return true;
+    } catch (error) {
+        console.error('❌ Error en el proceso:', error);
+        return false;
     }
-    
-    console.log('✅ Proceso de añadir administradores de prueba completado');
-    return true;
-  } catch (error) {
-    console.error('❌ Error al añadir administradores de prueba:', error);
-    return false;
-  }
 }
 
 // Ejecutar la función
