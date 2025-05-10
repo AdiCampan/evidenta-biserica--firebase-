@@ -73,5 +73,33 @@
     "archive": "Arhivă",
     "login": "Autentificare",
     "logout": "Deconectare"
+  },
+  "table": {
+    "showing": "Se afișează",
+    "entriesOf": "înregistrări din",
+    "page": "Pagina",
+    "of": "din",
+    "to": "până la",
+    "entries": "înregistrări",
+    "noData": "Nu există date disponibile",
+    "filter": "Filtrează",
+    "search": "Caută",
+    "actions": "Acțiuni",
+    "edit": "Editează",
+    "delete": "Șterge",
+    "view": "Vizualizează",
+    "print": "Printează",
+    "export": "Exportă",
+    "first": "Prima",
+    "previous": "Anterioară",
+    "next": "Următoarea",
+    "lastName": "Nume",
+    "firstName": "Prenume",
+    "address": "Adresa",
+    "phone": "Telefon",
+    "age": "Varsta",
+    "birthDate": "Data nasterii",
+    "sex": "Sex",
+    "last": "Ultima"
   }
 }

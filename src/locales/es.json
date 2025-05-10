@@ -73,5 +73,33 @@
     "archive": "Archivo",
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión"
+  },
+  "table": {
+    "showing": "Mostrando",
+    "entriesOf": "registros de",
+    "page": "Página",
+    "of": "de",
+    "to": "a",
+    "entries": "registros",
+    "noData": "No hay datos disponibles",
+    "filter": "Filtrar",
+    "search": "Buscar",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "print": "Imprimir",
+    "export": "Exportar",
+    "first": "Primera",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "lastName": "Apellido",
+    "firstName": "Nombre",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "age": "Edad",
+    "birthDate": "Fecha de nacimiento",
+    "sex": "Sexo",
+    "last": "Última"
   }
 }

@@ -6,6 +6,7 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./index.css";
+import "./components/Button.scss"; // Estilos globales para botones
 import "./i18n"; // Importación crítica para i18n
 
 // Validar variables de entorno críticas al inicio

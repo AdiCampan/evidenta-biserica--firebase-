@@ -1,32 +1,23 @@
-import { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import { useGetMembersQuery } from "../../services/members";
+import PaginatedTable from "../../components/PaginatedTable";
+import { useTranslation } from "react-i18next";
 import {
   filterByText,
   formatDate,
-  searchField,
   filterByAgeGreater,
   filterByAgeSmaller,
-  filterByDate,
   calculateAge,
 } from "../../utils";
 import "./Boteze.scss";
 import Modal from "react-bootstrap/Modal";
-
-import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
-import { firestore } from "../../firebase-config";
-import { list } from "firebase/storage";
 
 function Boteze({ persoane }) {
   if (!persoane || persoane.length === 0) {
     return <div>Loading...</div>; // O un mensaje de estado inicial
   }
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
@@ -113,32 +104,26 @@ function Boteze({ persoane }) {
           <div className="title">
             <h3>BOTEZE în EBEN EZER</h3>
           </div>
-          <Table striped bordered hover size="sm">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Data Botezului</th>
-                <th>Slujitori Botez</th>
-                <th>Slujitori Invitati</th>
-              </tr>
-            </thead>
-            <tbody>
-              {persoane
-                ? filterMembers(persoane).map((p, index) => (
-                    <tr
-                      key={p?.id}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => listBaptized(p?.baptiseDate, p.baptisedBy)}
-                    >
-                      <td>{index + 1}</td>
-                      <td>{formatDate(p?.baptiseDate)}</td>
-                      <td>{p?.baptisedBy}</td>
-                      <td>{}</td>
-                    </tr>
-                  ))
-                : null}
-            </tbody>
-          </Table>
+          <PaginatedTable
+            data={persoane ? filterMembers(persoane).map((p, index) => ({
+              ...p,
+              index: index + 1,
+            })) : []}
+            columns={[
+              { key: 'index', label: '#', sortable: false },
+              { key: 'baptiseDate', label: t('table.baptismDate') || 'Data Botezului', sortable: true, 
+                render: (row) => formatDate(row.baptiseDate) },
+              { key: 'baptisedBy', label: t('table.baptismMinisters') || 'Slujitori Botez', sortable: true },
+              { key: 'invitedMinisters', label: t('table.invitedMinisters') || 'Slujitori Invitati', sortable: true }
+            ]}
+            onRowClick={(row) => listBaptized(row.baptiseDate, row.baptisedBy)}
+            defaultPageSize={10}
+            striped
+            bordered
+            hover
+            size="sm"
+            variant="light"
+          />
         </div>
         <Modal
           style={{ width: "100%" }}
@@ -160,44 +145,32 @@ function Boteze({ persoane }) {
               {baptisedBy && <div>{`Slujitori: ${baptisedBy}`} </div>}
             </Modal.Title>
           </Modal.Header>
-          <Table
+          <PaginatedTable
+            data={listByDateBaptized ? listByDateBaptized.map((p, index) => ({
+              ...p,
+              index: index + 1,
+              age: calculateAge(p.birthDate)
+            })) : []}
+            columns={[
+              { key: 'index', label: '#', sortable: false },
+              { key: 'lastName', label: t('table.lastName') || 'Nume', sortable: true },
+              { key: 'firstName', label: t('table.firstName') || 'Prenume', sortable: true },
+              { key: 'birthDate', label: t('table.birthDate') || 'D. Nasterii', sortable: true, 
+                render: (row) => formatDate(row.birthDate) },
+              { key: 'age', label: t('table.age') || 'Varsta', sortable: true },
+              { key: 'sex', label: t('table.sex') || 'Gen', sortable: true,
+                render: (row) => row.sex ? 'M' : 'F' },
+              { key: 'details', label: t('table.details') || 'Detalii', sortable: true }
+            ]}
+            onRowClick={(row) => goToPerson(row.id)}
+            defaultPageSize={10}
             striped
             bordered
             hover
+            size="sm"
             variant="dark"
-            style={{ width: "800px" }}
-          >
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nume</th>
-                <th>Prenume</th>
-                <th>D. Nasterii</th>
-                <th>Varsta</th>
-                <th>Gen</th>
-                <th>Detalii</th>
-              </tr>
-            </thead>
-            <tbody>
-              {listByDateBaptized
-                ? listByDateBaptized.map((p, index) => (
-                    <tr
-                      key={p.id}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => goToPerson(p.id)}
-                    >
-                      <td>{index + 1}</td>
-                      <td>{p.lastName}</td>
-                      <td>{p.firstName}</td>
-                      <td>{formatDate(p.birthDate)}</td>
-                      <td>{calculateAge(p.birthDate)}</td>
-                      <td>{p.sex ? "M" : "F"}</td>
-                      <td>{p.details}</td>
-                    </tr>
-                  ))
-                : null}
-            </tbody>
-          </Table>
+            className="baptism-list-table"
+          />
         </Modal>
       </div>
     </>

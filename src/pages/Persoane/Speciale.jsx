@@ -1,37 +1,25 @@
 import { useState, useEffect } from "react";
-import { Card, FormControl } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Table from "react-bootstrap/Table";
 import InputGroup from "react-bootstrap/InputGroup";
 import { Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import Confirmation from "../../Confirmation";
+import PaginatedTable from "../../components/PaginatedTable";
+import { useTranslation } from "react-i18next";
 import AddCazSpecial from "./AddCazSpecial";
 import { FaTrash, FaRegEdit } from "react-icons/fa";
 import {
-  calculateAge,
   formatDate,
-  searchField,
-  filterByText,
-  filterByAgeSmaller,
-  filterByAge,
-  filterByAgeGreater,
-  filterByDate,
-  filterBySex,
 } from "../../utils";
 import {
-  useGetSpecialCasesQuery,
   useModifySpecialCaseMutation,
 } from "../../services/specialCases";
-import {
-  useGetMembersQuery,
-  useModifyMemberMutation,
-} from "../../services/members";
 import {
   collection,
   deleteDoc,
@@ -48,34 +36,17 @@ const FILTER_LABEL = {
   2: "Exclus defintiv",
 };
 
-function uuid() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
-  );
-}
-
 const Speciale = ({ persoane }) => {
+  const { t } = useTranslation();
   const [filterType, setFilterType] = useState("1");
   const [filter, setFilter] = useState("all"); // Estado para el tipo de filtro
   const [cazuri, setCazuri] = useState([]);
-  const [dataOpencase, setDataOpenCase] = useState("");
   const [dataRezolvarii, setDataRezolvarii] = useState("");
   const [dataExcluderii, setDataExcluderii] = useState("");
   const [detalii, setDetalii] = useState("");
   const [idToDelete, setIdToDelete] = useState(null);
-  const [idToEdit, setIdToEdit] = useState(null);
   const [show, setShow] = useState(false);
-  const [resolved, setResolved] = useState(false);
   const [caseToEdit, setCaseToEdit] = useState(null);
-
-  // const { data: cazuriSpeciale, isLoading: cazuriSpecialeLoading } =
-  //   useGetSpecialCasesQuery();
-  const [modifySpecialCase] = useModifySpecialCaseMutation();
-  // const [modifyMember] = useModifyMemberMutation();
-  // const { data: persoane, isLoading: persoaneLoading } = useGetMembersQuery();
 
   //  ----------------  get list of all cases fron Firestore dataBase --------  //
   const q = query(collection(firestore, "specialCases"));
@@ -112,7 +83,6 @@ const Speciale = ({ persoane }) => {
     );
 
     setDetalii(caz.details);
-    setIdToEdit(caz.id);
   };
 
   const handleUpdate = async () => {
@@ -170,89 +140,98 @@ const Speciale = ({ persoane }) => {
   return (
     <div>
       <Card style={{ position: "inherit" }}>
-        <Table striped bordered hover size="sm">
-          <thead className="head-list">
-            <tr>
-              <th>#</th>
-              <th>Nume si Prenume</th>
-              <th>Data Deschiderii</th>
-              <th>Data Rezolvarii</th>
-              <th style={{ display: "flex" }}>
-                <div>Detalii Caz Special</div>
-                <InputGroup
-                  style={{
-                    width: "190px",
-                    marginRight: "20px",
-                  }}
-                  size="sm"
-                  className="mb-3"
-                >
-                  <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
-                </InputGroup>
-                <InputGroup className="mb-3" size="sm">
-                  <DropdownButton
-                    as={ButtonGroup}
-                    title={
-                      filter === "all"
-                        ? "Toate cazurile"
-                        : filter === "active"
-                        ? "Active"
-                        : "Rezolvate"
-                    }
-                    onSelect={(key) => setFilter(key)}
-                  >
-                    <Dropdown.Item eventKey="all">Toate cazurile</Dropdown.Item>
-                    <Dropdown.Item eventKey="active"> Active</Dropdown.Item>
-                    <Dropdown.Item eventKey="resolved">Rezolvate</Dropdown.Item>
-                  </DropdownButton>
-                </InputGroup>
-              </th>
-              <th style={{ width: "80px" }}>Actiuni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCazuri?.map((caz, index) => (
-              <tr
-                key={caz.id}
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+            <div>
+              <InputGroup
                 style={{
-                  backgroundColor: caz.endDate ? "#7ec07e80" : "#af404038",
+                  width: "190px",
+                  marginRight: "20px",
                 }}
+                size="sm"
+                className="mb-3"
               >
-                <td>{index + 1}</td>
-                <td>
-                  {persoane &&
-                  persoane.find((person) => person.id === caz.person) ? (
-                    <>
-                      {`${
-                        persoane.find((person) => person.id === caz.person)
-                          .lastName
-                      }  ${
-                        persoane.find((person) => person.id === caz.person)
-                          .firstName
-                      } `}
-                    </>
-                  ) : (
-                    "STERS din EVIDENTA !"
-                  )}
-                </td>
-
-                <td>{formatDate(caz.startDate)}</td>
-                <td>{formatDate(caz.endDate)}</td>
-                <td>{caz.details}</td>
-                <td>
-                  <FaRegEdit
-                    style={{ cursor: "pointer" }}
-                    onClick={() => editar(caz)}
-                  />
-                  <FaTrash
-                    style={{ cursor: "pointer", marginLeft: "30px" }}
-                    onClick={(event) => showDeleteModal(caz.id, event)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+                <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
+              </InputGroup>
+            </div>
+            <div>
+              <InputGroup className="mb-3" size="sm">
+                <DropdownButton
+                  as={ButtonGroup}
+                  title={
+                    filter === "all"
+                      ? "Toate cazurile"
+                      : filter === "active"
+                      ? "Active"
+                      : "Rezolvate"
+                  }
+                  id="bg-nested-dropdown"
+                >
+                  <Dropdown.Item
+                    eventKey="1"
+                    onClick={() => setFilter("all")}
+                  >
+                    Toate cazurile
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    eventKey="2"
+                    onClick={() => setFilter("active")}
+                  >
+                    Active
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    eventKey="3"
+                    onClick={() => setFilter("resolved")}
+                  >
+                    Rezolvate
+                  </Dropdown.Item>
+                </DropdownButton>
+              </InputGroup>
+            </div>
+          </div>
+          <PaginatedTable
+            data={filteredCazuri.map((caz, index) => {
+              const person = persoane?.find((p) => p.id === caz.person);
+              return {
+                ...caz,
+                index: index + 1,
+                personName: person ? `${person.lastName} ${person.firstName}` : 'STERS din EVIDENTA !',
+                person: person,
+                startDateFormatted: formatDate(caz.startDate),
+                endDateFormatted: formatDate(caz.endDate)
+              };
+            })}
+            columns={[
+              { key: 'index', label: '#', sortable: false },
+              { key: 'personName', label: t('table.fullName') || 'Nume si Prenume', sortable: true },
+              { key: 'startDateFormatted', label: t('table.openDate') || 'Data Deschiderii', sortable: true },
+              { key: 'endDateFormatted', label: t('table.resolveDate') || 'Data Rezolvarii', sortable: true },
+              { key: 'details', label: t('table.caseDetails') || 'Detalii Caz Special', sortable: true },
+              { key: 'actions', label: t('table.actions') || 'Actiuni', sortable: false,
+                render: (row) => (
+                  <div className="d-flex">
+                    <Button
+                      variant="outline-primary"
+                      onClick={() => editar({ ...row, person: row.person })}
+                    >
+                      <FaRegEdit />
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      onClick={(ev) => showDeleteModal(row.id, ev)}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </div>
+                )
+              }
+            ]}
+            defaultPageSize={10}
+            striped
+            bordered
+            hover
+            size="sm"
+            variant="light"
+          />
       </Card>
 
       <Modal show={show} onHide={handleClose}>

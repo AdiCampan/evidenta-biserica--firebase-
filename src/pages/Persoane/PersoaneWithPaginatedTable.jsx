@@ -1,6 +1,4 @@
 import Button from "react-bootstrap/Button";
-import PaginatedTable from "../../components/PaginatedTable";
-import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import AddPerson from "./AddPerson";
@@ -15,7 +13,6 @@ import {
   filterByAgeSmaller,
   filterByAge,
   filterByAgeGreater,
-  filterByDate,
   filterBySex,
   filterByAnyText,
 } from "../../utils";
@@ -28,6 +25,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import CSVUploader from "../../components/CSVUploader";
+import PaginatedTable from "../../components/PaginatedTable";
+import { useTranslation } from "react-i18next";
 
 function Persoane({ persoane }) {
   const { t } = useTranslation();
@@ -44,10 +43,6 @@ function Persoane({ persoane }) {
   const [masculin, setMasculin] = useState(false);
   const [feminin, setFeminin] = useState(false);
   const [ageFilterType, setAgeFilterType] = useState("1");
-  const [memberSorting, setMemberSorting] = useState({
-    field: null,
-    direction: null,
-  });
   const [baptisedOnly, setBaptisedOnly] = useState(false);
   const [notBabtisedOnly, setNotBaptisedOnly] = useState(false);
   const [blessedOnly, setBlessedOnly] = useState(false);
@@ -114,6 +109,7 @@ function Persoane({ persoane }) {
   const deleteMember = async (id) => {
     await deleteDoc(doc(firestore, "persoane", id));
   };
+  
   function filterMembers(members) {
     let filteredMembers = members;
 
@@ -220,7 +216,6 @@ function Persoane({ persoane }) {
 
   function deletePerson(id) {
     deleteMember(id);
-
     setIdToDelete(null);
   }
 
@@ -235,55 +230,41 @@ function Persoane({ persoane }) {
     }
   };
 
-  const filterBaptize = (members) => {
-    let filteredMembers = members;
-    filteredMembers = filterByDate(filteredMembers, "baptiseDate");
-    return filteredMembers;
-  };
+  // Definir las columnas para la tabla paginada
+  const columns = [
+    { key: 'index', label: '#', sortable: false },
+    { key: 'lastName', label: t('table.lastName') || 'Nume', sortable: true },
+    { key: 'firstName', label: t('table.firstName') || 'Prenume', sortable: true },
+    { key: 'address', label: t('table.address') || 'Adresa', sortable: true },
+    { key: 'mobilePhone', label: t('table.phone') || 'Telefon', sortable: true },
+    { key: 'age', label: t('table.age') || 'Varsta', sortable: true },
+    { key: 'birthDate', label: t('table.birthDate') || 'Data nasterii', sortable: true, 
+      render: (row) => formatDate(row.birthDate) },
+    { key: 'sex', label: t('table.sex') || 'Sex', sortable: true,
+      render: (row) => row.sex ? 'M' : 'F' },
+    { key: 'actions', label: t('table.actions') || 'Actiuni', sortable: false,
+      render: (row) => (
+        <Button
+          variant="primary"
+          onClick={(event) => {
+            event.stopPropagation();
+            showDeleteModal(row.id, event);
+          }}
+        >
+          {t('table.delete') || 'Sterge'}
+        </Button>
+      ) }
+  ];
 
-  const sortList = (a, b) => {
-    if (!memberSorting.field) {
-      return 1;
-    }
-    // ascendent
-    if (memberSorting.direction === "asc") {
-      if (
-        a[memberSorting.field]?.toLowerCase() >
-        b[memberSorting.field]?.toLowerCase()
-      ) {
-        return 1;
-      }
-      return -1;
-      // descendent
-    } else {
-      if (
-        a[memberSorting.field]?.toLowerCase() <
-        b[memberSorting.field]?.toLowerCase()
-      ) {
-        return 1;
-      }
-      return -1;
-    }
-  };
-
-  const sorting = (field) => {
-    let newDirection = "asc";
-
-    // 1. nu e setat deloc, deci trebuie pus ascendent
-    if (memberSorting.direction === null) {
-      newDirection = "asc";
-      // 2. e setat ascendent, deci trebuie pus descendent
-    } else if (memberSorting.direction === "asc") {
-      newDirection = "desc";
-      // 3 e setat descendent, deci trebuie pus ascendent
-    } else {
-      newDirection = "asc";
-    }
-
-    setMemberSorting({
-      field: field,
-      direction: newDirection,
-    });
+  // Preparar los datos para la tabla paginada
+  const prepareTableData = () => {
+    if (!persoane) return [];
+    
+    return filterMembers(persoane).map((p, index) => ({
+      ...p,
+      index: index + 1,
+      age: calculateAge(p.birthDate)
+    }));
   };
 
   return (
@@ -299,7 +280,7 @@ function Persoane({ persoane }) {
             variant="primary"
             style={{ marginLeft: "10px" }}
           >
-            Imprimir
+            {t('table.print') || 'Imprimir'}
           </Button>
         </div>
         <div ref={tableRef} className="printable-table">
@@ -357,35 +338,8 @@ function Persoane({ persoane }) {
 
           {/* Implementación de PaginatedTable */}
           <PaginatedTable
-            data={persoane ? filterMembers(persoane).map((p, index) => ({
-              ...p,
-              index: index + 1,
-              age: calculateAge(p.birthDate)
-            })) : []}
-            columns={[
-              { key: 'index', label: '#', sortable: false },
-              { key: 'lastName', label: t('table.lastName'), sortable: true },
-              { key: 'firstName', label: t('table.firstName'), sortable: true },
-              { key: 'address', label: t('table.address'), sortable: true },
-              { key: 'mobilePhone', label: t('table.phone'), sortable: true },
-              { key: 'age', label: t('table.age'), sortable: true },
-              { key: 'birthDate', label: t('table.birthDate'), sortable: true, 
-                render: (row) => formatDate(row.birthDate) },
-              { key: 'sex', label: t('table.sex'), sortable: true,
-                render: (row) => row.sex ? 'M' : 'F' },
-              { key: 'actions', label: t('table.actions'), sortable: false,
-                render: (row) => (
-                  <Button
-                    variant="primary"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      showDeleteModal(row.id, event);
-                    }}
-                  >
-                    {t('table.delete')}
-                  </Button>
-                ) }
-            ]}
+            data={prepareTableData()}
+            columns={columns}
             onRowClick={(row) => goToPerson(row.id)}
             defaultPageSize={10}
             striped
@@ -393,6 +347,7 @@ function Persoane({ persoane }) {
             hover
             size="sm"
             variant="light"
+            className=""
           />
         </div>
         <ScrollButton />
