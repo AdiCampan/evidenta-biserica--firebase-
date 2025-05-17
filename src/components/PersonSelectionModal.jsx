@@ -16,7 +16,7 @@ const PersonSelectionModal = ({ show, onHide, matches, onSelect }) => {
               action
               onClick={() => onSelect(person)}
             >
-              {`${person.firstName} ${person.lastName} - Dirección: ${
+              {`${person.lastName} ${person.firstName} - Dirección: ${
                 person.address || "Desconocida"
               }`}
             </ListGroup.Item>
