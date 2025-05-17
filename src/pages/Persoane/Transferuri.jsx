@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import Table from "react-bootstrap/Table";
 import { Button, Card } from "react-bootstrap";
-import { FaTrash, FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import { FaTrash, FaRegEdit } from "react-icons/fa";
 import AddTransferModal from "./AddTransferModal";
 import { calculateAge, formatDate } from "../../utils";
 import {
@@ -14,17 +13,16 @@ import {
 import { firestore } from "../../firebase-config";
 import Confirmation from "../../Confirmation";
 import ScrollButton from "../../ScrollButton";
+import PaginatedTable from "../../components/PaginatedTable";
+import { useTranslation } from "react-i18next";
 import "./Transferuri.scss";
 
+
 const Transferuri = ({ persoane }) => {
+  const { t } = useTranslation();
   const [transfers, setTransfers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc"); // Estado para controlar el orden (ascendente/descendente)
-  const [sortedTransfers, setSortedTransfers] = useState([]); // Estado para los transfers ordenados
-  const [sortByDateAsc, setSortByDateAsc] = useState(true); // Estado para ordenar por fecha
-
-  console.log("transfers", transfers);
 
   // Crear un mapa de personas para acceso rápido por ID
   const persoaneMap = persoane?.reduce((map, person) => {
@@ -48,46 +46,14 @@ const Transferuri = ({ persoane }) => {
     return () => unsubscribe();
   }, [persoane, showModal]);
 
-  useEffect(() => {
-    // Ordenar los transfers cada vez que cambie el orden o los datos
-    sortTransfersByName();
-  }, [transfers, sortOrder]);
-
-  // Función para alternar entre orden ascendente y descendente
-  const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
-  };
-
-  // Función para ordenar los transfers por "Nume și Prenume"
-  const sortTransfersByName = () => {
-    const sorted = [...transfers].sort((a, b) => {
-      const personA = persoaneMap[a.owner];
-      const personB = persoaneMap[b.owner];
-
-      if (!personA || !personB) return 0;
-
-      const fullNameA =
-        `${personA.lastName} ${personA.firstName}`.toLowerCase();
-      const fullNameB =
-        `${personB.lastName} ${personB.firstName}`.toLowerCase();
-
-      if (sortOrder === "asc") {
-        return fullNameA.localeCompare(fullNameB);
-      } else {
-        return fullNameB.localeCompare(fullNameA);
-      }
-    });
-
-    setSortedTransfers(sorted);
-  };
-
   const addTransfer = (transfer) => {
     const transfersActualizados = [transfer, ...transfers];
     setTransfers(transfersActualizados);
   };
 
-  const showDeleteModal = (personId) => {
+  const showDeleteModal = (personId, ev) => {
     setIdToDelete(personId);
+    if (ev) ev.stopPropagation();
   };
 
   const deleteTransfer = async (id) => {
@@ -97,93 +63,84 @@ const Transferuri = ({ persoane }) => {
 
   const intrati = ["baptise", "transferFrom"];
 
-  // Función para ordenar por fecha
-  const sortByDate = () => {
-    const sorted = [...transfers].sort((a, b) => {
-      // Convertir los Timestamp a objetos Date
-      const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-      const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-
-      // Ordenar ascendente o descendente según el estado
-      return sortByDateAsc ? dateA - dateB : dateB - dateA;
-    });
-
-    setSortedTransfers(sorted); // Actualizar sortedTransfers en lugar de transfers
-    setSortByDateAsc(!sortByDateAsc); // Alternar entre ascendente y descendente
-  };
-
   return (
-    <>
-      <Card style={{ position: "inherit" }}>
-        <Table striped bordered hover size="sm" className="table-resizable">
-          <thead className="head-list">
-            <tr>
-              <th>#</th>
-              <th onClick={toggleSortOrder} style={{ cursor: "pointer" }}>
-                Nume si Prenume <FaSort />{" "}
-                {/* Icono para indicar que se puede ordenar */}
-              </th>
-              <th>
-                Transferat
-                <Button
-                  variant="primary"
-                  style={{ marginLeft: "40px" }}
-                  onClick={() => setShowModal(true)}
-                >
-                  Adauga un TRANSFER
-                </Button>
-              </th>
-              <th onClick={sortByDate} style={{ cursor: "pointer" }}>
-                Data transferului{" "}
-                {sortByDateAsc ? <FaSortUp /> : <FaSortDown />}
-              </th>
-              <th>Act de transfer</th>
-              <th>Detalii</th>
-              <th>Varsta</th>
-              <th>Actiuni</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedTransfers.map((transfer, index) => {
-              const person = persoaneMap[transfer?.owner];
-              if (!person) return null; // Ignorar si la persona no existe
+    <div>
+      <Card style={{ padding: "1.5rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+          <div>
+            <Button
+              variant="primary"
+              onClick={() => setShowModal(true)}
+            >
+              Adauga un TRANSFER
+            </Button>
+          </div>
+        </div>
+        <PaginatedTable
+           data={transfers.map((transfer, index) => {
+             const person = persoaneMap[transfer?.owner];
+             if (!person) return null; // Ignorar si la persona no existe
 
-              return (
-                <tr
-                  key={index}
-                  style={{
-                    backgroundColor: intrati.includes(transfer?.type)
-                      ? "#00c90057"
-                      : "#ff000021",
-                  }}
-                >
-                  <td>{index + 1}</td>
-                  <td>
-                    {(person.lastName || "").trim() +
-                      " " +
-                      (person.firstName || "").trim()}
-                  </td>
-                  <td>
-                    {intrati.includes(transfer.type) ? "din" : "in"}{" "}
-                    {transfer.churchTransfer}
-                  </td>
-                  <td>{formatDate(transfer.date)}</td>
-                  <td>{transfer.docNumber}</td>
-                  <td style={{ wordBreak: "break-all", maxWidth: "200px" }}>
-                    {transfer.details}
-                  </td>
-                  <td>{calculateAge(person.birthDate)}</td>
-                  <td>
-                    <FaTrash
-                      style={{ cursor: "pointer" }}
-                      onClick={() => showDeleteModal(transfer?.id)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+             return {
+               ...transfer,
+               index: index + 1,
+               personName: (person.lastName || "").trim() + " " + (person.firstName || "").trim(),
+               person: person,
+               transferDirection: intrati.includes(transfer.type) ? "din" : "in",
+               churchName: transfer.churchTransfer,
+               dateFormatted: formatDate(transfer.date),
+               age: calculateAge(person.birthDate),
+               isIncoming: intrati.includes(transfer.type)
+             };
+           }).filter(Boolean)}
+          columns={[
+             { key: 'index', label: '#', sortable: false },
+             { key: 'personName', label: t('table.fullName') || 'Nume si Prenume', sortable: true },
+             { 
+               key: 'transferDirection', 
+               label: 'Transferat', 
+               sortable: true,
+               render: (row) => `${row.transferDirection} ${row.churchName}`
+             },
+             { key: 'dateFormatted', label: 'Data transferului', sortable: true },
+             { key: 'docNumber', label: 'Act de transfer', sortable: true },
+             { 
+               key: 'details', 
+               label: 'Detalii', 
+               sortable: true,
+               render: (row) => (
+                 <div style={{ wordBreak: "break-all", maxWidth: "200px" }}>
+                   {row.details}
+                 </div>
+               )
+             },
+             { key: 'age', label: 'Varsta', sortable: true },
+             { 
+               key: 'actions', 
+               label: t('table.actions') || 'Actiuni', 
+               sortable: false,
+               render: (row) => (
+                 <div className="d-flex">
+                   <Button
+                     variant="outline-danger"
+                     onClick={(ev) => showDeleteModal(row.id, ev)}
+                   >
+                     <FaTrash />
+                   </Button>
+                 </div>
+               )
+             }
+           ]}
+           onRowClick={() => {}}
+           className="transfers-table"
+           striped={false}
+           rowClassName={(row) => row.isIncoming ? "incoming-transfer" : "outgoing-transfer"}
+          defaultPageSize={10}
+          bordered
+          hover
+          size="sm"
+          variant="light"
+        />
         <ScrollButton />
         <AddTransferModal
           persoane={persoane}
@@ -199,7 +156,7 @@ const Transferuri = ({ persoane }) => {
         message="Esti sigur ca vrei sa stergi transferul din baza de date ?"
         hideModal={() => setIdToDelete(null)}
       />
-    </>
+    </div>
   );
 };
 

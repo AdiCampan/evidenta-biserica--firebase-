@@ -75,6 +75,13 @@
     "logout": "Cerrar Sesión"
   },
   "table": {
+    "baptismDate": "Fecha de Bautismo",
+    "baptismMinisters": "Ministros de Bautismo",
+    "invitedMinisters": "Ministros Invitados",
+    "fullName": "Nombre Completo",
+    "openDate": "Fecha de Apertura",
+    "resolveDate": "Fecha de Resolución",
+    "caseDetails": "Detalles del Caso",
     "showing": "Mostrando",
     "entriesOf": "registros de",
     "page": "Página",
@@ -98,6 +105,10 @@
     "address": "Dirección",
     "phone": "Teléfono",
     "age": "Edad",
+    "min-age": "Edad mínima",
+    "max-age": "Edad máxima",
+    "minimum": "mínima",
+    "maximum": "máxima",
     "birthDate": "Fecha de nacimiento",
     "sex": "Sexo",
     "last": "Última"

@@ -168,7 +168,7 @@ function Boteze({ persoane }) {
             bordered
             hover
             size="sm"
-            variant="dark"
+            variant="light"
             className="baptism-list-table"
           />
         </Modal>

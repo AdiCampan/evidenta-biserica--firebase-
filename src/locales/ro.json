@@ -75,6 +75,13 @@
     "logout": "Deconectare"
   },
   "table": {
+    "baptismDate": "Data botezei",
+    "baptismMinisters": "Botezatori",
+    "invitedMinisters": "Ministri invitați",
+    "fullName": "Nume complet",
+    "openDate": "Data deschidere",
+    "resolveDate": "Data de rezolvare",
+    "caseDetails": "Detalii caz",
     "showing": "Se afișează",
     "entriesOf": "înregistrări din",
     "page": "Pagina",
@@ -98,6 +105,10 @@
     "address": "Adresa",
     "phone": "Telefon",
     "age": "Varsta",
+    "min-age": "Varsta minima",
+    "max-age": "Varsta maxima",
+    "minimum": "minimă",
+    "maximum": "maximă",
     "birthDate": "Data nasterii",
     "sex": "Sex",
     "last": "Ultima"

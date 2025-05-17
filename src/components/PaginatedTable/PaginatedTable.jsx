@@ -223,8 +223,8 @@ const PaginatedTable = ({
   return (
     <div className={`paginated-table-container ${className}`}>
       <div className="table-controls mb-3">
-        <Row>
-          <Col xs={12} md={6} className="d-flex align-items-center mb-2 mb-md-0">
+        <div className="d-flex flex-wrap align-items-center justify-content-between">
+          <div className="d-flex align-items-center flex-nowrap me-3 mb-2 mb-md-0">
             <span className="me-2">{t('table.showing')}</span>
             <Form.Select
               size="sm"
@@ -241,13 +241,13 @@ const PaginatedTable = ({
             </Form.Select>
             <span className="me-2">{t('table.entriesOf')}</span>
             <strong>{filteredData.length}</strong>
-          </Col>
-          <Col xs={12} md={6} className="d-flex justify-content-md-end">
-            <div className="table-info">
+          </div>
+          <div className="table-info">
+            <span className="d-inline-flex align-items-center flex-nowrap">
               {t('table.page')} {currentPage} {t('table.of')} {totalPages || 1}
-            </div>
-          </Col>
-        </Row>
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="table-responsive">
@@ -266,6 +266,7 @@ const PaginatedTable = ({
                   key={column.key}
                   className={column.sortable ? 'sortable-header' : ''}
                   onClick={column.sortable ? () => handleSort(column.key) : undefined}
+                  style={{ width: column.width || 'auto' }}
                 >
                   <div className="d-flex align-items-center">
                     <span>{column.label}</span>
@@ -332,12 +333,16 @@ const PaginatedTable = ({
         </Table>
       </div>
 
-      <div className="d-flex justify-content-between align-items-center">
-        <div className="table-info-bottom">
-          {t('table.showing')} {Math.min(filteredData.length, (currentPage - 1) * pageSize + 1)} {t('table.to')}{' '}
-          {Math.min(filteredData.length, currentPage * pageSize)} {t('table.of')} {filteredData.length} {t('table.entries')}
+      <div className="d-flex flex-wrap justify-content-between align-items-center">
+        <div className="table-info-bottom mb-3 mb-md-0">
+          <span className="d-inline-flex align-items-center flex-nowrap">
+            {t('table.showing')} {Math.min(filteredData.length, (currentPage - 1) * pageSize + 1)} {t('table.to')}{' '}
+            {Math.min(filteredData.length, currentPage * pageSize)} {t('table.of')} {filteredData.length} {t('table.entries')}
+          </span>
         </div>
-        {renderPagination()}
+        <div className="pagination-container">
+          {renderPagination()}
+        </div>
       </div>
     </div>
   );

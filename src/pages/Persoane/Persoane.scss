@@ -1,5 +1,7 @@
 .page-persons {
-  background-color: rgba(211, 211, 211, 0.836);
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
 
   .age-input {
     max-width: 45px;
@@ -11,10 +13,12 @@
 
   .search-input {
     max-width: 150px;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .barra-buttons {
-    margin: 5px;
+    margin: 5px 0 5px -10px;
     display: flex;
     justify-content: flex-start;
   }
@@ -59,6 +63,12 @@
 //     display: none !important;
 //   }
 // }
+.lista_persoane {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+
 @media print {
   .no-print {
     display: none !important;

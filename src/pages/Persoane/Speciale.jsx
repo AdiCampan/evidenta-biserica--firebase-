@@ -139,12 +139,11 @@ const Speciale = ({ persoane }) => {
 
   return (
     <div>
-      <Card style={{ position: "inherit" }}>
+      <Card style={{ padding: "1.5rem"}}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
             <div>
               <InputGroup
                 style={{
-                  width: "190px",
                   marginRight: "20px",
                 }}
                 size="sm"

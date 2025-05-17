@@ -82,7 +82,6 @@ function AddPerson({ label }) {
   return (
     <>
       <Button
-        style={{ marginLeft: "20px" }}
         variant="primary"
         onClick={() => setShow(true)}
       >
