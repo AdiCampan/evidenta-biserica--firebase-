@@ -21,6 +21,7 @@ import {
   validateDate,
   sanitizeText,
 } from "../utils/validation";
+import PersonSelectionModal from "./PersonSelectionModal";
 
 // Estilos para los mensajes de error
 const errorStyles = `
@@ -57,6 +58,11 @@ const ExternalFormsReview = ({ persoane }) => {
     blessingDate: null,
     profileImage: selectedFile,
     observations: "",
+  });
+  const [modalData, setModalData] = useState({
+    show: false,
+    matches: [],
+    onSelect: () => {},
   });
 
   const [selectedForm, setSelectedForm] = useState(null);
@@ -98,14 +104,158 @@ const ExternalFormsReview = ({ persoane }) => {
 
   const [formErrors, setFormErrors] = useState({});
 
-  const handleSubmit = async (e) => {
-    setSelectedForm(null);
-    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+  function similarityScore(str1, str2) {
+    if (!str1 || !str2) return 0;
+    str1 = str1.toLowerCase().trim();
+    str2 = str2.toLowerCase().trim();
 
-    // Validar los campos del formulario antes de procesar
+    const longer = str1.length > str2.length ? str1 : str2;
+    const shorter = str1.length > str2.length ? str2 : str1;
+
+    const intersection = [...shorter].filter((char) =>
+      longer.includes(char)
+    ).length;
+
+    return intersection / longer.length;
+  }
+
+  // const handleSubmit = async (e) => {
+  //   setSelectedForm(null);
+  //   e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+  //   // Validar los campos del formulario antes de procesar
+  //   const errors = {};
+
+  //   // Sanitizar y validar nombre y apellido
+  //   const sanitizedFirstName = sanitizeText(personData.firstName);
+  //   const sanitizedLastName = sanitizeText(personData.lastName);
+
+  //   if (!validateName(sanitizedFirstName)) {
+  //     errors.firstName = "El nombre no es válido";
+  //   }
+
+  //   if (!validateName(sanitizedLastName)) {
+  //     errors.lastName = "El apellido no es válido";
+  //   }
+
+  //   // Validar teléfono
+  //   if (!validatePhone(personData.mobilePhone)) {
+  //     errors.mobilePhone = "El número de teléfono no es válido";
+  //   }
+
+  //   // Validar dirección
+  //   if (!validateAddress(personData.address)) {
+  //     errors.address = "La dirección no es válida";
+  //   }
+
+  //   // Validar fecha de nacimiento
+  //   if (personData.birthDate && !validateDate(personData.birthDate)) {
+  //     errors.birthDate = "La fecha de nacimiento no es válida";
+  //   }
+
+  //   // Validar género
+  //   if (!personData.sex) {
+  //     errors.sex = "Debe seleccionar un género";
+  //   }
+
+  //   // Validar otras fechas si están presentes
+  //   if (personData.baptiseDate && !validateDate(personData.baptiseDate)) {
+  //     errors.baptiseDate = "La fecha de bautismo no es válida";
+  //   }
+
+  //   if (personData.blessingDate && !validateDate(personData.blessingDate)) {
+  //     errors.blessingDate = "La fecha de bendición no es válida";
+  //   }
+
+  //   // Validar observaciones
+  //   if (personData.observations && personData.observations.length > 500) {
+  //     errors.observations =
+  //       "Las observaciones no pueden exceder los 500 caracteres";
+  //   }
+
+  //   // Si hay errores, mostrarlos y detener el envío
+  //   if (Object.keys(errors).length > 0) {
+  //     setFormErrors(errors);
+  //     return;
+  //   }
+
+  //   // Limpiar errores si todo está bien
+  //   setFormErrors({});
+
+  //   // Sanitizar las observaciones para prevenir inyección
+  //   personData.observations = sanitizeText(personData.observations);
+
+  //   if (persoane) {
+  //     try {
+  //       const existingPerson = persoane?.find(
+  //         (p) =>
+  //           p.firstName?.toLowerCase().trim() ===
+  //             sanitizedFirstName.toLowerCase().trim() &&
+  //           p.lastName?.toLowerCase().trim() ===
+  //             sanitizedLastName.toLowerCase().trim()
+  //       );
+
+  //       if (existingPerson) {
+  //         // Obtener el valor actual de 'observations' de la persona
+  //         const personRef = doc(firestore, "persoane", existingPerson.id);
+  //         const personDoc = await getDoc(personRef);
+
+  //         // Si existe el documento de la persona
+  //         if (personDoc.exists()) {
+  //           const currentPersonData = personDoc.data();
+  //           const existingObservations = currentPersonData.observations || ""; // Valor actual de 'observations'
+
+  //           // Concatenar el nuevo valor de observations al valor existente
+  //           const newObservations = personData.observations
+  //             ? `${existingObservations} ${personData.observations}` // Agregar espacio entre ambos textos
+  //             : existingObservations;
+
+  //           // Crear un nuevo objeto solo con los campos no vacíos
+  //           const updatedFields = Object.keys(personData).reduce((acc, key) => {
+  //             if (
+  //               personData[key] !== "" &&
+  //               personData[key] !== null &&
+  //               personData[key] !== undefined
+  //             ) {
+  //               acc[key] = personData[key];
+  //             }
+  //             return acc;
+  //           }, {});
+
+  //           // Actualizar el campo 'observations' concatenado
+  //           updatedFields.observations = newObservations;
+
+  //           // Si la persona existe, actualizar el documento en Firestore
+  //           if (updatedFields.sex) {
+  //             updatedFields.sex = updatedFields.sex === "M" ? true : false;
+  //           }
+
+  //           await updateDoc(personRef, updatedFields);
+
+  //           // Eliminar el formulario de la colección temporal
+  //           await deleteDoc(doc(firestore, "externalForms", form?.id));
+
+  //           alert("FISA ACTUALIZATA CORECT !!! ");
+  //           setExternalForms(externalForms.filter((f) => f.id !== form.id)); // Eliminar formulario sincronizado de la lista
+  //           setForm(null); // Limpiar el formulario actual
+  //         } else {
+  //           alert("No se encontró una persona con esos datos.");
+  //         }
+  //       } else {
+  //         alert("No se encontró una persona con esos datos.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error al sincronizar el formulario:", error);
+  //     }
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSelectedForm(null);
+
     const errors = {};
 
-    // Sanitizar y validar nombre y apellido
     const sanitizedFirstName = sanitizeText(personData.firstName);
     const sanitizedLastName = sanitizeText(personData.lastName);
 
@@ -117,27 +267,22 @@ const ExternalFormsReview = ({ persoane }) => {
       errors.lastName = "El apellido no es válido";
     }
 
-    // Validar teléfono
     if (!validatePhone(personData.mobilePhone)) {
       errors.mobilePhone = "El número de teléfono no es válido";
     }
 
-    // Validar dirección
     if (!validateAddress(personData.address)) {
       errors.address = "La dirección no es válida";
     }
 
-    // Validar fecha de nacimiento
     if (personData.birthDate && !validateDate(personData.birthDate)) {
       errors.birthDate = "La fecha de nacimiento no es válida";
     }
 
-    // Validar género
     if (!personData.sex) {
       errors.sex = "Debe seleccionar un género";
     }
 
-    // Validar otras fechas si están presentes
     if (personData.baptiseDate && !validateDate(personData.baptiseDate)) {
       errors.baptiseDate = "La fecha de bautismo no es válida";
     }
@@ -146,86 +291,94 @@ const ExternalFormsReview = ({ persoane }) => {
       errors.blessingDate = "La fecha de bendición no es válida";
     }
 
-    // Validar observaciones
     if (personData.observations && personData.observations.length > 500) {
       errors.observations =
         "Las observaciones no pueden exceder los 500 caracteres";
     }
 
-    // Si hay errores, mostrarlos y detener el envío
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
 
-    // Limpiar errores si todo está bien
     setFormErrors({});
-
-    // Sanitizar las observaciones para prevenir inyección
     personData.observations = sanitizeText(personData.observations);
 
-    if (persoane) {
-      try {
-        const existingPerson = persoane?.find(
-          (p) =>
-            p.firstName?.toLowerCase().trim() ===
-              sanitizedFirstName.toLowerCase().trim() &&
-            p.lastName?.toLowerCase().trim() ===
-              sanitizedLastName.toLowerCase().trim()
-        );
+    try {
+      // const matchedPersons = persoane?.filter(
+      //   (p) =>
+      //     p.firstName?.toLowerCase().trim() === sanitizedFirstName.toLowerCase().trim() &&
+      //     p.lastName?.toLowerCase().trim() === sanitizedLastName.toLowerCase().trim()
+      // );
+      const matchedPersons = persoane?.filter((p) => {
+        const scoreFirst = similarityScore(p.firstName, sanitizedFirstName);
+        const scoreLast = similarityScore(p.lastName, sanitizedLastName);
+        const avgScore = (scoreFirst + scoreLast) / 2;
 
-        if (existingPerson) {
-          // Obtener el valor actual de 'observations' de la persona
-          const personRef = doc(firestore, "persoane", existingPerson.id);
-          const personDoc = await getDoc(personRef);
+        return avgScore >= 0.7; // Puedes ajustar este umbral
+      });
 
-          // Si existe el documento de la persona
-          if (personDoc.exists()) {
-            const currentPersonData = personDoc.data();
-            const existingObservations = currentPersonData.observations || ""; // Valor actual de 'observations'
+      const updateExistingPerson = async (existingPerson) => {
+        const personRef = doc(firestore, "persoane", existingPerson.id);
+        const personDoc = await getDoc(personRef);
 
-            // Concatenar el nuevo valor de observations al valor existente
-            const newObservations = personData.observations
-              ? `${existingObservations} ${personData.observations}` // Agregar espacio entre ambos textos
-              : existingObservations;
+        if (personDoc.exists()) {
+          const currentPersonData = personDoc.data();
+          const existingObservations = currentPersonData.observations || "";
 
-            // Crear un nuevo objeto solo con los campos no vacíos
-            const updatedFields = Object.keys(personData).reduce((acc, key) => {
-              if (
-                personData[key] !== "" &&
-                personData[key] !== null &&
-                personData[key] !== undefined
-              ) {
-                acc[key] = personData[key];
-              }
-              return acc;
-            }, {});
+          const newObservations = personData.observations
+            ? `${existingObservations} ${personData.observations}`
+            : existingObservations;
 
-            // Actualizar el campo 'observations' concatenado
-            updatedFields.observations = newObservations;
-
-            // Si la persona existe, actualizar el documento en Firestore
-            if (updatedFields.sex) {
-              updatedFields.sex = updatedFields.sex === "M" ? true : false;
+          const updatedFields = Object.keys(personData).reduce((acc, key) => {
+            if (
+              personData[key] !== "" &&
+              personData[key] !== null &&
+              personData[key] !== undefined
+            ) {
+              acc[key] = personData[key];
             }
+            return acc;
+          }, {});
 
-            await updateDoc(personRef, updatedFields);
+          updatedFields.observations = newObservations;
 
-            // Eliminar el formulario de la colección temporal
-            await deleteDoc(doc(firestore, "externalForms", form?.id));
-
-            alert("FISA ACTUALIZATA CORECT !!! ");
-            setExternalForms(externalForms.filter((f) => f.id !== form.id)); // Eliminar formulario sincronizado de la lista
-            setForm(null); // Limpiar el formulario actual
-          } else {
-            alert("No se encontró una persona con esos datos.");
+          if (updatedFields.sex) {
+            updatedFields.sex = updatedFields.sex === "M" ? true : false;
           }
-        } else {
-          alert("No se encontró una persona con esos datos.");
+
+          await updateDoc(personRef, updatedFields);
+          await deleteDoc(doc(firestore, "externalForms", form?.id));
+
+          alert("FISA ACTUALIZATA CORECT !!! ");
+          setExternalForms(externalForms.filter((f) => f.id !== form.id));
+          setForm(null);
         }
-      } catch (error) {
-        console.error("Error al sincronizar el formulario:", error);
+      };
+
+      if (matchedPersons.length > 1) {
+        setModalData({
+          show: true,
+          matches: matchedPersons,
+          onSelect: async (selectedPerson) => {
+            setModalData({ show: false, matches: [], onSelect: () => {} });
+
+            if (selectedPerson) {
+              await updateExistingPerson(selectedPerson);
+            } else {
+              alert(
+                "Funcionalidad para agregar una persona nueva aún no implementada."
+              );
+            }
+          },
+        });
+      } else if (matchedPersons.length === 1) {
+        await updateExistingPerson(matchedPersons[0]);
+      } else {
+        alert("No se encontró una persona con esos datos.");
       }
+    } catch (error) {
+      console.error("Error al sincronizar el formulario:", error);
     }
   };
 
@@ -279,6 +432,12 @@ const ExternalFormsReview = ({ persoane }) => {
 
   return (
     <div>
+      <PersonSelectionModal
+        show={modalData.show}
+        matches={modalData.matches}
+        onSelect={modalData.onSelect}
+        onHide={() => setModalData({ show: false })}
+      />
       <Button
         style={{ marginInline: "10px" }}
         variant="primary"
