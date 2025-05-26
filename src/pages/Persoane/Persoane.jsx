@@ -23,10 +23,7 @@ import {
 import "./Persoane.scss";
 import ScrollButton from "../../ScrollButton";
 import { firestore } from "../../firebase-config";
-import {
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 import CSVUploader from "../../components/CSVUploader";
 
 function Persoane({ persoane }) {
@@ -357,23 +354,50 @@ function Persoane({ persoane }) {
 
           {/* Implementación de PaginatedTable */}
           <PaginatedTable
-            data={persoane ? filterMembers(persoane).map((p, index) => ({
-              ...p,
-              index: index + 1,
-              age: calculateAge(p.birthDate)
-            })) : []}
+            data={
+              persoane
+                ? filterMembers(persoane).map((p, index) => ({
+                    ...p,
+                    index: index + 1,
+                    age: calculateAge(p.birthDate),
+                  }))
+                : []
+            }
             columns={[
-              { key: 'index', label: '#', sortable: false },
-              { key: 'lastName', label: t('table.lastName'), sortable: true },
-              { key: 'firstName', label: t('table.firstName'), sortable: true },
-              { key: 'address', label: t('table.address'), sortable: true },
-              { key: 'mobilePhone', label: t('table.phone'), sortable: true },
-              { key: 'age', label: t('table.age'), sortable: true },
-              { key: 'birthDate', label: t('table.birthDate'), sortable: true, 
-                render: (row) => formatDate(row.birthDate) },
-              { key: 'sex', label: t('table.sex'), sortable: true,
-                render: (row) => row.sex ? 'M' : 'F' },
-              { key: 'actions', label: t('table.actions'), sortable: false,
+              { key: "index", label: "#", sortable: false, width: "5%" },
+              { key: "lastName", label: t("table.lastName"), sortable: true },
+              { key: "firstName", label: t("table.firstName"), sortable: true },
+              { key: "address", label: t("table.address"), sortable: true },
+              {
+                key: "mobilePhone",
+                label: t("table.phone"),
+                sortable: true,
+                width: "10%",
+              },
+              {
+                key: "age",
+                label: t("table.age"),
+                sortable: true,
+                width: "8%",
+              },
+              {
+                key: "birthDate",
+                label: t("table.birthDate"),
+                sortable: true,
+                render: (row) => formatDate(row.birthDate),
+                width: "10%",
+              },
+              {
+                key: "sex",
+                label: t("table.sex"),
+                sortable: true,
+                render: (row) => (row.sex ? "M" : "F"),
+                width: "5%",
+              },
+              {
+                key: "actions",
+                label: t("table.actions"),
+                sortable: false,
                 render: (row) => (
                   <Button
                     variant="primary"
@@ -382,9 +406,11 @@ function Persoane({ persoane }) {
                       showDeleteModal(row.id, event);
                     }}
                   >
-                    {t('table.delete')}
+                    {t("table.delete")}
                   </Button>
-                ) }
+                ),
+                width: "9%",
+              },
             ]}
             onRowClick={(row) => goToPerson(row.id)}
             defaultPageSize={10}

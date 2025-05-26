@@ -22,12 +22,12 @@ import PaginatedTable from "../../components/PaginatedTable";
 function Membrii({ persoane }) {
   // Función para mostrar el modal de confirmación de eliminación
   const [idToDelete, setIdToDelete] = useState(null);
-  
+
   const showDeleteModal = (id, event) => {
     event.stopPropagation();
     setIdToDelete(id);
   };
-  
+
   const deletePerson = (id) => {
     // Implementar la lógica de eliminación aquí
     console.log(`Eliminar persona con ID: ${id}`);
@@ -123,13 +123,15 @@ function Membrii({ persoane }) {
   };
 
   const { t } = useTranslation();
-  
+
   return (
     <div className="page-membrii">
-      <div className="filters-container">
-        <div className="filters-title">{t('table.filter')} {t('table.search')}</div>
+      {/* <div className="filters-container">
+        <div className="filters-title">
+          {t("table.filter")} {t("table.search")}
+        </div>
         <div className="barra-buttons">
-          <div className="age-input" data-label={`${t('table.min-age')}`}>
+          <div className="age-input" data-label={`${t("table.min-age")}`}>
             <input
               placeholder=">0"
               type="text"
@@ -137,8 +139,8 @@ function Membrii({ persoane }) {
               onChange={(e) => setAgeFilterGreater(e.target.value)}
             />
           </div>
-          
-          <div className="age-input" data-label={`${t('table.max-age')}`}>
+
+          <div className="age-input" data-label={`${t("table.max-age")}`}>
             <input
               placeholder="<99"
               type="text"
@@ -146,51 +148,80 @@ function Membrii({ persoane }) {
               onChange={(e) => setAgeFilterSmaller(e.target.value)}
             />
           </div>
-          
+
           <div className="search-input">
             <input
-              placeholder={t('table.lastName')}
+              placeholder={t("table.lastName")}
               type="text"
               value={lastNameFilter}
               onChange={(e) => setLastNameFilter(e.target.value)}
-              aria-label={`${t('table.filter')} ${t('table.lastName')}`}
+              aria-label={`${t("table.filter")} ${t("table.lastName")}`}
             />
           </div>
-          
+
           <div className="search-input">
             <input
-              placeholder={t('table.firstName')}
+              placeholder={t("table.firstName")}
               type="text"
               value={firstNameFilter}
               onChange={(e) => setFirstNameFilter(e.target.value)}
-              aria-label={`${t('table.filter')} ${t('table.firstName')}`}
+              aria-label={`${t("table.filter")} ${t("table.firstName")}`}
             />
           </div>
         </div>
-      </div>
-      
+      </div> */}
+
       {/* Implementación de PaginatedTable */}
       <PaginatedTable
-        data={persoane ? filterMembers(persoane).sort(sortList).map((p, index) => ({
-          ...p,
-          index: index + 1,
-          age: calculateAge(p.birthDate)
-        })) : []}
+        data={
+          persoane
+            ? filterMembers(persoane)
+                .sort(sortList)
+                .map((p, index) => ({
+                  ...p,
+                  index: index + 1,
+                  age: calculateAge(p.birthDate),
+                }))
+            : []
+        }
         columns={[
-          { key: 'index', label: '#', sortable: false },
-          { key: 'lastName', label: 'Nume', sortable: true },
-          { key: 'firstName', label: 'Prenume', sortable: true },
-          { key: 'memberDate', label: 'Data membru', sortable: true, 
-            render: (row) => formatDate(row.memberDate) },
-          { key: 'baptiseDate', label: 'Data Botezului', sortable: true, 
-            render: (row) => formatDate(row.baptiseDate) },
-          { key: 'baptisePlace', label: 'Locul Botezului', sortable: true },
-          { key: 'age', label: 'Varsta', sortable: true },
-          { key: 'birthDate', label: 'Data nasterii', sortable: true, 
-            render: (row) => formatDate(row.birthDate) },
-          { key: 'sex', label: 'Gen', sortable: true,
-            render: (row) => row.sex ? 'M' : 'F' },
-          { key: 'actions', label: 'Actiuni', sortable: false,
+          { key: "index", label: "#", sortable: false, width: "5%" },
+          { key: "lastName", label: "Nume", sortable: true },
+          { key: "firstName", label: "Prenume", sortable: true },
+          {
+            key: "memberDate",
+            label: "Data membru",
+            sortable: true,
+            render: (row) => formatDate(row.memberDate),
+            width: "10%",
+          },
+          {
+            key: "baptiseDate",
+            label: "Data Botezului",
+            sortable: true,
+            render: (row) => formatDate(row.baptiseDate),
+            width: "10%",
+          },
+          { key: "baptisePlace", label: "Locul Botezului", sortable: true },
+          { key: "age", label: "Varsta", sortable: true, width: "8%" },
+          {
+            key: "birthDate",
+            label: "Data nasterii",
+            sortable: true,
+            render: (row) => formatDate(row.birthDate),
+            width: "10%",
+          },
+          {
+            key: "sex",
+            label: "Gen",
+            sortable: true,
+            render: (row) => (row.sex ? "M" : "F"),
+            width: "6%",
+          },
+          {
+            key: "actions",
+            label: "Actiuni",
+            sortable: false,
             render: (row) => (
               <Button
                 variant="primary"
@@ -201,7 +232,9 @@ function Membrii({ persoane }) {
               >
                 Sterge
               </Button>
-            ) }
+            ),
+            width: "9%",
+          },
         ]}
         onRowClick={(row) => goToPerson(row.id)}
         defaultPageSize={10}

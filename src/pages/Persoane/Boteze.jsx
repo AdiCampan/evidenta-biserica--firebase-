@@ -105,16 +105,33 @@ function Boteze({ persoane }) {
             <h3>BOTEZE în EBEN EZER</h3>
           </div>
           <PaginatedTable
-            data={persoane ? filterMembers(persoane).map((p, index) => ({
-              ...p,
-              index: index + 1,
-            })) : []}
+            data={
+              persoane
+                ? filterMembers(persoane).map((p, index) => ({
+                    ...p,
+                    index: index + 1,
+                  }))
+                : []
+            }
             columns={[
-              { key: 'index', label: '#', sortable: false },
-              { key: 'baptiseDate', label: t('table.baptismDate') || 'Data Botezului', sortable: true, 
-                render: (row) => formatDate(row.baptiseDate) },
-              { key: 'baptisedBy', label: t('table.baptismMinisters') || 'Slujitori Botez', sortable: true },
-              { key: 'invitedMinisters', label: t('table.invitedMinisters') || 'Slujitori Invitati', sortable: true }
+              { key: "index", label: "#", sortable: false, width: "5%" },
+              {
+                key: "baptiseDate",
+                label: t("table.baptismDate") || "Data Botezului",
+                sortable: true,
+                render: (row) => formatDate(row.baptiseDate),
+                width: "15%",
+              },
+              {
+                key: "baptisedBy",
+                label: t("table.baptismMinisters") || "Slujitori Botez",
+                sortable: true,
+              },
+              {
+                key: "invitedMinisters",
+                label: t("table.invitedMinisters") || "Slujitori Invitati",
+                sortable: true,
+              },
             ]}
             onRowClick={(row) => listBaptized(row.baptiseDate, row.baptisedBy)}
             defaultPageSize={10}
@@ -146,21 +163,45 @@ function Boteze({ persoane }) {
             </Modal.Title>
           </Modal.Header>
           <PaginatedTable
-            data={listByDateBaptized ? listByDateBaptized.map((p, index) => ({
-              ...p,
-              index: index + 1,
-              age: calculateAge(p.birthDate)
-            })) : []}
+            data={
+              listByDateBaptized
+                ? listByDateBaptized.map((p, index) => ({
+                    ...p,
+                    index: index + 1,
+                    age: calculateAge(p.birthDate),
+                  }))
+                : []
+            }
             columns={[
-              { key: 'index', label: '#', sortable: false },
-              { key: 'lastName', label: t('table.lastName') || 'Nume', sortable: true },
-              { key: 'firstName', label: t('table.firstName') || 'Prenume', sortable: true },
-              { key: 'birthDate', label: t('table.birthDate') || 'D. Nasterii', sortable: true, 
-                render: (row) => formatDate(row.birthDate) },
-              { key: 'age', label: t('table.age') || 'Varsta', sortable: true },
-              { key: 'sex', label: t('table.sex') || 'Gen', sortable: true,
-                render: (row) => row.sex ? 'M' : 'F' },
-              { key: 'details', label: t('table.details') || 'Detalii', sortable: true }
+              { key: "index", label: "#", sortable: false },
+              {
+                key: "lastName",
+                label: t("table.lastName") || "Nume",
+                sortable: true,
+              },
+              {
+                key: "firstName",
+                label: t("table.firstName") || "Prenume",
+                sortable: true,
+              },
+              {
+                key: "birthDate",
+                label: t("table.birthDate") || "D. Nasterii",
+                sortable: true,
+                render: (row) => formatDate(row.birthDate),
+              },
+              { key: "age", label: t("table.age") || "Varsta", sortable: true },
+              {
+                key: "sex",
+                label: t("table.sex") || "Gen",
+                sortable: true,
+                render: (row) => (row.sex ? "M" : "F"),
+              },
+              {
+                key: "details",
+                label: t("table.details") || "Detalii",
+                sortable: true,
+              },
             ]}
             onRowClick={(row) => goToPerson(row.id)}
             defaultPageSize={10}

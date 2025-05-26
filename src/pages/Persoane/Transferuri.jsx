@@ -17,7 +17,6 @@ import PaginatedTable from "../../components/PaginatedTable";
 import { useTranslation } from "react-i18next";
 import "./Transferuri.scss";
 
-
 const Transferuri = ({ persoane }) => {
   const { t } = useTranslation();
   const [transfers, setTransfers] = useState([]);
@@ -66,75 +65,104 @@ const Transferuri = ({ persoane }) => {
   return (
     <div>
       <Card style={{ padding: "1.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+          }}
+        >
           <div>
-            <Button
-              variant="primary"
-              onClick={() => setShowModal(true)}
-            >
+            <Button variant="primary" onClick={() => setShowModal(true)}>
               Adauga un TRANSFER
             </Button>
           </div>
         </div>
         <PaginatedTable
-           data={transfers.map((transfer, index) => {
-             const person = persoaneMap[transfer?.owner];
-             if (!person) return null; // Ignorar si la persona no existe
+          data={transfers
+            .map((transfer, index) => {
+              const person = persoaneMap[transfer?.owner];
+              if (!person) return null; // Ignorar si la persona no existe
 
-             return {
-               ...transfer,
-               index: index + 1,
-               personName: (person.lastName || "").trim() + " " + (person.firstName || "").trim(),
-               person: person,
-               transferDirection: intrati.includes(transfer.type) ? "din" : "in",
-               churchName: transfer.churchTransfer,
-               dateFormatted: formatDate(transfer.date),
-               age: calculateAge(person.birthDate),
-               isIncoming: intrati.includes(transfer.type)
-             };
-           }).filter(Boolean)}
+              return {
+                ...transfer,
+                index: index + 1,
+                personName:
+                  (person.lastName || "").trim() +
+                  " " +
+                  (person.firstName || "").trim(),
+                person: person,
+                transferDirection: intrati.includes(transfer.type)
+                  ? "din"
+                  : "in",
+                churchName: transfer.churchTransfer,
+                dateFormatted: formatDate(transfer.date),
+                age: calculateAge(person.birthDate),
+                isIncoming: intrati.includes(transfer.type),
+              };
+            })
+            .filter(Boolean)}
           columns={[
-             { key: 'index', label: '#', sortable: false },
-             { key: 'personName', label: t('table.fullName') || 'Nume si Prenume', sortable: true },
-             { 
-               key: 'transferDirection', 
-               label: 'Transferat', 
-               sortable: true,
-               render: (row) => `${row.transferDirection} ${row.churchName}`
-             },
-             { key: 'dateFormatted', label: 'Data transferului', sortable: true },
-             { key: 'docNumber', label: 'Act de transfer', sortable: true },
-             { 
-               key: 'details', 
-               label: 'Detalii', 
-               sortable: true,
-               render: (row) => (
-                 <div style={{ wordBreak: "break-all", maxWidth: "200px" }}>
-                   {row.details}
-                 </div>
-               )
-             },
-             { key: 'age', label: 'Varsta', sortable: true },
-             { 
-               key: 'actions', 
-               label: t('table.actions') || 'Actiuni', 
-               sortable: false,
-               render: (row) => (
-                 <div className="d-flex">
-                   <Button
-                     variant="outline-danger"
-                     onClick={(ev) => showDeleteModal(row.id, ev)}
-                   >
-                     <FaTrash />
-                   </Button>
-                 </div>
-               )
-             }
-           ]}
-           onRowClick={() => {}}
-           className="transfers-table"
-           striped={false}
-           rowClassName={(row) => row.isIncoming ? "incoming-transfer" : "outgoing-transfer"}
+            { key: "index", label: "#", sortable: false, width: "5%" },
+            {
+              key: "personName",
+              label: t("table.fullName") || "Nume si Prenume",
+              sortable: true,
+              width: "18%",
+            },
+            {
+              key: "transferDirection",
+              label: "Transferat",
+              sortable: true,
+              render: (row) => `${row.transferDirection} ${row.churchName}`,
+            },
+            {
+              key: "dateFormatted",
+              label: "Data transferului",
+              sortable: true,
+              width: "10%",
+            },
+            {
+              key: "docNumber",
+              label: "Act de transfer",
+              sortable: true,
+              width: "11%",
+            },
+            {
+              key: "details",
+              label: "Detalii",
+              sortable: true,
+              render: (row) => (
+                <div style={{ wordBreak: "break-all", maxWidth: "200px" }}>
+                  {row.details}
+                </div>
+              ),
+              width: "30%",
+            },
+            { key: "age", label: "Varsta", sortable: true, width: "%" },
+            {
+              key: "actions",
+              label: t("table.actions") || "Actiuni",
+              sortable: false,
+              render: (row) => (
+                <div className="d-flex">
+                  <Button
+                    variant="outline-danger"
+                    onClick={(ev) => showDeleteModal(row.id, ev)}
+                  >
+                    <FaTrash />
+                  </Button>
+                </div>
+              ),
+              width: "7%",
+            },
+          ]}
+          onRowClick={() => {}}
+          className="transfers-table"
+          striped={false}
+          rowClassName={(row) =>
+            row.isIncoming ? "incoming-transfer" : "outgoing-transfer"
+          }
           defaultPageSize={10}
           bordered
           hover

@@ -14,12 +14,8 @@ import PaginatedTable from "../../components/PaginatedTable";
 import { useTranslation } from "react-i18next";
 import AddCazSpecial from "./AddCazSpecial";
 import { FaTrash, FaRegEdit } from "react-icons/fa";
-import {
-  formatDate,
-} from "../../utils";
-import {
-  useModifySpecialCaseMutation,
-} from "../../services/specialCases";
+import { formatDate } from "../../utils";
+import { useModifySpecialCaseMutation } from "../../services/specialCases";
 import {
   collection,
   deleteDoc,
@@ -139,98 +135,123 @@ const Speciale = ({ persoane }) => {
 
   return (
     <div>
-      <Card style={{ padding: "1.5rem"}}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-            <div>
-              <InputGroup
-                style={{
-                  marginRight: "20px",
-                }}
-                size="sm"
-                className="mb-3"
-              >
-                <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
-              </InputGroup>
-            </div>
-            <div>
-              <InputGroup className="mb-3" size="sm">
-                <DropdownButton
-                  as={ButtonGroup}
-                  title={
-                    filter === "all"
-                      ? "Toate cazurile"
-                      : filter === "active"
-                      ? "Active"
-                      : "Rezolvate"
-                  }
-                  id="bg-nested-dropdown"
-                >
-                  <Dropdown.Item
-                    eventKey="1"
-                    onClick={() => setFilter("all")}
-                  >
-                    Toate cazurile
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    eventKey="2"
-                    onClick={() => setFilter("active")}
-                  >
-                    Active
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    eventKey="3"
-                    onClick={() => setFilter("resolved")}
-                  >
-                    Rezolvate
-                  </Dropdown.Item>
-                </DropdownButton>
-              </InputGroup>
-            </div>
+      <Card style={{ padding: "1.5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+          }}
+        >
+          <div>
+            <InputGroup
+              style={{
+                marginRight: "20px",
+              }}
+              size="sm"
+              className="mb-3"
+            >
+              <AddCazSpecial persoane={persoane} onAddCaz={addCaz} />
+            </InputGroup>
           </div>
-          <PaginatedTable
-            data={filteredCazuri.map((caz, index) => {
-              const person = persoane?.find((p) => p.id === caz.person);
-              return {
-                ...caz,
-                index: index + 1,
-                personName: person ? `${person.lastName} ${person.firstName}` : 'STERS din EVIDENTA !',
-                person: person,
-                startDateFormatted: formatDate(caz.startDate),
-                endDateFormatted: formatDate(caz.endDate)
-              };
-            })}
-            columns={[
-              { key: 'index', label: '#', sortable: false },
-              { key: 'personName', label: t('table.fullName') || 'Nume si Prenume', sortable: true },
-              { key: 'startDateFormatted', label: t('table.openDate') || 'Data Deschiderii', sortable: true },
-              { key: 'endDateFormatted', label: t('table.resolveDate') || 'Data Rezolvarii', sortable: true },
-              { key: 'details', label: t('table.caseDetails') || 'Detalii Caz Special', sortable: true },
-              { key: 'actions', label: t('table.actions') || 'Actiuni', sortable: false,
-                render: (row) => (
-                  <div className="d-flex">
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => editar({ ...row, person: row.person })}
-                    >
-                      <FaRegEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      onClick={(ev) => showDeleteModal(row.id, ev)}
-                    >
-                      <FaTrash />
-                    </Button>
-                  </div>
-                )
-              }
-            ]}
-            defaultPageSize={10}
-            striped
-            bordered
-            hover
-            size="sm"
-            variant="light"
-          />
+          <div>
+            <InputGroup className="mb-3" size="sm">
+              <DropdownButton
+                as={ButtonGroup}
+                title={
+                  filter === "all"
+                    ? "Toate cazurile"
+                    : filter === "active"
+                    ? "Active"
+                    : "Rezolvate"
+                }
+                id="bg-nested-dropdown"
+              >
+                <Dropdown.Item eventKey="1" onClick={() => setFilter("all")}>
+                  Toate cazurile
+                </Dropdown.Item>
+                <Dropdown.Item eventKey="2" onClick={() => setFilter("active")}>
+                  Active
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey="3"
+                  onClick={() => setFilter("resolved")}
+                >
+                  Rezolvate
+                </Dropdown.Item>
+              </DropdownButton>
+            </InputGroup>
+          </div>
+        </div>
+        <PaginatedTable
+          data={filteredCazuri.map((caz, index) => {
+            const person = persoane?.find((p) => p.id === caz.person);
+            return {
+              ...caz,
+              index: index + 1,
+              personName: person
+                ? `${person.lastName} ${person.firstName}`
+                : "STERS din EVIDENTA !",
+              person: person,
+              startDateFormatted: formatDate(caz.startDate),
+              endDateFormatted: formatDate(caz.endDate),
+            };
+          })}
+          columns={[
+            { key: "index", label: "#", sortable: false, width: "5%" },
+            {
+              key: "personName",
+              label: t("table.fullName") || "Nume si Prenume",
+              sortable: true,
+              width: "18%",
+            },
+            {
+              key: "startDateFormatted",
+              label: t("table.openDate") || "Data Deschiderii",
+              sortable: true,
+              width: "12%",
+            },
+            {
+              key: "endDateFormatted",
+              label: t("table.resolveDate") || "Data Rezolvarii",
+              sortable: true,
+              width: "12%",
+            },
+            {
+              key: "details",
+              label: t("table.caseDetails") || "Detalii Caz Special",
+              sortable: true,
+            },
+            {
+              key: "actions",
+              label: t("table.actions") || "Actiuni",
+              sortable: false,
+              render: (row) => (
+                <div className="d-flex">
+                  <Button
+                    variant="outline-primary"
+                    onClick={() => editar({ ...row, person: row.person })}
+                  >
+                    <FaRegEdit />
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    onClick={(ev) => showDeleteModal(row.id, ev)}
+                  >
+                    <FaTrash />
+                  </Button>
+                </div>
+              ),
+              width: "10%",
+            },
+          ]}
+          defaultPageSize={10}
+          striped
+          bordered
+          hover
+          size="sm"
+          variant="light"
+        />
       </Card>
 
       <Modal show={show} onHide={handleClose}>
