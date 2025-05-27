@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "helpsecretariat-ebenezer",
-    "production": "helpsecretariat-ebenezer",
+    "default": "secretariat-ebenezer",
+    "production": "secretariat-ebenezer",
     "development": "evidenta-bisericii"
   }
 }
