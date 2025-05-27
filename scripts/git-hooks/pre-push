@@ -19,17 +19,22 @@ node "$(git rev-parse --show-toplevel)/deploy-check.js"
 echo "🏗️ Ejecutando build..."
 npm run build
 
-# Si el build es exitoso, ejecutar deploy
+# Si el build es exitoso, mostrar mensaje de éxito
 if [ $? -eq 0 ]; then
-  echo "🚀 Ejecutando deploy..."
-  firebase deploy
+  echo "✅ Build completado con éxito."
+  echo "📝 NOTA: El deploy automático está temporalmente desactivado."
+  echo "Para hacer deploy manualmente, ejecuta: firebase deploy"
   
-  if [ $? -eq 0 ]; then
-    echo "✅ Deploy completado con éxito."
-  else
-    echo "❌ Error durante el deploy."
-    exit 1
-  fi
+  # Comentado temporalmente para permitir push sin deploy
+  # echo "🚀 Ejecutando deploy..."
+  # firebase deploy
+  # 
+  # if [ $? -eq 0 ]; then
+  #   echo "✅ Deploy completado con éxito."
+  # else
+  #   echo "❌ Error durante el deploy."
+  #   exit 1
+  # fi
 else
   echo "❌ Error durante el build."
   exit 1
