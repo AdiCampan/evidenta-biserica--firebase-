@@ -5,7 +5,7 @@
 Al ejecutar el script `add-test-admins.js`, se está produciendo el siguiente error:
 
 ```
-PERMISSION_DENIED: Permission denied on resource project helpsecretariat-ebenezer
+PERMISSION_DENIED: Permission denied on resource project secretariat-ebenezer
 ```
 
 Este error indica que las credenciales utilizadas no tienen permisos suficientes para escribir en la colección `authorizedAdmins` de Firestore.
@@ -33,7 +33,7 @@ Para resolver este problema, necesitamos utilizar Firebase Admin SDK, que propor
 2. **Generar una Cuenta de Servicio**:
 
    - Ve a la [Consola de Firebase](https://console.firebase.google.com/)
-   - Selecciona tu proyecto (`helpsecretariat-ebenezer`)
+   - Selecciona tu proyecto (`secretariat-ebenezer`)
    - Ve a Configuración del proyecto > Cuentas de servicio
    - Haz clic en "Generar nueva clave privada"
    - Guarda el archivo JSON generado en una ubicación segura (por ejemplo, `serviceAccountKey.json`)

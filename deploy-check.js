@@ -38,7 +38,7 @@ if (missingVars.length > 0) {
   formatErrors.forEach(error => console.error(`- ${error}`));
   console.error('\nSugerencia: Verifica que VITE_DATABASE_URL sea uno de estos valores:');
   console.error('- https://evidenta-bisericii.firebaseio.com');
-  console.error('- https://helpsecretariat-ebenezer.firebaseio.com');
+  console.error('- https://secretariat-ebenezer.firebaseio.com');
   process.exit(1);
 } else {
   console.log('✅ Todas las variables de entorno requeridas están presentes');

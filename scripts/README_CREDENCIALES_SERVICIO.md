@@ -7,7 +7,7 @@ Este documento explica cómo generar y configurar el archivo de credenciales de 
 Para generar el archivo de credenciales de servicio, sigue estos pasos:
 
 1. Ve a la [Consola de Firebase](https://console.firebase.google.com/)
-2. Selecciona tu proyecto (`helpsecretariat-ebenezer`)
+2. Selecciona tu proyecto (`secretariat-ebenezer`)
 3. Ve a **Configuración del proyecto** (icono de engranaje) > **Cuentas de servicio**
 4. En la pestaña **Firebase Admin SDK**, haz clic en **Generar nueva clave privada**
 5. Guarda el archivo JSON descargado como `serviceAccountKey.json` en la raíz del proyecto
