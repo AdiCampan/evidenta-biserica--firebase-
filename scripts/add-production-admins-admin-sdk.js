@@ -59,13 +59,14 @@ async function addProductionAdmins() {
       }
       
       // 2. Verificar si existe como usuario en Authentication
+      let userRecord;
       try {
-        const userRecord = await admin.auth().getUserByEmail(email);
+        userRecord = await admin.auth().getUserByEmail(email);
         console.log(`ℹ️ Usuario ya existe en Authentication: ${email}`);
       } catch (error) {
         if (error.code === 'auth/user-not-found') {
           // Crear usuario en Authentication
-          await admin.auth().createUser({
+          userRecord = await admin.auth().createUser({
             email: email,
             password: tempPassword,
             emailVerified: true
@@ -76,6 +77,12 @@ async function addProductionAdmins() {
           await admin.auth().generatePasswordResetLink(email);
           console.log(`✉️ Enlace de restablecimiento enviado a: ${email}`);
         }
+      }
+      
+      // Establecer custom claims para privilegios de administrador
+      if (userRecord) {
+        await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
+        console.log(`✅ Custom claims (admin: true) establecidos para: ${email}`);
       }
       
       // 3. Añadir o actualizar en colección users

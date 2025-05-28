@@ -78,20 +78,34 @@ function MainApp() {
 
   // Solo cargar los datos si el usuario está logueado
   useEffect(() => {
+    console.log('Estado de autenticación:', currentUser ? 'Usuario autenticado' : 'No autenticado');
+    
     if (currentUser) {
+      console.log('Intentando cargar datos de personas...');
       const q = query(collection(firestore, "persoane"));
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const tmpArray = [];
-        querySnapshot.forEach((doc) => {
-          const childKey = doc.id;
-          const childData = doc.data();
-          tmpArray.push({ id: childKey, ...childData });
+      
+      try {
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          console.log('Snapshot recibido con', querySnapshot.size, 'documentos');
+          const tmpArray = [];
+          querySnapshot.forEach((doc) => {
+            const childKey = doc.id;
+            const childData = doc.data();
+            tmpArray.push({ id: childKey, ...childData });
+          });
+          console.log('Datos cargados correctamente:', tmpArray.length, 'personas');
+          setPersoane(tmpArray);
+        }, (error) => {
+          console.error('Error al escuchar cambios en Firestore:', error);
         });
-        setPersoane(tmpArray);
-      });
 
-      // Limpiar el efecto
-      return () => unsubscribe();
+        // Limpiar el efecto
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error al configurar el listener de Firestore:', error);
+      }
+    } else {
+      console.log('No hay usuario autenticado, no se cargarán datos');
     }
   }, [currentUser]);
   useEffect(() => {
