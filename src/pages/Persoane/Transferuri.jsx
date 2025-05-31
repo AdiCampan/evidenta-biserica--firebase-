@@ -108,13 +108,14 @@ const Transferuri = ({ persoane }) => {
               key: "personName",
               label: t("table.fullName") || "Nume si Prenume",
               sortable: true,
-              width: "18%",
+              width: "20%",
             },
             {
               key: "transferDirection",
               label: "Transferat",
               sortable: true,
               render: (row) => `${row.transferDirection} ${row.churchName}`,
+              width: "14%",
             },
             {
               key: "dateFormatted",
@@ -139,7 +140,7 @@ const Transferuri = ({ persoane }) => {
               ),
               width: "30%",
             },
-            { key: "age", label: "Varsta", sortable: true, width: "%" },
+            { key: "age", label: "Varsta", sortable: true, width: "7%" },
             {
               key: "actions",
               label: t("table.actions") || "Actiuni",

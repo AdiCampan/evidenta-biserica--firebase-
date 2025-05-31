@@ -156,6 +156,15 @@ const Navbar = () => {
               >
                 <span>{t("nav.baptisms")}</span>
               </NavLink>
+              <NavLink
+                to="/persoane/familii"
+                end
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                <span>{t("nav.families")}</span>
+              </NavLink>
 
               <NavLink
                 to="/persoane/cazuri-speciale"

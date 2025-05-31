@@ -416,7 +416,7 @@ const PaginatedTable = ({
                       <div>
                         {[DropdownButton].map((DropdownType, idx) => (
                           <DropdownType
-                            style={{ position: "relative", zIndex: 1000 }}
+                            style={{ position: "unset", zIndex: 1000 }}
                             as={ButtonGroup}
                             key={idx}
                             id={`dropdown-button-drop-${idx}`}

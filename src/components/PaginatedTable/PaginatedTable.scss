@@ -341,8 +341,10 @@
 
           input,
           select {
+            cursor: pointer;
+
             width: 100%;
-            padding: 0.7rem 1rem;
+            padding: 0.7rem 0.5rem;
             font-size: 0.9rem;
             border-radius: 6px;
             border: 1px solid #ddd;
