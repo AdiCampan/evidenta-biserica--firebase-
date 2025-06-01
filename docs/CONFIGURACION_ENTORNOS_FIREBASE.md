@@ -12,7 +12,7 @@ Este proyecto está configurado para trabajar con dos bases de datos Firebase di
 Se han creado archivos de configuración separados para cada entorno:
 
 - `.env.production`: Contiene las credenciales para el entorno de producción (evidenta-bisericii)
-- `.env.development`: Contiene las credenciales para el entorno de desarrollo (helpsecretariat-ebenezer)
+- `.env.development`: Contiene las credenciales para el entorno de desarrollo (secretariat-ebenezer)
 
 ## Cómo Usar los Diferentes Entornos
 
@@ -24,7 +24,7 @@ Se han agregado scripts en el `package.json` para facilitar el cambio entre ento
 npm run dev
 ```
 
-Este comando ejecutará la aplicación en modo desarrollo, utilizando las credenciales de Firebase del proyecto `helpsecretariat-ebenezer`.
+Este comando ejecutará la aplicación en modo desarrollo, utilizando las credenciales de Firebase del proyecto `secretariat-ebenezer`.
 
 ### Para desarrollo local con la base de datos de PRODUCCIÓN
 
@@ -55,7 +55,7 @@ o
 
 ```
 Entorno actual: DESARROLLO
-Conectando a Firebase: helpsecretariat-ebenezer
+Conectando a Firebase: secretariat-ebenezer
 ```
 
 ## Notas Importantes
