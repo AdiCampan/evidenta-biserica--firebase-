@@ -75,9 +75,9 @@
     "logout": "Deconectare"
   },
   "table": {
-    "baptismDate": "Data botezei",
+    "baptismDate": "Data botezului",
     "baptismMinisters": "Botezatori",
-    "invitedMinisters": "Ministri invitați",
+    "invitedMinisters": "Invitați",
     "fullName": "Nume complet",
     "openDate": "Data deschidere",
     "resolveDate": "Data de rezolvare",
