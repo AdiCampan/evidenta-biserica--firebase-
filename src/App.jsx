@@ -73,8 +73,16 @@ function MainApp() {
   
   // Inicializar la colección de administradores autorizados al cargar la aplicación
   useEffect(() => {
-    initializeAuthorizedAdmins();
-  }, []);
+    // Solo intentar inicializar si un usuario está autenticado.
+    // Idealmente, esto también debería verificar si el usuario tiene derechos para hacerlo,
+    // o esta lógica debería moverse a un script de backend/configuración.
+    if (currentUser) {
+      console.log('Usuario autenticado, intentando inicializar la colección de administradores autorizados.');
+      initializeAuthorizedAdmins();
+    } else {
+      console.log('Usuario no autenticado, omitiendo la inicialización de la colección de administradores autorizados.');
+    }
+  }, [currentUser]); // Volver a ejecutar si currentUser cambia
 
   // Solo cargar los datos si el usuario está logueado
   useEffect(() => {
