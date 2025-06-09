@@ -33,7 +33,8 @@ async function addProductionAdmins() {
     const adminEmails = [
       'victor.calatayud.espinosa@gmail.com',
       'secretariatebenezercastellon@gmail.com',
-      'adicampan1974@gmail.com'
+      'adicampan1974@gmail.com',
+      'cristiandinica38@gmail.com'
       // Añade aquí más correos si es necesario
     ];
     
