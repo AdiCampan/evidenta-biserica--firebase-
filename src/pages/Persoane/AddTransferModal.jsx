@@ -200,7 +200,7 @@ function AddTransferModal({
                   labelKey={(option) =>
                     `${option.firstName} ${""}${option.lastName}`
                   }
-                  options={persoane || []}
+                  options={(persoane || []).filter(filterByMember)}
                   placeholder="Alege o persoana..."
                   selected={persoane?.filter((p) => p.id === person) || []}
                 />
