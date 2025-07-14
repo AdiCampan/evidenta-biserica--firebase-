@@ -12,6 +12,7 @@ const ExternalForm = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isAgreed, setIsAgreed] = useState(false); // Estado para la casilla de verificación
   const [csrfToken, setCsrfToken] = useState(""); // Token CSRF
+  const [formId] = useState(() => `form_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`); // ID único para el formulario
 
   // Estado para las fechas como objetos Date
   const [honeypot, setHoneypot] = useState(""); //proteccion antiBot
@@ -233,9 +234,10 @@ const ExternalForm = ({ onCloseModal }) => {
           </div>
           <div className="column-form">
             <ImageUploader
-              id={`${personData.lastName}_${personData.firstName}`}
+              id={formId}
               onFileSelectSuccess={(file) => setSelectedFile(file)}
               onFileSelectError={({ error }) => alert(error)}
+              isExternalForm={true}
             />
 
             <label className="label">

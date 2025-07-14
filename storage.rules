@@ -32,6 +32,12 @@ service firebase.storage {
         (request.auth.uid == userId || isAdmin());
     }
     
+    // Reglas para imágenes de formularios externos (usuarios no autenticados)
+    match /externalForms/{formId}/{fileName} {
+      // Permitir acceso completo para formularios externos
+      allow read, write: if true;
+    }
+    
     // Reglas para otros archivos
     match /{allPaths=**} {
       allow read: if isAuthenticated();
