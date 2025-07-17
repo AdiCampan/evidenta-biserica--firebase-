@@ -30,6 +30,12 @@ service cloud.firestore {
       allow write: if isAuthenticated() && isAdmin();
     }
     
+    // Reglas para formularios externos (acceso público)
+    match /externalForms/{document=**} {
+      allow create: if true; // Permitir creación sin autenticación
+      allow read, update, delete: if isAuthenticated() && isAdmin();
+    }
+    
     // Reglas para otras colecciones
     match /{document=**} {
       allow read, write: if isAuthenticated() && isAdmin();

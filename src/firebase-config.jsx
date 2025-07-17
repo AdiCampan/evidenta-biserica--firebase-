@@ -25,7 +25,7 @@ const getEnvVar = (key, defaultValue = '') => {
 const firebaseConfig = {
   apiKey: getEnvVar('VITE_API_KEY'),
   authDomain: getEnvVar('VITE_AUTH_DOMAIN'),
-  projectId: getEnvVar('VITE_PROJECT_ID', 'evidenta-bisericii'),
+  projectId: getEnvVar('VITE_PROJECT_ID', 'secretariat-ebenezer'),
   storageBucket: getEnvVar('VITE_STORAGE_BUCKET').replace('gs://', ''),
   messagingSenderId: getEnvVar('VITE_MESSAGING_SENDER_ID'),
   appId: getEnvVar('VITE_APP_ID'),
