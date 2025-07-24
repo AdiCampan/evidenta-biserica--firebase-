@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # Hook pre-push para automatizar el build y deploy
 echo "🔍 Ejecutando hook pre-push para build y deploy automático..."
 

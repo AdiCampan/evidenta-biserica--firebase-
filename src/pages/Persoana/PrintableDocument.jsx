@@ -156,6 +156,10 @@ function PrintableDocument({ data, persons }) {
                     Data serv rel.: {formatDateLong(servRel)}
                   </p>
                   <p style={{ margin: "5px 0" }}>Biserica: {weddingChurch}</p>
+                </div>
+              )}
+              {(father || mother) && (
+                <div className="parents">
                   <p style={{ margin: "5px 0" }}>Tata: {father}</p>
                   <p style={{ margin: "5px 0" }}>Mama: {mother}</p>
                 </div>
