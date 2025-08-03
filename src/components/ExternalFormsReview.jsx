@@ -267,9 +267,9 @@ const ExternalFormsReview = ({ persoane }) => {
     let sanitizedValue = value;
 
     // Para campos de texto como nombres, direcciones, etc.
-    if (["firstName", "lastName", "address"].includes(name)) {
-      sanitizedValue = sanitizeText(value);
-    }
+    // if (["firstName", "lastName", "address"].includes(name)) {
+    //   sanitizedValue = sanitizeText(value);
+    // }
 
     setPersonData({
       ...personData,
@@ -488,7 +488,7 @@ const ExternalFormsReview = ({ persoane }) => {
                   onChange={(e) =>
                     setPersonData({
                       ...personData,
-                      observations: sanitizeText(e.target.value),
+                      observations: e.target.value, // Actualizamos el estado con el valor del textarea
                     })
                   } // Actualizamos el estado cuando el usuario escribe
                 ></textarea>
