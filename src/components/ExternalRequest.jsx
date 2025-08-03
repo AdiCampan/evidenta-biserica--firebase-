@@ -6,12 +6,15 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./ExternalForm.scss";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import {
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-} from "@mui/material";
-import { validateName, validateEmail, validatePhone, validateAddress, validateDate, sanitizeText } from "../utils/validation";
+  validateName,
+  validateEmail,
+  validatePhone,
+  validateAddress,
+  validateDate,
+  sanitizeText,
+} from "../utils/validation";
 
 const ExternalRequest = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -57,7 +60,6 @@ const ExternalRequest = ({ onCloseModal }) => {
     spouse: { firstName: "", lastName: "" },
     transferNumber: "",
   });
-  console.log("selectedFile", selectedFile);
 
   useEffect(() => {
     setStartTime(Date.now());
@@ -125,13 +127,16 @@ const ExternalRequest = ({ onCloseModal }) => {
     }
   };
 
-  console.log(personData);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Validando selectedFile antes de enviar:", selectedFile);
-    if (!selectedFile || !selectedFile.startsWith("http")) {
+    // console.log("Validando selectedFile antes de enviar:", selectedFile);
+
+    if (
+      !selectedFile ||
+      (!selectedFile.startsWith("http") &&
+        !selectedFile.startsWith("data:image/"))
+    ) {
       alert("Por favor, cargue una imagen válida antes de enviar.");
       return;
     }
@@ -149,42 +154,42 @@ const ExternalRequest = ({ onCloseModal }) => {
       alert("Formulario detectado como spam.");
       return;
     }
-    
+
     // Validar los campos del formulario
     const errors = [];
-    
+
     // Sanitizar y validar nombre y apellido
     const sanitizedFirstName = sanitizeText(personData.firstName);
     const sanitizedLastName = sanitizeText(personData.lastName);
-    
+
     if (!validateName(sanitizedFirstName)) {
       errors.push("El nombre no es válido");
     }
-    
+
     if (!validateName(sanitizedLastName)) {
       errors.push("El apellido no es válido");
     }
-    
+
     // Validar email si se proporcionó
     if (personData.email && !validateEmail(personData.email)) {
       errors.push("El email no es válido");
     }
-    
+
     // Validar teléfono si se proporcionó
     if (personData.mobilePhone && !validatePhone(personData.mobilePhone)) {
       errors.push("El número de teléfono no es válido");
     }
-    
+
     // Validar dirección si se proporcionó
     if (personData.address && !validateAddress(personData.address)) {
       errors.push("La dirección no es válida");
     }
-    
+
     // Validar fecha de nacimiento
     if (birthDate && !validateDate(birthDate)) {
       errors.push("La fecha de nacimiento no es válida");
     }
-    
+
     // Si hay errores, mostrarlos y detener el envío
     if (errors.length > 0) {
       alert("Por favor corrija los siguientes errores:\n" + errors.join("\n"));
