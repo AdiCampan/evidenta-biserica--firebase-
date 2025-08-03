@@ -45,8 +45,18 @@ function PrintableDocument({ data, persons }) {
       const religios = data[0].relations?.find(
         (relation) => relation.weddingChurch
       )?.religiousWeddingDate;
-      const tata = persons?.find((person) => person.id === data[0].fatherID);
-      const mama = persons?.find((person) => person.id === data[0].motherID);
+      const relationTata = data[0].relations?.find(
+        (relation) => relation.type === "father"
+      );
+      const relationMama = data[0].relations?.find(
+        (relation) => relation.type === "mother"
+      );
+      const tata = persons?.find(
+        (person) => person.id === relationTata?.person
+      );
+      const mama = persons?.find(
+        (person) => person.id === relationMama?.person
+      );
       const copii = data[0].relations?.filter(
         (relation) => relation.type === "child"
       );

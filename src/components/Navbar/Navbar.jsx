@@ -83,7 +83,6 @@ const Navbar = () => {
     i18n.changeLanguage(lng);
     setLangMenuOpen(false);
   };
-  console.log("menuOpen", menuOpen);
   const currentLanguage = i18n.language;
 
   return (
