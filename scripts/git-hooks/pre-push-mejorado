@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Hook pre-push mejorado para automatizar el build y deploy
+# Permite seleccionar el entorno de deployment
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+echo "🔍 Ejecutando hook pre-push para build y deploy automático..."
+
+# Verificar si hay cambios sin commit
+if [[ $(git status --porcelain) ]]; then
+  echo "❌ Error: Hay cambios sin commit. Por favor, haz commit de todos los cambios antes de hacer push."
+  exit 1
+fi
+
+# Función para mostrar menú de selección de entorno
+select_environment() {
+  echo "🌍 Selecciona el entorno de deployment:"
+  echo "1) Development (evidenta-bisericii)"
+  echo "2) Production (secretariat-ebenezer)"
+  echo "3) Cancelar deployment"
+  
+  read -p "Ingresa tu opción (1-3): " choice
+  
+  case $choice in
+    1)
+      echo "development"
+      ;;
+    2)
+      echo "production"
+      ;;
+    3)
+      echo "cancelled"
+      ;;
+    *)
+      echo "❌ Opción inválida. Cancelando deployment."
+      echo "cancelled"
+      ;;
+  esac
+}
+
+# Seleccionar entorno
+ENVIRONMENT=$(select_environment)
+
+if [ "$ENVIRONMENT" = "cancelled" ]; then
+  echo "🚫 Deployment cancelado por el usuario."
+  exit 0
+fi
+
+echo "🎯 Entorno seleccionado: $ENVIRONMENT"
+
+# Configurar el proyecto de Firebase según el entorno
+if [ "$ENVIRONMENT" = "development" ]; then
+  firebase use development
+  echo "🔧 Configurado para entorno de desarrollo"
+elif [ "$ENVIRONMENT" = "production" ]; then
+  firebase use production
+  echo "🔧 Configurado para entorno de producción"
+fi
+
+# Ejecutar verificación de variables de entorno
+echo "🔍 Verificando variables de entorno..."
+node "$(git rev-parse --show-toplevel)/deploy-check.js"
+
+# Si la verificación falla, el script se detendrá aquí debido al código de salida
+if [ $? -ne 0 ]; then
+  echo "❌ Error en la verificación de variables de entorno."
+  exit 1
+fi
+
+# Ejecutar build
+echo "🏗️ Ejecutando build..."
+npm run build
+
+# Si el build es exitoso, ejecutar deploy
+if [ $? -eq 0 ]; then
+  echo "🚀 Ejecutando deploy en entorno $ENVIRONMENT..."
+  firebase deploy
+  
+  if [ $? -eq 0 ]; then
+    echo "✅ Deploy completado con éxito en $ENVIRONMENT."
+    echo "🌐 URL del proyecto:"
+    if [ "$ENVIRONMENT" = "development" ]; then
+      echo "   https://evidenta-bisericii.web.app"
+    elif [ "$ENVIRONMENT" = "production" ]; then
+      echo "   https://secretariat-ebenezer.web.app"
+    fi
+  else
+    echo "❌ Error durante el deploy."
+    exit 1
+  fi
+else
+  echo "❌ Error durante el build."
+  exit 1
+fi
+
+# Continuar con el push si todo fue exitoso
+echo "✅ Proceso completado. Continuando con el push..."
+exit 0
