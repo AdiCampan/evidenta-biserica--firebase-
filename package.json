@@ -18,7 +18,8 @@
     "add-test-admins-admin": "node scripts/add-test-admins-admin-sdk.js",
     "diagnostico": "node scripts/diagnostico-git-hooks.js",
     "install-hooks-mejorado": "node scripts/install-git-hooks-mejorado.js",
-    "deploy-manual": "node scripts/deploy-manual.js"
+    "deploy-manual": "node scripts/deploy-manual.js",
+    "reparar-git": "node scripts/reparar-git.js"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",

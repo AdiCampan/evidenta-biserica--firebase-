@@ -2,7 +2,12 @@
 
 ## 🆘 Solución Inmediata
 
-Si tienes problemas con los git hooks y necesitas hacer deploy **AHORA**:
+### Si VS Code muestra error "No such file or directory":
+```bash
+npm run reparar-git
+```
+
+### Si tienes problemas con los git hooks y necesitas hacer deploy **AHORA**:
 
 ```bash
 # Opción 1: Deploy manual con selección de entorno
@@ -53,6 +58,7 @@ Ahora verás un menú para elegir:
 
 | Comando | Descripción |
 |---------|-------------|
+| `npm run reparar-git` | **Reparar errores de Git en VS Code** |
 | `npm run diagnostico` | Revisar qué está fallando |
 | `npm run deploy-manual` | Deploy con selección de entorno |
 | `npm run install-hooks-mejorado` | Instalar hook mejorado |
