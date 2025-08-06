@@ -383,6 +383,15 @@
           position: relative;
           height: 60px;
         }
+        &.incoming-transfer td {
+          background-color: #aeffc1 !important;
+          color: #155724 !important;
+        }
+
+        &.outgoing-transfer td {
+          background-color: #f7c7d4 !important;
+          color: #2f2424 !important;
+        }
       }
     }
   }

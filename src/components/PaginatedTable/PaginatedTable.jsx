@@ -48,6 +48,8 @@ const PaginatedTable = ({
   size = "sm",
   variant = "light",
   className = "",
+  rowClassName = () => "",
+  initialSort = null,
 }) => {
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
@@ -64,10 +66,9 @@ const PaginatedTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
   const [filteredData, setFilteredData] = useState([]);
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: null,
-  });
+  const [sortConfig, setSortConfig] = useState(
+    initialSort || { key: null, direction: null }
+  );
 
   const AGE_FILTER_LABEL = {
     1: ">=",
@@ -505,6 +506,7 @@ const PaginatedTable = ({
                   key={row.id || index}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   style={onRowClick ? { cursor: "pointer" } : {}}
+                  className={rowClassName(row)}
                 >
                   {columns.map((column) => (
                     <td key={`${row.id || index}-${column.key}`}>

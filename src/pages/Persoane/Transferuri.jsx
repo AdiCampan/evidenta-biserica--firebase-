@@ -97,6 +97,7 @@ const Transferuri = ({ persoane }) => {
                   : "in",
                 churchName: transfer.churchTransfer,
                 dateFormatted: formatDate(transfer.date),
+                transferDate: transfer.date,
                 age: calculateAge(person.birthDate),
                 isIncoming: intrati.includes(transfer.type),
               };
@@ -169,6 +170,7 @@ const Transferuri = ({ persoane }) => {
           hover
           size="sm"
           variant="light"
+          initialSort={{ key: "transferDate", direction: "desc" }}
         />
         <ScrollButton />
         <AddTransferModal
