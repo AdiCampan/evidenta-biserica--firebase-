@@ -305,8 +305,10 @@ const ExternalRequest = ({ onCloseModal }) => {
                   <option value="F">Femenin</option>
                 </select>
               </label>
-              <label className="label">
-                Data nașterii / Fecha de nacimiento {`(obligatoriu)`}:
+              <div>
+                <label className="label">
+                  Data nașterii / Fecha de nacimiento {`(obligatoriu)`}:
+                </label>
                 <DatePicker
                   selected={birthDate}
                   onChange={(date) => setBirthDate(date)}
@@ -317,8 +319,10 @@ const ExternalRequest = ({ onCloseModal }) => {
                   dropdownMode="select"
                   dateFormat="dd/MM/yyyy"
                   className="input"
+                  shouldCloseOnSelect={true}
                 />
-              </label>
+              </div>
+
               <label className="label">
                 Adresa / Direccion {`(obligatoriu)`}:
                 <input
@@ -586,8 +590,10 @@ const ExternalRequest = ({ onCloseModal }) => {
               </div>
 
               <div className="colum-form">
-                <label>
-                  Data casatoriei civile / Fecha de matrimonio civil:
+                <div>
+                  <label>
+                    Data casatoriei civile / Fecha de matrimonio civil:
+                  </label>
                   <DatePicker
                     disabled={maritalStatus !== "y"}
                     selected={civilWeddingDate}
@@ -599,10 +605,11 @@ const ExternalRequest = ({ onCloseModal }) => {
                     dateFormat="dd/MM/yyyy"
                     className="short-input"
                   />
-                </label>
-
-                <label>
-                  Data serv. Religios / Fecha de matrimonio religioso:
+                </div>
+                <div>
+                  <label>
+                    Data serv. Religios / Fecha de matrimonio religioso:
+                  </label>
                   <DatePicker
                     disabled={maritalStatus !== "y"}
                     selected={religiousWeddingDate}
@@ -614,7 +621,7 @@ const ExternalRequest = ({ onCloseModal }) => {
                     dateFormat="dd/MM/yyyy"
                     className="short-input"
                   />
-                </label>
+                </div>
               </div>
             </Row>
             <Row className="colums">

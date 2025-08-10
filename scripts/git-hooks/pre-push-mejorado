@@ -60,7 +60,7 @@ elif [ "$ENVIRONMENT" = "production" ]; then
 fi
 
 # Ejecutar verificación de variables de entorno
-echo "🔍 Verificando variables de entorno..."
+echo "🔍 Verificando variables de entorno....."
 node "$(git rev-parse --show-toplevel)/deploy-check.js"
 
 # Si la verificación falla, el script se detendrá aquí debido al código de salida
