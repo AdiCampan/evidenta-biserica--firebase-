@@ -380,8 +380,10 @@ const ExternalFormsReview = ({ persoane }) => {
                         </div>
                       )}
                     </label>
-                    <label className="label">
-                      Data nasterii {`(obligatoriu)`}:
+                    <div>
+                      <label className="label">
+                        Data nasterii {`(obligatoriu)`}:
+                      </label>
                       <DatePicker
                         selected={personData.birthDate}
                         onChange={(date) =>
@@ -395,13 +397,14 @@ const ExternalFormsReview = ({ persoane }) => {
                         className={`input ${
                           formErrors.birthDate ? "is-invalid" : ""
                         }`}
+                        shouldCloseOnSelect={true} // Cierra al elegir fecha
                       />
                       {formErrors.birthDate && (
                         <div className="error-message">
                           {formErrors.birthDate}
                         </div>
                       )}
-                    </label>
+                    </div>
 
                     <label className="label">
                       Gen {`(obligatoriu)`}:
@@ -429,9 +432,8 @@ const ExternalFormsReview = ({ persoane }) => {
                       onFileSelectError={({ error }) => alert(error)}
                       initialImage={form?.profileImage}
                     />
-
-                    <label className="label">
-                      Data Binecuvantarii:
+                    <div>
+                      <label className="label">Data Binecuvantarii:</label>
                       <DatePicker
                         selected={personData.blessingDate}
                         onChange={(date) =>
@@ -451,9 +453,9 @@ const ExternalFormsReview = ({ persoane }) => {
                           {formErrors.blessingDate}
                         </div>
                       )}
-                    </label>
-                    <label className="label">
-                      Data Botezului:
+                    </div>
+                    <div>
+                      <label className="label">Data Botezului:</label>
                       <DatePicker
                         selected={personData.baptiseDate}
                         onChange={(date) =>
@@ -473,7 +475,7 @@ const ExternalFormsReview = ({ persoane }) => {
                           {formErrors.blessingDate}
                         </div>
                       )}
-                    </label>
+                    </div>
                   </div>
                 </div>
 

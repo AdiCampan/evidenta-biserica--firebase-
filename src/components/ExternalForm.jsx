@@ -5,14 +5,22 @@ import DatePicker from "react-datepicker"; // Importamos el DatePicker
 import "react-datepicker/dist/react-datepicker.css";
 import "./ExternalForm.scss";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
-import { validateName, validatePhone, validateAddress, validateDate, sanitizeText } from "../utils/validation";
+import {
+  validateName,
+  validatePhone,
+  validateAddress,
+  validateDate,
+  sanitizeText,
+} from "../utils/validation";
 import { generateCSRFToken, verifyCSRFToken } from "../utils/csrf";
 
 const ExternalForm = ({ onCloseModal }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isAgreed, setIsAgreed] = useState(false); // Estado para la casilla de verificación
   const [csrfToken, setCsrfToken] = useState(""); // Token CSRF
-  const [formId] = useState(() => `form_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`); // ID único para el formulario
+  const [formId] = useState(
+    () => `form_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  ); // ID único para el formulario
 
   // Estado para las fechas como objetos Date
   const [honeypot, setHoneypot] = useState(""); //proteccion antiBot
@@ -68,10 +76,12 @@ const ExternalForm = ({ onCloseModal }) => {
       alert("Formulario detectado como spam.");
       return;
     }
-    
+
     // Verificar token CSRF
     if (!verifyCSRFToken(csrfToken)) {
-      alert("Error de seguridad: La sesión ha expirado o es inválida. Por favor, recarga la página.");
+      alert(
+        "Error de seguridad: La sesión ha expirado o es inválida. Por favor, recarga la página."
+      );
       return;
     }
 
@@ -82,37 +92,37 @@ const ExternalForm = ({ onCloseModal }) => {
       );
       return;
     }
-    
+
     // Validar los campos del formulario
     const errors = [];
-    
+
     // Sanitizar y validar nombre y apellido
     const sanitizedFirstName = sanitizeText(personData.firstName);
     const sanitizedLastName = sanitizeText(personData.lastName);
-    
+
     if (!validateName(sanitizedFirstName)) {
       errors.push("El nombre no es válido");
     }
-    
+
     if (!validateName(sanitizedLastName)) {
       errors.push("El apellido no es válido");
     }
-    
+
     // Validar teléfono si se proporcionó
     if (personData.mobilePhone && !validatePhone(personData.mobilePhone)) {
       errors.push("El número de teléfono no es válido");
     }
-    
+
     // Validar dirección si se proporcionó
     if (personData.address && !validateAddress(personData.address)) {
       errors.push("La dirección no es válida");
     }
-    
+
     // Validar fecha de nacimiento
     if (birthDate && !validateDate(birthDate)) {
       errors.push("La fecha de nacimiento no es válida");
     }
-    
+
     // Si hay errores, mostrarlos y detener el envío
     if (errors.length > 0) {
       alert("Por favor corrija los siguientes errores:\n" + errors.join("\n"));
@@ -201,9 +211,13 @@ const ExternalForm = ({ onCloseModal }) => {
                 onChange={handleChange}
               />
             </label>
-            <label className="label">
-              Data nașterii {`(Fecha de nacimiento)`}:
+            <div>
+              <label className="label" htmlFor="birthDate">
+                Data nașterii (Fecha de nacimiento):
+              </label>
+
               <DatePicker
+                id="birthDate"
                 placeholderText="Obligatoriu"
                 selected={birthDate}
                 onChange={(date) => setBirthDate(date)}
@@ -214,8 +228,10 @@ const ExternalForm = ({ onCloseModal }) => {
                 dropdownMode="select"
                 dateFormat="dd/MM/yyyy"
                 className="input"
+                shouldCloseOnSelect={true} // Cierra al elegir fecha
               />
-            </label>
+            </div>
+
             <label className="label">
               Gen {`(Genero)`}:
               <select
@@ -239,9 +255,11 @@ const ExternalForm = ({ onCloseModal }) => {
               onFileSelectError={({ error }) => alert(error)}
               isExternalForm={true}
             />
+            <div>
+              <label className="label">
+                Data Binecuvantarii (Fecha de bendición):
+              </label>
 
-            <label className="label">
-              Data Binecuvantarii {`(Fecha de bendición)`}:
               <DatePicker
                 selected={blessingDate}
                 onChange={(date) => setBlessingDate(date)}
@@ -252,9 +270,12 @@ const ExternalForm = ({ onCloseModal }) => {
                 dateFormat="dd/MM/yyyy"
                 className="input"
               />
-            </label>
-            <label className="label">
-              Data Botezului {`(Fecha de bautismo)`}:
+            </div>
+            <div>
+              <label className="label">
+                Data Botezului (Fecha de bautismo):
+              </label>
+
               <DatePicker
                 selected={baptiseDate}
                 onChange={(date) => setBaptiseDate(date)}
@@ -265,7 +286,7 @@ const ExternalForm = ({ onCloseModal }) => {
                 dateFormat="dd/MM/yyyy"
                 className="input"
               />
-            </label>
+            </div>
           </div>
         </div>
 
