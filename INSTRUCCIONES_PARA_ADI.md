@@ -1,5 +1,19 @@
 # 🚀 Instrucciones Rápidas para Adi
 
+## ✅ PROBLEMA RESUELTO: Separación de Entornos
+
+**El problema principal estaba en GitHub Actions** - ambas URLs usaban la misma configuración de producción.
+
+### 🔧 Solución Implementada:
+- ✅ Workflows de GitHub Actions actualizados
+- ✅ Separación completa de variables de entorno
+- ✅ Cada push desplegará a AMBOS entornos con sus configuraciones correctas
+
+**📋 ACCIÓN REQUERIDA**: Debes configurar las nuevas variables de entorno en GitHub Secrets.
+**📖 Ver**: `docs/CONFIGURACION_GITHUB_SECRETS.md` para instrucciones detalladas.
+
+---
+
 ## 🆘 Solución Inmediata
 
 ### Si VS Code muestra error "No such file or directory":
@@ -94,12 +108,22 @@ firebase use production && npm run build && firebase deploy
 - **Development**: https://evidenta-bisericii.web.app
 - **Production**: https://secretariat-ebenezer.web.app
 
+## 🎯 Resultado Esperado (Después de Configurar GitHub Secrets)
+
+Una vez configuradas las variables de entorno en GitHub:
+
+✅ **https://secretariat-ebenezer.web.app** → Base de datos de PRODUCCIÓN  
+✅ **https://evidenta-bisericii.web.app** → Base de datos de DESARROLLO  
+✅ **Cada push a main** → Despliega automáticamente a AMBOS entornos  
+✅ **Separación completa** → Cada entorno usa su propia configuración  
+
 ## 📞 Contacto
 
 Si sigues teniendo problemas:
-1. Ejecuta `npm run diagnostico` y envíame la salida
-2. Podemos hacer una sesión remota
-3. Mientras tanto, usa `npm run deploy-manual`
+1. **PRIMERO**: Configura las variables en GitHub Secrets (ver `docs/CONFIGURACION_GITHUB_SECRETS.md`)
+2. Ejecuta `npm run diagnostico` y envíame la salida
+3. Podemos hacer una sesión remota
+4. Mientras tanto, usa `npm run deploy-manual`
 
 ---
 

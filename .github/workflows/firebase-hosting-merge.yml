@@ -7,20 +7,46 @@ on:
     branches:
       - main
 jobs:
-  build_and_deploy:
+  deploy_production:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Create .env file
+      - name: Create .env file for PRODUCTION
         run: |
-          echo "VITE_API_KEY=${{ secrets.VITE_API_KEY }}" >> .env
-          echo "VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }}" >> .env
-          echo "VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }}" >> .env
-          echo "VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}" >> .env
-          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> .env
-          echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> .env
-          echo "VITE_DATABASE_URL=${{ secrets.VITE_DATABASE_URL }}" >> .env
-          echo "VITE_ENCRYPTION_KEY=${{ secrets.VITE_ENCRYPTION_KEY }}" >> .env
+          echo "VITE_API_KEY=${{ secrets.PROD_VITE_API_KEY }}" >> .env
+          echo "VITE_AUTH_DOMAIN=${{ secrets.PROD_VITE_AUTH_DOMAIN }}" >> .env
+          echo "VITE_PROJECT_ID=${{ secrets.PROD_VITE_PROJECT_ID }}" >> .env
+          echo "VITE_STORAGE_BUCKET=${{ secrets.PROD_VITE_STORAGE_BUCKET }}" >> .env
+          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.PROD_VITE_MESSAGING_SENDER_ID }}" >> .env
+          echo "VITE_APP_ID=${{ secrets.PROD_VITE_APP_ID }}" >> .env
+          echo "VITE_DATABASE_URL=${{ secrets.PROD_VITE_DATABASE_URL }}" >> .env
+          echo "VITE_ENCRYPTION_KEY=${{ secrets.PROD_VITE_ENCRYPTION_KEY }}" >> .env
+          echo "SERVER_URL=${{ secrets.PROD_SERVER_URL }}" >> .env
+      - name: Verificar variables de entorno
+        run: node scripts/verify-env-before-build.js
+      - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SECRETARIAT_EBENEZER }}
+          channelId: live
+          projectId: secretariat-ebenezer
+  
+  deploy_development:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create .env file for DEVELOPMENT
+        run: |
+          echo "VITE_API_KEY=${{ secrets.DEV_VITE_API_KEY }}" >> .env
+          echo "VITE_AUTH_DOMAIN=${{ secrets.DEV_VITE_AUTH_DOMAIN }}" >> .env
+          echo "VITE_PROJECT_ID=${{ secrets.DEV_VITE_PROJECT_ID }}" >> .env
+          echo "VITE_STORAGE_BUCKET=${{ secrets.DEV_VITE_STORAGE_BUCKET }}" >> .env
+          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.DEV_VITE_MESSAGING_SENDER_ID }}" >> .env
+          echo "VITE_APP_ID=${{ secrets.DEV_VITE_APP_ID }}" >> .env
+          echo "VITE_DATABASE_URL=${{ secrets.DEV_VITE_DATABASE_URL }}" >> .env
+          echo "VITE_ENCRYPTION_KEY=${{ secrets.DEV_VITE_ENCRYPTION_KEY }}" >> .env
+          echo "SERVER_URL=${{ secrets.DEV_SERVER_URL }}" >> .env
       - name: Verificar variables de entorno
         run: node scripts/verify-env-before-build.js
       - run: npm ci && npm run build
