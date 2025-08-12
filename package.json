@@ -17,6 +17,8 @@
     "add-test-admins": "node scripts/add-test-admins.js",
     "add-test-admins-admin": "node scripts/add-test-admins-admin-sdk.js",
     "diagnostico": "node scripts/diagnostico-git-hooks.js",
+    "diagnostico-entornos": "node scripts/diagnostico-entornos.js",
+    "verificar-secrets": "node scripts/verificar-github-secrets.js",
     "install-hooks-mejorado": "node scripts/install-git-hooks-mejorado.js",
     "deploy-manual": "node scripts/deploy-manual.js",
     "reparar-git": "node scripts/reparar-git.js"

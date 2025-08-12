@@ -1,16 +1,28 @@
 # 🚀 Instrucciones Rápidas para Adi
 
-## ✅ PROBLEMA RESUELTO: Separación de Entornos
+## 🚨 PROBLEMA URGENTE: Separación de Entornos en GitHub Actions
 
-**El problema principal estaba en GitHub Actions** - ambas URLs usaban la misma configuración de producción.
+**ESTADO**: ⚠️ REQUIERE ACCIÓN - Variables de entorno no configuradas
 
-### 🔧 Solución Implementada:
-- ✅ Workflows de GitHub Actions actualizados
-- ✅ Separación completa de variables de entorno
-- ✅ Cada push desplegará a AMBOS entornos con sus configuraciones correctas
+### El Problema Reportado
+- `https://evidenta-bisericii.web.app` sigue apuntando a la base de datos de PRODUCCIÓN
+- Los cambios se reflejan en evidenta-bisericii pero no en secretariat-ebenezer
+- GitHub Actions está fallando por falta de variables de entorno
 
-**📋 ACCIÓN REQUERIDA**: Debes configurar las nuevas variables de entorno en GitHub Secrets.
-**📖 Ver**: `docs/CONFIGURACION_GITHUB_SECRETS.md` para instrucciones detalladas.
+### Diagnóstico Rápido
+```bash
+# Verificar qué configuración usa cada sitio
+npm run diagnostico-entornos
+
+# Verificar variables en GitHub Secrets
+npm run verificar-secrets
+```
+
+### ⚠️ ACCIÓN REQUERIDA PARA ADI
+**DEBES configurar las nuevas variables de entorno en GitHub Secrets AHORA**
+
+📖 **Sigue la guía**: `docs/CONFIGURACION_GITHUB_SECRETS.md`
+📖 **Diagnóstico completo**: `docs/DIAGNOSTICO_GITHUB_ACTIONS.md`
 
 ---
 
