@@ -24,7 +24,11 @@ jobs:
           echo "SERVER_URL=${{ secrets.PROD_SERVER_URL }}" >> .env
       - name: Verificar variables de entorno
         run: node scripts/verify-env-before-build.js
-      - run: npm ci && npm run build
+      - name: Limpiar cache y build
+        run: |
+          rm -rf node_modules/.vite
+          rm -rf dist
+          npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
@@ -47,11 +51,13 @@ jobs:
           echo "VITE_DATABASE_URL=${{ secrets.DEV_VITE_DATABASE_URL }}" >> .env
           echo "VITE_ENCRYPTION_KEY=${{ secrets.DEV_VITE_ENCRYPTION_KEY }}" >> .env
           echo "SERVER_URL=${{ secrets.DEV_SERVER_URL }}" >> .env
-      - name: Debug variables de desarrollo
-        run: node debug-dev-vars.js
       - name: Verificar variables de entorno
         run: node scripts/verify-env-before-build.js
-      - run: npm ci && npm run build
+      - name: Limpiar cache y build
+        run: |
+          rm -rf node_modules/.vite
+          rm -rf dist
+          npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
