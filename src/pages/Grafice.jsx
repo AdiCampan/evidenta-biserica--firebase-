@@ -387,7 +387,7 @@ function Grafice({ persoane }) {
           </div>
         </div>
         <div className="chart">
-          <p>TOTAL FAMILII: {totalFamilii}</p>
+          <strong>TOTAL FAMILII: {totalFamilii}</strong>
           <div
             style={{
               maxHeight: "400px",
