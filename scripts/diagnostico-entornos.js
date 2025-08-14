@@ -36,7 +36,9 @@ console.log('');
 // Función para obtener configuración de un sitio
 function obtenerConfiguracion(url) {
   return new Promise((resolve, reject) => {
+    console.log(`   🔍 Conectando a: ${url}`);
     const request = https.get(url, (response) => {
+      console.log(`   📡 Respuesta HTTP: ${response.statusCode}`);
       let data = '';
       
       response.on('data', (chunk) => {
@@ -45,48 +47,112 @@ function obtenerConfiguracion(url) {
       
       response.on('end', () => {
         try {
-          // Buscar configuración de Firebase en el HTML
-          const configMatch = data.match(/window\.__FIREBASE_CONFIG__\s*=\s*({[^}]+})/)
-            || data.match(/firebase\.initializeApp\(\s*({[^}]+})\s*\)/)
-            || data.match(/firebaseConfig\s*=\s*({[^}]+})/);
-          
-          if (configMatch) {
-            const config = JSON.parse(configMatch[1]);
-            resolve(config);
+          console.log(`   📄 HTML recibido: ${data.length} caracteres`);
+          // Buscar el archivo JavaScript principal
+          const jsMatch = data.match(/src="\/assets\/(index-[^"]+\.js)"/);          
+          if (jsMatch) {
+            const jsUrl = `${url}/assets/${jsMatch[1]}`;
+            console.log(`   🔗 Archivo JS encontrado: ${jsUrl}`);
+            // Obtener el archivo JavaScript
+            obtenerArchivoJS(jsUrl).then(resolve).catch(reject);
           } else {
-            // Buscar variables VITE en el código
-            const viteMatches = {
-              projectId: data.match(/VITE_PROJECT_ID["']?\s*:\s*["']([^"']+)["']/),
-              authDomain: data.match(/VITE_AUTH_DOMAIN["']?\s*:\s*["']([^"']+)["']/),
-              databaseURL: data.match(/VITE_DATABASE_URL["']?\s*:\s*["']([^"']+)["']/)
-            };
-            
-            const config = {};
-            Object.keys(viteMatches).forEach(key => {
-              if (viteMatches[key]) {
-                config[key] = viteMatches[key][1];
-              }
-            });
-            
-            if (Object.keys(config).length > 0) {
-              resolve(config);
-            } else {
-              resolve({ error: 'No se encontró configuración de Firebase' });
-            }
+            console.log(`   ❌ No se encontró patrón de archivo JS en HTML`);
+            console.log(`   📝 Primeros 500 caracteres del HTML:`);
+            console.log(`   ${data.substring(0, 500)}...`);
+            resolve({ error: 'No se encontró archivo JavaScript principal' });
           }
         } catch (error) {
-          resolve({ error: 'Error parseando configuración: ' + error.message });
+          console.log(`   ❌ Error parseando HTML: ${error.message}`);
+          resolve({ error: 'Error parseando HTML: ' + error.message });
         }
       });
     });
     
     request.on('error', (error) => {
+      console.log(`   ❌ Error de conexión: ${error.message}`);
       reject(error);
     });
     
-    request.setTimeout(10000, () => {
+    request.setTimeout(15000, () => {
+      console.log(`   ⏰ Timeout después de 15 segundos`);
       request.destroy();
-      reject(new Error('Timeout'));
+      reject(new Error('Timeout conectando al sitio'));
+    });
+  });
+}
+
+// Función para obtener y analizar el archivo JavaScript
+function obtenerArchivoJS(jsUrl) {
+  return new Promise((resolve, reject) => {
+    console.log(`   📥 Descargando JS: ${jsUrl}`);
+    const request = https.get(jsUrl, (response) => {
+      console.log(`   📡 Respuesta JS HTTP: ${response.statusCode}`);
+      let data = '';
+      
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      response.on('end', () => {
+        try {
+          console.log(`   📄 JavaScript recibido: ${data.length} caracteres`);
+          // Buscar project IDs en el código compilado
+          const tieneEvidenta = data.includes('evidenta-bisericii');
+          const tieneSecretariat = data.includes('secretariat-ebenezer');
+          
+          console.log(`   🔍 Análisis del código:`);
+          console.log(`      - Contiene 'evidenta-bisericii': ${tieneEvidenta}`);
+          console.log(`      - Contiene 'secretariat-ebenezer': ${tieneSecretariat}`);
+          
+          let config = {};
+          
+          if (tieneEvidenta && !tieneSecretariat) {
+            // Solo desarrollo
+            config = {
+              projectId: 'evidenta-bisericii',
+              authDomain: 'evidenta-bisericii.firebaseapp.com',
+              databaseURL: 'https://evidenta-bisericii-default-rtdb.europe-west1.firebasedatabase.app'
+            };
+            console.log(`   ✅ Configuración de desarrollo detectada`);
+          } else if (tieneSecretariat && !tieneEvidenta) {
+            // Solo producción
+            config = {
+              projectId: 'secretariat-ebenezer',
+              authDomain: 'secretariat-ebenezer.firebaseapp.com',
+              databaseURL: 'https://secretariat-ebenezer-default-rtdb.europe-west1.firebasedatabase.app'
+            };
+            console.log(`   ✅ Configuración de producción detectada`);
+          } else if (tieneEvidenta && tieneSecretariat) {
+            // Ambos (problema de configuración)
+            config = {
+              error: 'Configuración mixta detectada - contiene ambos entornos',
+              detalles: 'El código contiene referencias a ambos proyectos Firebase'
+            };
+            console.log(`   ⚠️ Configuración mixta detectada`);
+          } else {
+            console.log(`   ❌ No se encontraron project IDs de Firebase en el código`);
+            console.log(`   📝 Muestra del código (primeros 1000 caracteres):`);
+            console.log(`   ${data.substring(0, 1000)}...`);
+            config = { error: 'No se encontró configuración de Firebase' };
+          }
+          
+          resolve(config);
+        } catch (error) {
+          console.log(`   ❌ Error analizando JavaScript: ${error.message}`);
+          resolve({ error: 'Error analizando JavaScript: ' + error.message });
+        }
+      });
+    });
+    
+    request.on('error', (error) => {
+      console.log(`   ❌ Error descargando JS: ${error.message}`);
+      reject(error);
+    });
+    
+    request.setTimeout(15000, () => {
+      console.log(`   ⏰ Timeout descargando JavaScript`);
+      request.destroy();
+      reject(new Error('Timeout obteniendo JavaScript'));
     });
   });
 }
@@ -101,6 +167,13 @@ async function verificarEntorno(nombre, url) {
     
     if (config.error) {
       console.log(`   ❌ Error: ${config.error}`);
+      if (config.detalles) {
+        console.log(`   📝 Detalles: ${config.detalles}`);
+        console.log(`   🔧 SOLUCIÓN: Verificar variables de entorno en GitHub Actions`);
+        console.log(`      - El sitio contiene código de ambos entornos`);
+        console.log(`      - Revisar que las variables VITE_* estén correctas`);
+        console.log(`      - Hacer un nuevo deploy después de corregir`);
+      }
       return false;
     }
     
