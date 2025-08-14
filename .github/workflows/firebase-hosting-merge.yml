@@ -47,6 +47,8 @@ jobs:
           echo "VITE_DATABASE_URL=${{ secrets.DEV_VITE_DATABASE_URL }}" >> .env
           echo "VITE_ENCRYPTION_KEY=${{ secrets.DEV_VITE_ENCRYPTION_KEY }}" >> .env
           echo "SERVER_URL=${{ secrets.DEV_SERVER_URL }}" >> .env
+      - name: Debug variables de desarrollo
+        run: node debug-dev-vars.js
       - name: Verificar variables de entorno
         run: node scripts/verify-env-before-build.js
       - run: npm ci && npm run build
