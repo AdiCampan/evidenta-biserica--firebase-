@@ -222,7 +222,9 @@ function Grafice({ persoane }) {
         </div>
         <div className="chart">
           <div>
-            <strong style={{ textAlign: "center" }}>EVOLUTIA MEMBRILOR</strong>
+            <div style={{ textAlign: "center", alignContent: "center" }}>
+              <strong> EVOLUTIA MEMBRILOR</strong>
+            </div>
             <Line
               datasetIdKey="id345"
               data={{

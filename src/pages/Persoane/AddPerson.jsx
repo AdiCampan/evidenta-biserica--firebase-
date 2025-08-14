@@ -10,7 +10,6 @@ import { validateName, sanitizeText } from "../../utils/validation";
 
 function AddPerson({ label }) {
   const [show, setShow] = useState(false);
-  // const dispatch = useDispatch();
 
   const [nume, setNume] = useState("");
   const [prenume, setPrenume] = useState("");
@@ -54,12 +53,13 @@ function AddPerson({ label }) {
     // Sanitizar y validar los datos
     const sanitizedNume = sanitizeText(nume);
     const sanitizedPrenume = sanitizeText(prenume);
-    const sanitizedBiserica = biserica === "EBEN - EZER" ? biserica : sanitizeText(otherChurch);
-    
+    const sanitizedBiserica =
+      biserica === "EBEN - EZER" ? biserica : sanitizeText(otherChurch);
+
     // Validar los campos
     const isNumeValid = validateName(sanitizedNume);
     const isPrenumeValid = validateName(sanitizedPrenume);
-    
+
     const newPerson = {
       firstName: sanitizedPrenume,
       lastName: sanitizedNume,
@@ -81,10 +81,7 @@ function AddPerson({ label }) {
 
   return (
     <>
-      <Button
-        variant="primary"
-        onClick={() => setShow(true)}
-      >
+      <Button variant="primary" onClick={() => setShow(true)}>
         {label || "Persoana noua"}
       </Button>
 
