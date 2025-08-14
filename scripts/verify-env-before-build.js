@@ -1,5 +1,8 @@
 // Script para verificar variables de entorno antes del build en GitHub Actions
-// No usa dotenv porque las variables ya están en process.env desde GitHub Actions
+// Lee variables del archivo .env creado por GitHub Actions
+
+const fs = require('fs');
+const path = require('path');
 
 const requiredEnvVars = [
   'VITE_API_KEY',
@@ -12,6 +15,26 @@ const requiredEnvVars = [
 ];
 
 console.log('🔍 Verificando variables de entorno para GitHub Actions...');
+
+// Leer archivo .env si existe
+const envPath = path.join(process.cwd(), '.env');
+let envVars = {};
+
+if (fs.existsSync(envPath)) {
+  console.log('📄 Leyendo archivo .env...');
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const [key, value] = line.split('=');
+    if (key && value) {
+      envVars[key] = value;
+      // También establecer en process.env para compatibilidad
+      process.env[key] = value;
+    }
+  });
+} else {
+  console.log('⚠️  No se encontró archivo .env, usando process.env...');
+}
+
 let missingVars = [];
 let formatErrors = [];
 
