@@ -38,6 +38,7 @@ jobs:
   
   deploy_development:
     runs-on: ubuntu-latest
+    needs: deploy_production
     steps:
       - uses: actions/checkout@v4
       - name: Create .env file for DEVELOPMENT
